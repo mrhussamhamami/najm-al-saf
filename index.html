@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f766e"><link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css"><title>نجم الصف V2</title>
+</head>
+<body>
+<div id="login" class="login-screen">
+  <div class="login-card">
+    <div class="brand-star">⭐</div><h1>نجم الصف</h1><p>منصة متابعة الطلاب</p>
+    <label>البريد الإلكتروني<input id="email" type="email" autocomplete="email" placeholder="name@example.com"></label>
+    <label>كلمة المرور<input id="password" type="password" autocomplete="current-password" placeholder="••••••••"></label>
+    <button class="primary wide" id="loginBtn">تسجيل الدخول</button>
+    <div id="loginMsg" class="msg"></div>
+  </div>
+</div>
+
+<div id="app" class="hidden">
+<header class="topbar"><div><div class="eyebrow">منصة متابعة الطلاب</div><h1>نجم الصف ⭐</h1></div>
+<button class="icon-btn" id="logoutBtn">↪</button></header>
+<main>
+<section id="dashboard" class="page active">
+ <div class="welcome card"><div><span class="muted">مرحبًا بك</span><h2 id="welcomeName">—</h2><p>تابع طلابك واكتشف نجوم الأسبوع والشهر.</p></div><div class="hero-star">⭐</div></div>
+ <div class="stats"><div class="stat card"><b id="studentCount">0</b><span>الطلاب</span></div><div class="stat card"><b id="classAvg">0%</b><span>متوسط الصف</span></div><div class="stat card"><b id="weekStar">—</b><span>نجم الأسبوع</span></div><div class="stat card"><b id="monthStar">—</b><span>نجم الشهر</span></div></div>
+ <div class="section-title"><h3>الوصول السريع</h3></div>
+ <div class="quick-grid"><button class="quick card" data-go="students">👨‍🎓<strong>الطلاب</strong><small>عرض الملفات</small></button><button class="quick card" data-go="evaluate">📝<strong>تقييم جديد</strong><small>من 1 إلى 10</small></button><button class="quick card" data-go="stars">🏆<strong>النجوم</strong><small>أسبوعي وشهري</small></button><button class="quick card" data-go="parent">👨‍👩‍👦<strong>عرض ولي الأمر</strong><small>للحسابات المرتبطة</small></button></div>
+ <div class="section-title"><h3>آخر التقييمات</h3></div><div id="recent" class="list"></div>
+</section>
+<section id="students" class="page"><div class="page-head"><div><span class="muted">إدارة الطلاب</span><h2>الطلاب</h2></div></div><div id="studentList" class="student-list"></div></section>
+<section id="evaluate" class="page"><div class="page-head"><div><span class="muted">تسجيل متابعة</span><h2>تقييم طالب</h2></div></div>
+<div class="card form-card"><label>الطالب<select id="studentSelect"></select></label><div class="score-grid" id="scoreGrid"></div><label>ملاحظة اختيارية<textarea id="note" rows="3" placeholder="اكتب ملاحظة مختصرة..."></textarea></label><button class="primary wide" id="saveEval">حفظ التقييم</button><div id="evalMsg" class="msg"></div></div></section>
+<section id="stars" class="page"><div class="page-head"><div><span class="muted">النتائج</span><h2>نجوم الصف ⭐</h2></div></div><div class="tabs"><button class="tab active" data-tab="week">هذا الأسبوع</button><button class="tab" data-tab="month">هذا الشهر</button></div><div id="starsContent"></div></section>
+<section id="parent" class="page"><div class="page-head"><div><span class="muted">الحسابات المرتبطة</span><h2>ملف الطالب</h2></div></div><div id="parentContent"></div></section>
+</main>
+<nav class="bottom-nav"><button class="nav active" data-go="dashboard">🏠<span>الرئيسية</span></button><button class="nav" data-go="students">👨‍🎓<span>الطلاب</span></button><button class="nav" data-go="evaluate">📝<span>التقييم</span></button><button class="nav" data-go="stars">🏆<span>النجوم</span></button><button class="nav" data-go="parent">👨‍👩‍👦<span>الأهل</span></button></nav>
+</div>
+<script type="module" src="app.js"></script>
+</body></html>
