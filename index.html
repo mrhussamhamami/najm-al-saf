@@ -1,72 +1,4134 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0b7a70"><link rel="manifest" href="manifest.json"><title>نجم الصف | متابعة الطلاب</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b7a70">
+<link rel="manifest" href="manifest.json">
+<title>نجم الصف | متابعة الطلاب</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
-:root{--p:#0b7a70;--p2:#075b54;--bg:#f3f7f6;--card:#fff;--text:#17302e;--muted:#6b7d7a;--danger:#b42318;--line:#dbe6e4;--shadow:0 8px 25px #0b7a7014}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Noto Sans Arabic",Arial,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}.top{position:sticky;top:0;z-index:10;background:linear-gradient(135deg,var(--p2),var(--p));color:#fff;padding:15px 16px;box-shadow:0 4px 15px #0002}.toprow{max-width:1050px;margin:auto;display:flex;justify-content:space-between;gap:12px;align-items:center}.brand{font-weight:900;font-size:21px}.sub{font-size:12px;opacity:.85}.wrap{max-width:1050px;margin:auto;padding:14px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.card{background:var(--card);border:1px solid #e7efee;border-radius:18px;padding:15px;box-shadow:var(--shadow);margin-bottom:12px}.hero{padding:20px;background:linear-gradient(135deg,#e7f6f3,#fff)}h1,h2,h3{margin:0 0 10px}h2{font-size:19px}h3{font-size:16px}.muted{color:var(--muted);font-size:13px}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.between{justify-content:space-between}.field{margin:8px 0}.field label{display:block;font-size:13px;font-weight:700;margin-bottom:5px}.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);border-radius:12px;padding:11px;background:#fff;color:var(--text)}textarea{min-height:80px;resize:vertical}.btn{border:0;border-radius:12px;padding:11px 14px;background:var(--p);color:#fff;font-weight:700}.btn.alt{background:#e8f3f1;color:var(--p2)}.btn.danger{background:#feeceb;color:var(--danger)}.btn.gray{background:#eef2f1;color:#394b49}.btn:disabled{opacity:.5;cursor:not-allowed}.tabs{display:flex;gap:7px;overflow:auto;padding-bottom:4px;margin-bottom:12px}.tabs button{white-space:nowrap;border:0;border-radius:12px;padding:10px 13px;background:#e8f0ef;color:#31514e}.tabs button.active{background:var(--p);color:#fff}.stat{padding:14px;border-radius:16px;background:#fff;border:1px solid var(--line)}.stat b{font-size:25px;display:block}.badge{display:inline-block;border-radius:20px;padding:4px 8px;background:#e7f5f2;color:var(--p2);font-size:12px}.dangerText{color:var(--danger)}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:9px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}.tableWrap{overflow:auto}.student{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px;border:1px solid var(--line);border-radius:14px;margin:8px 0;background:#fff}.avatar{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:#e6f5f2;color:var(--p);font-weight:900}.login{max-width:480px;margin:45px auto}.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#17302e;color:#fff;padding:11px 15px;border-radius:12px;display:none;z-index:99;max-width:90%}.hidden{display:none!important}.modal{position:fixed;inset:0;background:#0007;display:none;align-items:center;justify-content:center;padding:15px;z-index:50}.modalBox{width:min(650px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:20px;padding:18px}.small{font-size:12px}.check{display:flex;gap:8px;align-items:center}.check input{width:auto}.score{font-weight:900;color:var(--p)}@media(max-width:650px){.grid,.grid3{grid-template-columns:1fr}.toprow{align-items:flex-start}.hideMob{display:none}}
-</style></head>
+:root{
+  --p:#0b7a70;
+  --p2:#075b54;
+  --p3:#e7f6f3;
+  --bg:#f3f7f6;
+  --card:#fff;
+  --text:#17302e;
+  --muted:#6b7d7a;
+  --danger:#b42318;
+  --dangerBg:#fff0ee;
+  --warning:#9a6700;
+  --warningBg:#fff8df;
+  --success:#087443;
+  --successBg:#e9f8ef;
+  --line:#dbe6e4;
+  --shadow:0 8px 25px #0b7a7014;
+  --radius:18px;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:
+    system-ui,
+    -apple-system,
+    "Noto Sans Arabic",
+    Arial,
+    sans-serif;
+}
+
+button,
+input,
+select,
+textarea{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+button:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+
+.top{
+  position:sticky;
+  top:0;
+  z-index:20;
+  background:linear-gradient(135deg,var(--p2),var(--p));
+  color:#fff;
+  padding:14px 16px;
+  box-shadow:0 4px 18px #0002;
+}
+
+.toprow{
+  max-width:1100px;
+  margin:auto;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+}
+
+.brand{
+  font-weight:900;
+  font-size:22px;
+  letter-spacing:-.4px;
+}
+
+.sub{
+  font-size:12px;
+  opacity:.85;
+  margin-top:2px;
+}
+
+.wrap{
+  max-width:1100px;
+  margin:auto;
+  padding:15px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+
+.grid3{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+}
+
+.grid4{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px;
+}
+
+.card{
+  background:var(--card);
+  border:1px solid #e5eeec;
+  border-radius:var(--radius);
+  padding:16px;
+  box-shadow:var(--shadow);
+  margin-bottom:12px;
+}
+
+.hero{
+  padding:20px;
+  background:
+    radial-gradient(circle at top left,#d8f4ef 0,transparent 35%),
+    linear-gradient(135deg,#e8f7f4,#fff);
+}
+
+h1,
+h2,
+h3{
+  margin:0 0 10px;
+}
+
+h1{
+  font-size:25px;
+}
+
+h2{
+  font-size:19px;
+}
+
+h3{
+  font-size:16px;
+}
+
+.muted{
+  color:var(--muted);
+  font-size:13px;
+}
+
+.small{
+  font-size:12px;
+}
+
+.row{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+.between{
+  justify-content:space-between;
+}
+
+.field{
+  margin:9px 0;
+}
+
+.field label{
+  display:block;
+  font-size:13px;
+  font-weight:800;
+  margin-bottom:6px;
+}
+
+.field input,
+.field select,
+.field textarea,
+input,
+select,
+textarea{
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:13px;
+  padding:11px 12px;
+  background:#fff;
+  color:var(--text);
+  outline:none;
+  transition:.2s;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus,
+input:focus,
+select:focus,
+textarea:focus{
+  border-color:var(--p);
+  box-shadow:0 0 0 3px #0b7a7012;
+}
+
+textarea{
+  min-height:85px;
+  resize:vertical;
+}
+
+.btn{
+  border:0;
+  border-radius:13px;
+  padding:11px 15px;
+  background:var(--p);
+  color:#fff;
+  font-weight:800;
+  transition:.2s;
+}
+
+.btn:hover{
+  transform:translateY(-1px);
+}
+
+.btn.alt{
+  background:#e8f3f1;
+  color:var(--p2);
+}
+
+.btn.danger{
+  background:var(--dangerBg);
+  color:var(--danger);
+}
+
+.btn.gray{
+  background:#eef2f1;
+  color:#394b49;
+}
+
+.btn.success{
+  background:var(--successBg);
+  color:var(--success);
+}
+
+.tabs{
+  display:flex;
+  gap:7px;
+  overflow-x:auto;
+  padding-bottom:5px;
+  margin-bottom:13px;
+  scrollbar-width:none;
+}
+
+.tabs::-webkit-scrollbar{
+  display:none;
+}
+
+.tabs button{
+  white-space:nowrap;
+  border:0;
+  border-radius:13px;
+  padding:10px 14px;
+  background:#e8f0ef;
+  color:#31514e;
+  font-weight:700;
+}
+
+.tabs button.active{
+  background:var(--p);
+  color:#fff;
+  box-shadow:0 4px 12px #0b7a7030;
+}
+
+.stat{
+  padding:15px;
+  border-radius:17px;
+  background:#fff;
+  border:1px solid var(--line);
+  box-shadow:0 5px 18px #00000006;
+}
+
+.stat b{
+  font-size:27px;
+  display:block;
+  margin-top:4px;
+}
+
+.statIcon{
+  width:38px;
+  height:38px;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  background:var(--p3);
+  color:var(--p);
+  font-weight:900;
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  border-radius:20px;
+  padding:5px 9px;
+  background:#e7f5f2;
+  color:var(--p2);
+  font-size:12px;
+  font-weight:700;
+}
+
+.badge.warning{
+  background:var(--warningBg);
+  color:var(--warning);
+}
+
+.badge.danger{
+  background:var(--dangerBg);
+  color:var(--danger);
+}
+
+.badge.success{
+  background:var(--successBg);
+  color:var(--success);
+}
+
+.dangerText{
+  color:var(--danger);
+}
+
+.successText{
+  color:var(--success);
+}
+
+.tableWrap{
+  overflow:auto;
+  border:1px solid var(--line);
+  border-radius:14px;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
+  background:#fff;
+}
+
+th,
+td{
+  padding:10px;
+  border-bottom:1px solid var(--line);
+  text-align:right;
+  vertical-align:top;
+  white-space:nowrap;
+}
+
+th{
+  background:#f5f9f8;
+  font-weight:800;
+}
+
+tr:last-child td{
+  border-bottom:0;
+}
+
+.student{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:12px;
+  border:1px solid var(--line);
+  border-radius:15px;
+  margin:8px 0;
+  background:#fff;
+}
+
+.studentMain{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+}
+
+.studentInfo{
+  min-width:0;
+}
+
+.studentInfo b{
+  display:block;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.avatar{
+  flex:0 0 auto;
+  width:43px;
+  height:43px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:#e6f5f2;
+  color:var(--p);
+  font-weight:900;
+  font-size:17px;
+}
+
+.actions{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.scoreCard{
+  position:relative;
+  padding:14px;
+  border-radius:16px;
+  border:1px solid var(--line);
+  background:linear-gradient(180deg,#fff,#f8fbfa);
+}
+
+.scoreCard label{
+  display:block;
+  font-size:13px;
+  font-weight:800;
+  margin-bottom:7px;
+}
+
+.scoreCard input{
+  text-align:center;
+  font-size:20px;
+  font-weight:900;
+  color:var(--p);
+}
+
+.scoreHint{
+  font-size:11px;
+  color:var(--muted);
+  margin-top:5px;
+  text-align:center;
+}
+
+.evalHeader{
+  padding:15px;
+  border-radius:16px;
+  background:linear-gradient(135deg,#edf9f6,#fff);
+  border:1px solid #d8ebe8;
+  margin-bottom:12px;
+}
+
+.evalStatus{
+  margin-top:8px;
+}
+
+.reportHero{
+  padding:18px;
+  border-radius:17px;
+  background:linear-gradient(135deg,var(--p2),var(--p));
+  color:#fff;
+  margin-bottom:12px;
+}
+
+.reportHero .muted{
+  color:#ffffffc7;
+}
+
+.empty{
+  padding:25px 12px;
+  text-align:center;
+  color:var(--muted);
+}
+
+.emptyIcon{
+  font-size:30px;
+  margin-bottom:6px;
+}
+
+.login{
+  max-width:480px;
+  margin:45px auto;
+}
+
+.loginLogo{
+  width:65px;
+  height:65px;
+  display:grid;
+  place-items:center;
+  margin:0 auto 12px;
+  border-radius:20px;
+  background:var(--p);
+  color:#fff;
+  font-size:28px;
+  font-weight:900;
+  box-shadow:0 8px 25px #0b7a7030;
+}
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:#0007;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:15px;
+  z-index:50;
+}
+
+.modalBox{
+  width:min(650px,100%);
+  max-height:92vh;
+  overflow:auto;
+  background:#fff;
+  border-radius:21px;
+  padding:18px;
+}
+
+.toast{
+  position:fixed;
+  bottom:18px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#17302e;
+  color:#fff;
+  padding:12px 17px;
+  border-radius:13px;
+  display:none;
+  z-index:99;
+  max-width:92%;
+  text-align:center;
+  box-shadow:0 8px 30px #0004;
+}
+
+.loading{
+  opacity:.65;
+  pointer-events:none;
+}
+
+.hidden{
+  display:none!important;
+}
+
+.divider{
+  height:1px;
+  background:var(--line);
+  margin:15px 0;
+}
+
+.quick{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:13px;
+  border:1px solid var(--line);
+  border-radius:15px;
+  background:#fff;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.quick:hover{
+  transform:translateY(-1px);
+  border-color:#bcdad6;
+}
+
+.quickIcon{
+  width:40px;
+  height:40px;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  background:var(--p3);
+  color:var(--p);
+  font-weight:900;
+}
+
+.notice{
+  padding:12px;
+  border-radius:14px;
+  background:var(--warningBg);
+  color:var(--warning);
+  border:1px solid #f0df9b;
+  font-size:13px;
+}
+
+.successBox{
+  padding:12px;
+  border-radius:14px;
+  background:var(--successBg);
+  color:var(--success);
+  border:1px solid #ccebd8;
+  font-size:13px;
+}
+
+.sectionTitle{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:10px;
+}
+
+.progress{
+  height:8px;
+  border-radius:20px;
+  background:#e9efee;
+  overflow:hidden;
+  margin-top:7px;
+}
+
+.progress span{
+  display:block;
+  height:100%;
+  background:var(--p);
+  border-radius:20px;
+}
+
+.parentStudent{
+  padding:16px;
+  border:1px solid var(--line);
+  border-radius:17px;
+  background:#fff;
+  margin-bottom:10px;
+}
+
+@media(max-width:800px){
+  .grid4{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+}
+
+@media(max-width:650px){
+  .wrap{
+    padding:10px;
+  }
+
+  .grid,
+  .grid3,
+  .grid4{
+    grid-template-columns:1fr;
+  }
+
+  .toprow{
+    align-items:flex-start;
+  }
+
+  .brand{
+    font-size:20px;
+  }
+
+  .card{
+    padding:13px;
+    border-radius:16px;
+  }
+
+  .student{
+    align-items:flex-start;
+  }
+
+  .student>.actions{
+    flex-direction:column;
+  }
+
+  .actions .btn{
+    width:100%;
+  }
+
+  .login{
+    margin:25px auto;
+  }
+
+  th,
+  td{
+    padding:8px;
+  }
+}
+</style>
+</head>
+
 <body>
-<header class="top"><div class="toprow"><div><div class="brand">نجم الصف</div><div class="sub">نظام متابعة الطلاب — V2</div></div><button id="logoutBtn" class="btn alt hidden" onclick="logout()">تسجيل الخروج</button></div></header>
+
+<header class="top">
+  <div class="toprow">
+    <div>
+      <div class="brand">⭐ نجم الصف</div>
+      <div class="sub">نظام متابعة الطلاب — V2</div>
+    </div>
+
+    <button
+      id="logoutBtn"
+      class="btn alt hidden"
+      onclick="logout()">
+      تسجيل الخروج
+    </button>
+  </div>
+</header>
+
 <main class="wrap">
+
+<!-- LOGIN -->
 <section id="loginView" class="login card">
-<div class="hero"><h1>نجم الصف</h1><p class="muted">متابعة الطلاب والتقييم والحضور والتقارير من الهاتف.</p></div>
-<div class="field"><label>البريد الإلكتروني</label><input id="email" type="email" autocomplete="email"></div>
-<div class="field"><label>كلمة المرور</label><input id="password" type="password" autocomplete="current-password"></div>
-<div class="row"><button class="btn" onclick="login()">دخول</button><button class="btn alt" onclick="signupParent()">إنشاء حساب ولي أمر</button></div>
-<p id="loginMsg" class="muted"></p><p class="small muted">حساب المعلم يُنشأ من Supabase Auth، وحساب ولي الأمر يمكن إنشاؤه من هنا.</p>
+
+  <div class="hero" style="text-align:center">
+    <div class="loginLogo">ن</div>
+    <h1>نجم الصف</h1>
+    <p class="muted">
+      متابعة الطلاب والتقييم والحضور والتقارير من الهاتف.
+    </p>
+  </div>
+
+  <div class="field">
+    <label>البريد الإلكتروني</label>
+    <input
+      id="email"
+      type="email"
+      autocomplete="email"
+      placeholder="example@email.com">
+  </div>
+
+  <div class="field">
+    <label>كلمة المرور</label>
+    <input
+      id="password"
+      type="password"
+      autocomplete="current-password"
+      placeholder="كلمة المرور">
+  </div>
+
+  <div class="row">
+    <button class="btn" onclick="login()">دخول</button>
+    <button class="btn alt" onclick="signupParent()">
+      إنشاء حساب ولي أمر
+    </button>
+  </div>
+
+  <p id="loginMsg" class="muted"></p>
+
+  <p class="small muted">
+    حساب المعلم يُنشأ من Supabase Auth،
+    وحساب ولي الأمر يمكن إنشاؤه من هنا.
+  </p>
+
 </section>
+
+
+<!-- APP -->
 <section id="appView" class="hidden">
-<div class="card hero"><div class="row between"><div><h2 id="welcome">مرحبًا</h2><div id="roleLabel" class="muted"></div></div><span id="connection" class="badge">Supabase</span></div></div>
-<div id="teacherTabs" class="tabs hidden"><button data-tab="dashboard" onclick="tab('dashboard')">الرئيسية</button><button data-tab="students" onclick="tab('students')">الطلاب</button><button data-tab="evaluation" onclick="tab('evaluation')">التقييم</button><button data-tab="attendance" onclick="tab('attendance')">الحضور</button><button data-tab="notes" onclick="tab('notes')">الملاحظات</button><button data-tab="awards" onclick="tab('awards')">الإنجازات</button><button data-tab="reports" onclick="tab('reports')">التقارير</button></div>
-<div id="parentTabs" class="tabs hidden"><button data-tab="parent" onclick="tab('parent')">ملف أبنائي</button></div>
-<section id="dashboard" class="page"><div class="grid3"><div class="stat"><span class="muted">الطلاب</span><b id="statStudents">0</b></div><div class="stat"><span class="muted">تقييمات اليوم</span><b id="statEval">0</b></div><div class="stat"><span class="muted">حضور اليوم</span><b id="statAttend">0</b></div></div><div class="card"><h2>اختصارات</h2><div class="grid"><button class="btn" onclick="tab('students')">إدارة الطلاب</button><button class="btn" onclick="tab('evaluation')">إضافة تقييم</button><button class="btn" onclick="tab('attendance')">تسجيل الحضور</button><button class="btn" onclick="tab('reports')">تقارير الطلاب</button></div></div></section>
-<section id="students" class="page hidden"><div class="card"><div class="row between"><h2>إدارة الطلاب</h2><button class="btn" onclick="openStudent()">+ إضافة طالب</button></div><div class="field"><input id="studentSearch" placeholder="ابحث باسم الطالب أو ولي الأمر" oninput="renderStudents()"></div><div id="studentsList"></div></div></section>
-<section id="evaluation" class="page hidden"><div class="card"><h2>التقييم من 1 إلى 10</h2><div class="field"><label>الطالب</label><select id="evalStudent"></select></div><div class="grid3" id="scoreFields"></div><div class="field"><label>ملاحظة</label><textarea id="evalNote"></textarea></div><button class="btn" onclick="saveEvaluation()">حفظ التقييم</button></div><div class="card"><h2>آخر التقييمات</h2><div id="evalTable"></div></div></section>
-<section id="attendance" class="page hidden"><div class="card"><h2>الحضور</h2><div class="field"><label>التاريخ</label><input id="attDate" type="date"></div><div id="attList"></div><button class="btn" onclick="saveAttendance()">حفظ الحضور</button></div></section>
-<section id="notes" class="page hidden"><div class="card"><h2>ملاحظات الطلاب</h2><div class="field"><label>الطالب</label><select id="noteStudent"></select></div><textarea id="noteText" placeholder="اكتب الملاحظة"></textarea><button class="btn" onclick="saveNote()">حفظ الملاحظة</button></div><div class="card"><div id="notesTable"></div></div></section>
-<section id="awards" class="page hidden"><div class="card"><h2>الإنجازات والجوائز</h2><div class="field"><label>الطالب</label><select id="awardStudent"></select></div><input id="awardTitle" placeholder="اسم الإنجاز"><input id="awardPeriod" placeholder="الفترة" style="margin:8px 0"><button class="btn" onclick="saveAward()">حفظ الإنجاز</button></div><div class="card"><div id="awardsTable"></div></div></section>
-<section id="reports" class="page hidden"><div class="card"><h2>تقارير الطلاب</h2><div class="field"><label>الطالب</label><select id="reportStudent" onchange="loadReport()"></select></div><div id="reportBox" class="muted">اختر طالبًا.</div></div></section>
-<section id="parent" class="page hidden"><div class="card"><h2>ملف أبنائي</h2><div id="parentStudents"></div></div></section>
-</section></main>
-<div id="modal" class="modal"><div class="modalBox"><div class="row between"><h2 id="modalTitle">إضافة طالب</h2><button class="btn gray" onclick="closeModal()">إغلاق</button></div><input type="hidden" id="editStudentId"><div class="field"><label>اسم الطالب *</label><input id="studentName"></div><div class="grid"><div class="field"><label>الصف</label><input id="className" placeholder="مثال: السادس"></div><div class="field"><label>الشعبة</label><input id="sectionName" placeholder="مثال: الأولى"></div></div><div class="field"><label>اسم ولي الأمر</label><input id="parentName"></div><div class="field"><label>بريد ولي الأمر</label><input id="parentEmail" type="email" placeholder="لربط حساب ولي الأمر بالطالب"></div><div class="field"><label>هاتف ولي الأمر</label><input id="parentPhone" inputmode="tel"></div><div class="row"><button class="btn" onclick="saveStudent()">حفظ</button><button class="btn gray" onclick="closeModal()">إلغاء</button></div></div></div>
+
+  <div class="card hero">
+    <div class="row between">
+
+      <div>
+        <h2 id="welcome">مرحبًا</h2>
+        <div id="roleLabel" class="muted"></div>
+      </div>
+
+      <span id="connection" class="badge success">
+        ● متصل
+      </span>
+
+    </div>
+  </div>
+
+
+  <!-- TEACHER TABS -->
+  <div id="teacherTabs" class="tabs hidden">
+
+    <button data-tab="dashboard" onclick="tab('dashboard')">
+      الرئيسية
+    </button>
+
+    <button data-tab="students" onclick="tab('students')">
+      الطلاب
+    </button>
+
+    <button data-tab="evaluation" onclick="tab('evaluation')">
+      التقييم
+    </button>
+
+    <button data-tab="attendance" onclick="tab('attendance')">
+      الحضور
+    </button>
+
+    <button data-tab="notes" onclick="tab('notes')">
+      الملاحظات
+    </button>
+
+    <button data-tab="awards" onclick="tab('awards')">
+      الإنجازات
+    </button>
+
+    <button data-tab="reports" onclick="tab('reports')">
+      التقارير
+    </button>
+
+  </div>
+
+
+  <!-- PARENT TABS -->
+  <div id="parentTabs" class="tabs hidden">
+
+    <button data-tab="parent" onclick="tab('parent')">
+      👨‍👩‍👧 ملف أبنائي
+    </button>
+
+  </div>
+
+
+  <!-- DASHBOARD -->
+  <section id="dashboard" class="page">
+
+    <div class="grid3">
+
+      <div class="stat">
+        <div class="row between">
+          <span class="muted">الطلاب</span>
+          <span class="statIcon">👨‍🎓</span>
+        </div>
+        <b id="statStudents">0</b>
+      </div>
+
+      <div class="stat">
+        <div class="row between">
+          <span class="muted">تقييمات اليوم</span>
+          <span class="statIcon">⭐</span>
+        </div>
+        <b id="statEval">0</b>
+      </div>
+
+      <div class="stat">
+        <div class="row between">
+          <span class="muted">حضور اليوم</span>
+          <span class="statIcon">✓</span>
+        </div>
+        <b id="statAttend">0</b>
+      </div>
+
+    </div>
+
+
+    <div class="card">
+
+      <div class="sectionTitle">
+        <h2>الوصول السريع</h2>
+      </div>
+
+      <div class="grid">
+
+        <div class="quick" onclick="tab('students')">
+          <div class="quickIcon">👨‍🎓</div>
+          <div>
+            <b>إدارة الطلاب</b>
+            <div class="muted">إضافة وتعديل بيانات الطلاب</div>
+          </div>
+        </div>
+
+        <div class="quick" onclick="tab('evaluation')">
+          <div class="quickIcon">⭐</div>
+          <div>
+            <b>تقييم طالب</b>
+            <div class="muted">تسجيل تقييم اليوم</div>
+          </div>
+        </div>
+
+        <div class="quick" onclick="tab('attendance')">
+          <div class="quickIcon">✓</div>
+          <div>
+            <b>الحضور</b>
+            <div class="muted">تسجيل حضور الطلاب</div>
+          </div>
+        </div>
+
+        <div class="quick" onclick="tab('reports')">
+          <div class="quickIcon">📊</div>
+          <div>
+            <b>التقارير</b>
+            <div class="muted">متابعة مستوى الطالب</div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="card">
+
+      <h2>حالة النظام</h2>
+
+      <div class="successBox">
+        قاعدة البيانات متصلة، ويمكن إدارة الطلاب والتقييمات
+        والحضور من الهاتف.
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- STUDENTS -->
+  <section id="students" class="page hidden">
+
+    <div class="card">
+
+      <div class="sectionTitle">
+
+        <h2>إدارة الطلاب</h2>
+
+        <button
+          class="btn"
+          onclick="openStudent()">
+          + إضافة طالب
+        </button>
+
+      </div>
+
+      <div class="field">
+
+        <label>بحث</label>
+
+        <input
+          id="studentSearch"
+          placeholder="ابحث باسم الطالب أو ولي الأمر..."
+          oninput="renderStudents()">
+
+      </div>
+
+      <div id="studentsList"></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- EVALUATION -->
+  <section id="evaluation" class="page hidden">
+
+    <div class="card">
+
+      <div class="evalHeader">
+
+        <div class="row between">
+
+          <div>
+            <h2>⭐ تقييم الطالب</h2>
+
+            <div class="muted">
+              التقييم من 1 إلى 10
+            </div>
+          </div>
+
+          <span class="badge">
+            تقييم اليوم
+          </span>
+
+        </div>
+
+        <div id="evalStatus" class="evalStatus muted">
+          اختر الطالب لعرض تقييم اليوم.
+        </div>
+
+      </div>
+
+
+      <div class="field">
+
+        <label>الطالب</label>
+
+        <select id="evalStudent">
+          <option value="">اختر الطالب</option>
+        </select>
+
+      </div>
+
+
+      <div
+        class="grid3"
+        id="scoreFields">
+      </div>
+
+
+      <div class="field">
+
+        <label>ملاحظة التقييم</label>
+
+        <textarea
+          id="evalNote"
+          placeholder="اكتب ملاحظة مرتبطة بتقييم اليوم..."></textarea>
+
+      </div>
+
+
+      <button
+        id="saveEvalBtn"
+        class="btn"
+        onclick="saveEvaluation()">
+
+        حفظ تقييم اليوم
+
+      </button>
+
+      <p class="small muted">
+        إذا قيّمت الطالب مرة أخرى في اليوم نفسه،
+        سيتم تحديث تقييم اليوم بدل إنشاء نسخة جديدة.
+        أما التقييمات السابقة فتبقى محفوظة.
+      </p>
+
+    </div>
+
+
+    <div class="card">
+
+      <div class="sectionTitle">
+        <h2>آخر التقييمات</h2>
+
+        <span class="badge">
+          محفوظة في قاعدة البيانات
+        </span>
+      </div>
+
+      <div id="evalTable"></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ATTENDANCE -->
+  <section id="attendance" class="page hidden">
+
+    <div class="card">
+
+      <div class="sectionTitle">
+
+        <div>
+          <h2>✓ الحضور</h2>
+          <div class="muted">
+            تسجيل حالة كل طالب حسب التاريخ
+          </div>
+        </div>
+
+      </div>
+
+
+      <div class="field">
+
+        <label>التاريخ</label>
+
+        <input
+          id="attDate"
+          type="date"
+          onchange="loadAttendanceForDate()">
+
+      </div>
+
+
+      <div id="attList"></div>
+
+
+      <button
+        id="saveAttendanceBtn"
+        class="btn"
+        onclick="saveAttendance()">
+
+        حفظ الحضور
+
+      </button>
+
+    </div>
+
+  </section>
+
+
+  <!-- NOTES -->
+  <section id="notes" class="page hidden">
+
+    <div class="card">
+
+      <h2>📝 ملاحظات الطلاب</h2>
+
+      <div class="field">
+
+        <label>الطالب</label>
+
+        <select id="noteStudent"></select>
+
+      </div>
+
+      <textarea
+        id="noteText"
+        placeholder="اكتب الملاحظة هنا..."></textarea>
+
+      <br>
+
+      <button
+        id="saveNoteBtn"
+        class="btn"
+        onclick="saveNote()">
+
+        حفظ الملاحظة
+
+      </button>
+
+    </div>
+
+
+    <div class="card">
+
+      <div id="notesTable"></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- AWARDS -->
+  <section id="awards" class="page hidden">
+
+    <div class="card">
+
+      <h2>🏆 الإنجازات والجوائز</h2>
+
+      <div class="field">
+
+        <label>الطالب</label>
+
+        <select id="awardStudent"></select>
+
+      </div>
+
+      <div class="field">
+
+        <label>اسم الإنجاز</label>
+
+        <input
+          id="awardTitle"
+          placeholder="مثال: الطالب المثالي">
+
+      </div>
+
+      <div class="field">
+
+        <label>الفترة</label>
+
+        <input
+          id="awardPeriod"
+          placeholder="مثال: الأسبوع الأول">
+
+      </div>
+
+      <button
+        id="saveAwardBtn"
+        class="btn"
+        onclick="saveAward()">
+
+        حفظ الإنجاز
+
+      </button>
+
+    </div>
+
+
+    <div class="card">
+
+      <div id="awardsTable"></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- REPORTS -->
+  <section id="reports" class="page hidden">
+
+    <div class="card">
+
+      <h2>📊 تقارير الطلاب</h2>
+
+      <div class="field">
+
+        <label>الطالب</label>
+
+        <select
+          id="reportStudent"
+          onchange="loadReport()">
+        </select>
+
+      </div>
+
+    </div>
+
+    <div
+      id="reportBox"
+      class="muted">
+      اختر طالبًا لعرض التقرير.
+    </div>
+
+  </section>
+
+
+  <!-- PARENT -->
+  <section id="parent" class="page hidden">
+
+    <div class="card">
+
+      <h2>👨‍👩‍👧 ملف أبنائي</h2>
+
+      <p class="muted">
+        تظهر هنا الطلاب المرتبطون بالبريد الإلكتروني لهذا الحساب.
+      </p>
+
+      <div id="parentStudents"></div>
+
+    </div>
+
+  </section>
+
+</section>
+
+</main>
+
+
+<!-- STUDENT MODAL -->
+<div id="modal" class="modal">
+
+  <div class="modalBox">
+
+    <div class="sectionTitle">
+
+      <h2 id="modalTitle">
+        إضافة طالب
+      </h2>
+
+      <button
+        class="btn gray"
+        onclick="closeModal()">
+        إغلاق
+      </button>
+
+    </div>
+
+    <input
+      type="hidden"
+      id="editStudentId">
+
+    <div class="field">
+
+      <label>اسم الطالب *</label>
+
+      <input
+        id="studentName"
+        placeholder="الاسم الكامل">
+
+    </div>
+
+
+    <div class="grid">
+
+      <div class="field">
+
+        <label>الصف</label>
+
+        <input
+          id="className"
+          placeholder="مثال: السادس">
+
+      </div>
+
+
+      <div class="field">
+
+        <label>الشعبة</label>
+
+        <input
+          id="sectionName"
+          placeholder="مثال: الأولى">
+
+      </div>
+
+    </div>
+
+
+    <div class="field">
+
+      <label>اسم ولي الأمر</label>
+
+      <input
+        id="parentName"
+        placeholder="اسم ولي الأمر">
+
+    </div>
+
+
+    <div class="field">
+
+      <label>بريد ولي الأمر</label>
+
+      <input
+        id="parentEmail"
+        type="email"
+        placeholder="لربط حساب ولي الأمر بالطالب">
+
+    </div>
+
+
+    <div class="field">
+
+      <label>هاتف ولي الأمر</label>
+
+      <input
+        id="parentPhone"
+        inputmode="tel"
+        placeholder="رقم الهاتف">
+
+    </div>
+
+
+    <div class="row">
+
+      <button
+        id="saveStudentBtn"
+        class="btn"
+        onclick="saveStudent()">
+
+        حفظ الطالب
+
+      </button>
+
+      <button
+        class="btn gray"
+        onclick="closeModal()">
+
+        إلغاء
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
 <div id="toast" class="toast"></div>
+
+
 <script src="config.js"></script>
+
 <script>
-const C=window.SUPABASE_CONFIG||{};const sb=window.supabase.createClient(C.url||'',C.anonKey||'');
-let user=null,profile=null,students=[],cats=[],evals=[],notes=[],awards=[],attendance=[],editingId=null;
-const $=id=>document.getElementById(id); const today=()=>new Date().toISOString().slice(0,10);
-function toast(m){$('toast').textContent=m;$('toast').style.display='block';setTimeout(()=>$('toast').style.display='none',3000)}
-function msg(m){$('loginMsg').textContent=m}
-async function login(){msg('جارٍ الدخول...');const {data,error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error)return msg(error.message);await start(data.user)}
-async function signupParent(){const email=$('email').value.trim(),password=$('password').value;if(!email||password.length<6)return msg('أدخل بريدًا صحيحًا وكلمة مرور من 6 أحرف على الأقل.');const {error}=await sb.auth.signUp({email,password,data:{role:'parent'}});if(error)return msg(error.message);msg('تم إنشاء الحساب. إذا طُلب تأكيد البريد، أكّده ثم سجّل الدخول.')}
-async function logout(){await sb.auth.signOut();location.reload()}
-async function start(u){user=u; $('loginView').classList.add('hidden');$('appView').classList.remove('hidden');$('logoutBtn').classList.remove('hidden');
- let {data:p}=await sb.from('profiles').select('*').eq('id',u.id).maybeSingle(); profile=p||{role:'parent',full_name:u.email};
- $('welcome').textContent='مرحبًا '+(profile.full_name||u.email.split('@')[0]);$('roleLabel').textContent=profile.role==='teacher'?'حساب المعلم':'حساب ولي الأمر';
- const teacher=profile.role==='teacher';$('teacherTabs').classList.toggle('hidden',!teacher);$('parentTabs').classList.toggle('hidden',teacher);$('dashboard').classList.toggle('hidden',!teacher);tab(teacher?'dashboard':'parent');if(teacher)await loadAll();else await loadParent();}
-function tab(id){document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));$(id).classList.remove('hidden');document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));if(id==='students')renderStudents();if(id==='evaluation')renderEval();if(id==='attendance')renderAttendance();if(id==='notes')renderNotes();if(id==='awards')renderAwards();if(id==='reports'){fillSelect('reportStudent');}if(id==='parent')loadParent();}
+
+const C = window.SUPABASE_CONFIG || {};
+
+const sb = window.supabase.createClient(
+  C.url || '',
+  C.anonKey || ''
+);
+
+
+let user = null;
+let profile = null;
+
+let students = [];
+let cats = [];
+let evals = [];
+let notes = [];
+let awards = [];
+let attendance = [];
+
+let parentStudentsData = [];
+
+let editingId = null;
+
+
+const $ = id => document.getElementById(id);
+
+const today = () =>
+  new Date().toISOString().slice(0,10);
+
+
+function toast(message){
+
+  const box = $('toast');
+
+  box.textContent = message;
+
+  box.style.display = 'block';
+
+  clearTimeout(window.__toastTimer);
+
+  window.__toastTimer = setTimeout(()=>{
+    box.style.display = 'none';
+  },3500);
+}
+
+
+function msg(message){
+
+  $('loginMsg').textContent = message;
+}
+
+
+function esc(value){
+
+  return String(value ?? '').replace(
+    /[&<>"']/g,
+    m => ({
+      '&':'&amp;',
+      '<':'&lt;',
+      '>':'&gt;',
+      '"':'&quot;',
+      "'":'&#039;'
+    }[m])
+  );
+
+}
+
+
+function setLoading(id,state,text){
+
+  const btn = $(id);
+
+  if(!btn) return;
+
+  if(state){
+
+    btn.dataset.oldText = btn.textContent;
+
+    btn.textContent = text || 'جارٍ الحفظ...';
+
+    btn.disabled = true;
+
+  }else{
+
+    btn.textContent =
+      btn.dataset.oldText ||
+      btn.textContent;
+
+    btn.disabled = false;
+
+  }
+
+}
+
+
+async function login(){
+
+  const email = $('email').value.trim();
+  const password = $('password').value;
+
+  if(!email || !password){
+    return msg('أدخل البريد الإلكتروني وكلمة المرور.');
+  }
+
+  msg('جارٍ الدخول...');
+
+  const {data,error} =
+    await sb.auth.signInWithPassword({
+      email,
+      password
+    });
+
+  if(error){
+    return msg(error.message);
+  }
+
+  await start(data.user);
+
+}
+
+
+async function signupParent(){
+
+  const email = $('email').value.trim();
+  const password = $('password').value;
+
+  if(!email){
+    return msg('أدخل البريد الإلكتروني.');
+  }
+
+  if(password.length < 6){
+    return msg('كلمة المرور يجب أن تكون 6 أحرف على الأقل.');
+  }
+
+  msg('جارٍ إنشاء الحساب...');
+
+  const {error} =
+    await sb.auth.signUp({
+      email,
+      password,
+      data:{
+        role:'parent'
+      }
+    });
+
+  if(error){
+    return msg(error.message);
+  }
+
+  msg(
+    'تم إنشاء الحساب. إذا طُلب تأكيد البريد، أكّده ثم سجّل الدخول.'
+  );
+
+}
+
+
+async function logout(){
+
+  await sb.auth.signOut();
+
+  location.reload();
+
+}
+
+
+async function start(u){
+
+  user = u;
+
+  $('loginView').classList.add('hidden');
+  $('appView').classList.remove('hidden');
+  $('logoutBtn').classList.remove('hidden');
+
+  const {
+    data:p,
+    error
+  } = await sb
+    .from('profiles')
+    .select('*')
+    .eq('id',u.id)
+    .maybeSingle();
+
+  if(error){
+    toast(error.message);
+  }
+
+  profile =
+    p ||
+    {
+      role:'parent',
+      full_name:u.email
+    };
+
+  $('welcome').textContent =
+    'مرحبًا ' +
+    (
+      profile.full_name ||
+      u.email.split('@')[0]
+    );
+
+  const isTeacher =
+    profile.role === 'teacher';
+
+  $('roleLabel').textContent =
+    isTeacher
+      ? '👨‍🏫 حساب المعلم'
+      : '👨‍👩‍👧 حساب ولي الأمر';
+
+  $('teacherTabs')
+    .classList
+    .toggle('hidden',!isTeacher);
+
+  $('parentTabs')
+    .classList
+    .toggle('hidden',isTeacher);
+
+  $('dashboard')
+    .classList
+    .toggle('hidden',!isTeacher);
+
+  if(isTeacher){
+
+    tab('dashboard');
+
+    await loadAll();
+
+  }else{
+
+    tab('parent');
+
+    await loadParent();
+
+  }
+
+}
+
+
+function tab(id){
+
+  document
+    .querySelectorAll('.page')
+    .forEach(x =>
+      x.classList.add('hidden')
+    );
+
+  const page = $(id);
+
+  if(page){
+    page.classList.remove('hidden');
+  }
+
+  document
+    .querySelectorAll('.tabs button')
+    .forEach(b =>
+      b.classList.toggle(
+        'active',
+        b.dataset.tab === id
+      )
+    );
+
+
+  if(id === 'students'){
+    renderStudents();
+  }
+
+
+  if(id === 'evaluation'){
+
+    fillSelect('evalStudent');
+
+    renderEval();
+
+    const select = $('evalStudent');
+
+    if(select){
+
+      select.onchange =
+        async function(){
+
+          await loadTodayEvaluation(
+            this.value
+          );
+
+        };
+
+      if(select.value){
+
+        loadTodayEvaluation(
+          select.value
+        );
+
+      }
+
+    }
+
+  }
+
+
+  if(id === 'attendance'){
+
+    const d = $('attDate');
+
+    if(d && !d.value){
+      d.value = today();
+    }
+
+    loadAttendanceForDate();
+
+  }
+
+
+  if(id === 'notes'){
+
+    fillSelect('noteStudent');
+
+    renderNotes();
+
+  }
+
+
+  if(id === 'awards'){
+
+    fillSelect('awardStudent');
+
+    renderAwards();
+
+  }
+
+
+  if(id === 'reports'){
+
+    fillSelect('reportStudent');
+
+  }
+
+
+  if(id === 'parent'){
+
+    loadParent();
+
+  }
+
+}
+
+
 async function loadAll(){
- const [s,c,e,n,a,at]=await Promise.all([sb.from('students').select('*').eq('active',true).order('full_name'),sb.from('evaluation_categories').select('*').order('sort_order'),sb.from('evaluations').select('*,students(full_name),evaluation_categories(name)').order('created_at',{ascending:false}).limit(100),sb.from('student_notes').select('*,students(full_name)').order('created_at',{ascending:false}).limit(100),sb.from('awards').select('*,students(full_name)').order('created_at',{ascending:false}).limit(100),sb.from('attendance').select('*').eq('attendance_date',today())]);
- if(s.error){toast(s.error.message);return}students=s.data||[];cats=c.data||[];evals=e.data||[];notes=n.data||[];awards=a.data||[];attendance=at.data||[];$('statStudents').textContent=students.length;$('statEval').textContent=evals.filter(x=>(x.evaluation_date||'')===today()).length;$('statAttend').textContent=attendance.length;renderStudents();renderEval();renderAttendance();renderNotes();renderAwards();fillSelects();}
-function renderStudents(){const q=($('studentSearch')?.value||'').trim().toLowerCase();const arr=students.filter(s=>(s.full_name+' '+(s.parent_name||'')).toLowerCase().includes(q));$('studentsList').innerHTML=arr.length?arr.map(s=>`<div class="student"><div class="row"><div class="avatar">${s.full_name.trim()[0]||'؟'}</div><div><b>${esc(s.full_name)}</b><div class="muted">${esc(s.class_name||'')} ${s.section?'— '+esc(s.section):''}<br>${esc(s.parent_name||'')} ${s.parent_phone?'— '+esc(s.parent_phone):''}</div></div></div><div class="row"><button class="btn alt" onclick="openStudent('${s.id}')">تعديل</button><button class="btn danger" onclick="deleteStudent('${s.id}')">حذف</button></div></div>`).join(''):'<p class="muted">لا يوجد طلاب.</p>'}
-function openStudent(id){editingId=id||null;const s=students.find(x=>x.id===id);$('modalTitle').textContent=s?'تعديل طالب':'إضافة طالب';$('editStudentId').value=id||'';$('studentName').value=s?.full_name||'';$('className').value=s?.class_name||'';$('sectionName').value=s?.section||'';$('parentName').value=s?.parent_name||'';$('parentEmail').value=s?.parent_email||'';$('parentPhone').value=s?.parent_phone||'';$('modal').style.display='flex'}function closeModal(){$('modal').style.display='none'}
-async function saveStudent(){const payload={full_name:$('studentName').value.trim(),class_name:$('className').value.trim(),section:$('sectionName').value.trim(),parent_name:$('parentName').value.trim(),parent_email:$('parentEmail').value.trim().toLowerCase()||null,parent_phone:$('parentPhone').value.trim()||null,active:true};if(!payload.full_name)return toast('اسم الطالب مطلوب');let r=editingId?await sb.from('students').update(payload).eq('id',editingId):await sb.from('students').insert(payload);if(r.error)return toast(r.error.message);closeModal();toast('تم حفظ الطالب');await loadAll()}
-async function deleteStudent(id){if(!confirm('هل تريد حذف الطالب؟'))return;const {error}=await sb.from('students').update({active:false}).eq('id',id);if(error)return toast(error.message);toast('تم حذف الطالب');await loadAll()}
-function fillSelect(id,empty='اختر الطالب'){const el=$(id);if(!el)return;el.innerHTML='<option value="">'+empty+'</option>'+students.map(s=>`<option value="${s.id}">${esc(s.full_name)}</option>`).join('')}
-function fillSelects(){['evalStudent','noteStudent','awardStudent','reportStudent'].forEach(id=>fillSelect(id));}
-function renderEval(){const box=$('scoreFields');if(box)box.innerHTML=cats.map(c=>`<div class="field"><label>${esc(c.name)}</label><input id="score_${c.id}" type="number" min="1" max="10" step="1" value="10"></div>`).join('');const t=$('evalTable');if(t)t.innerHTML=evals.length?`<div class="tableWrap"><table><thead><tr><th>الطالب</th><th>المحور</th><th>الدرجة</th><th>التاريخ</th></tr></thead><tbody>${evals.map(e=>`<tr><td>${esc(e.students?.full_name||'')}</td><td>${esc(e.evaluation_categories?.name||'')}</td><td class="score">${e.score}/10</td><td>${e.evaluation_date||''}</td></tr>`).join('')}</tbody></table></div>`:'<p class="muted">لا توجد تقييمات.</p>'}
-async function saveEvaluation(){const sid=$('evalStudent').value;if(!sid)return toast('اختر طالبًا');const rows=cats.map(c=>({student_id:sid,category_id:c.id,score:Number($('score_'+c.id).value),evaluation_date:today(),note:$('evalNote').value.trim()||null}));if(rows.some(x=>x.score<1||x.score>10))return toast('الدرجة يجب أن تكون بين 1 و10');const {error}=await sb.from('evaluations').insert(rows);if(error)return toast(error.message);toast('تم حفظ التقييم');$('evalNote').value='';await loadAll()}
-function renderAttendance(){const d=$('attDate');if(d&&!d.value)d.value=today();const box=$('attList');if(!box)return;box.innerHTML=students.map(s=>{const old=attendance.find(a=>a.student_id===s.id);return `<div class="student"><div><b>${esc(s.full_name)}</b><div class="muted">${esc(s.class_name||'')} ${esc(s.section||'')}</div></div><select id="att_${s.id}" style="max-width:150px"><option ${old?.status==='حاضر'?'selected':''}>حاضر</option><option ${old?.status==='غائب'?'selected':''}>غائب</option><option ${old?.status==='متأخر'?'selected':''}>متأخر</option><option ${old?.status==='بعذر'?'selected':''}>بعذر</option></select></div>`}).join('')||'<p class="muted">أضف الطلاب أولًا.</p>'}
-async function saveAttendance(){const date=$('attDate').value||today();for(const s of students){const status=$('att_'+s.id)?.value;if(!status)continue;const {error}=await sb.from('attendance').upsert({student_id:s.id,attendance_date:date,status},{onConflict:'student_id,attendance_date'});if(error)return toast(error.message)}toast('تم حفظ الحضور');await loadAll()}
-function renderNotes(){const t=$('notesTable');if(t)t.innerHTML=notes.length?`<div class="tableWrap"><table><tr><th>الطالب</th><th>الملاحظة</th><th>التاريخ</th></tr>${notes.map(n=>`<tr><td>${esc(n.students?.full_name||'')}</td><td>${esc(n.note)}</td><td>${new Date(n.created_at).toLocaleDateString('ar')}</td></tr>`).join('')}</table></div>`:'<p class="muted">لا توجد ملاحظات.</p>'}
-async function saveNote(){const sid=$('noteStudent').value,text=$('noteText').value.trim();if(!sid||!text)return toast('اختر الطالب واكتب الملاحظة');const {error}=await sb.from('student_notes').insert({student_id:sid,note:text});if(error)return toast(error.message);$('noteText').value='';toast('تم حفظ الملاحظة');await loadAll()}
-function renderAwards(){const t=$('awardsTable');if(t)t.innerHTML=awards.length?`<div class="tableWrap"><table><tr><th>الطالب</th><th>الإنجاز</th><th>الفترة</th></tr>${awards.map(a=>`<tr><td>${esc(a.students?.full_name||'')}</td><td>${esc(a.title)}</td><td>${esc(a.period||'')}</td></tr>`).join('')}</table></div>`:'<p class="muted">لا توجد إنجازات.</p>'}
-async function saveAward(){const sid=$('awardStudent').value,title=$('awardTitle').value.trim(),period=$('awardPeriod').value.trim();if(!sid||!title)return toast('اختر الطالب واكتب الإنجاز');const {error}=await sb.from('awards').insert({student_id:sid,title,period});if(error)return toast(error.message);$('awardTitle').value='';$('awardPeriod').value='';toast('تم حفظ الإنجاز');await loadAll()}
-async function loadReport(){const sid=$('reportStudent').value;if(!sid)return $('reportBox').innerHTML='<p class="muted">اختر طالبًا.</p>';const s=students.find(x=>x.id===sid);const {data:ev}=await sb.from('evaluations').select('score,evaluation_date,evaluation_categories(name)').eq('student_id',sid).order('evaluation_date',{ascending:false}).limit(200);const avg=ev?.length?(ev.reduce((a,x)=>a+Number(x.score),0)/ev.length).toFixed(1):'—';const {data:at}=await sb.from('attendance').select('status').eq('student_id',sid);const present=(at||[]).filter(x=>x.status==='حاضر').length;const total=(at||[]).length;const {data:ns}=await sb.from('student_notes').select('*').eq('student_id',sid).order('created_at',{ascending:false}).limit(10);$('reportBox').innerHTML=`<div class="grid3"><div class="stat"><span class="muted">متوسط التقييم</span><b>${avg}</b></div><div class="stat"><span class="muted">أيام الحضور</span><b>${present}</b></div><div class="stat"><span class="muted">إجمالي الأيام</span><b>${total}</b></div></div><div class="card"><h3>${esc(s.full_name)}</h3><p class="muted">${esc(s.class_name||'')} ${esc(s.section||'')}</p><h3>آخر التقييمات</h3>${ev?.length?ev.slice(0,20).map(x=>`<div class="student"><span>${esc(x.evaluation_categories?.name||'')}</span><b>${x.score}/10</b><span class="muted">${x.evaluation_date}</span></div>`).join(''):'<p class="muted">لا يوجد.</p>'}<h3>آخر الملاحظات</h3>${ns?.length?ns.map(n=>`<p class="card">${esc(n.note)}</p>`).join(''):'<p class="muted">لا يوجد.</p>'}</div>`}
-async function loadParent(){const {data,error}=await sb.from('students').select('*').eq('active',true).order('full_name');if(error){toast(error.message);return}const mine=(data||[]);$('parentStudents').innerHTML=mine.length?mine.map(s=>`<div class="student"><div><b>${esc(s.full_name)}</b><div class="muted">${esc(s.class_name||'')} ${esc(s.section||'')}</div></div><button class="btn alt" onclick="parentReport('${s.id}')">عرض الملف</button></div>`).join(''):'<p class="muted">لا يوجد طلاب مرتبطون بهذا الحساب. يجب أن يضع المعلم بريد حساب ولي الأمر في بيانات الطالب.</p>'}
-async function parentReport(id){const {data:ev}=await sb.from('evaluations').select('score,evaluation_date,evaluation_categories(name)').eq('student_id',id).order('evaluation_date',{ascending:false}).limit(100);const {data:at}=await sb.from('attendance').select('status,attendance_date').eq('student_id',id).order('attendance_date',{ascending:false}).limit(100);const {data:ns}=await sb.from('student_notes').select('note,created_at').eq('student_id',id).order('created_at',{ascending:false}).limit(20);const s=students.find(x=>x.id===id)||{};const avg=ev?.length?(ev.reduce((a,x)=>a+Number(x.score),0)/ev.length).toFixed(1):'—';$('parentStudents').innerHTML=`<button class="btn gray" onclick="loadParent()">← رجوع</button><div class="card"><h2>${esc(s.full_name)}</h2><div class="grid3"><div class="stat"><span class="muted">المتوسط</span><b>${avg}</b></div><div class="stat"><span class="muted">الحضور</span><b>${(at||[]).filter(x=>x.status==='حاضر').length}</b></div><div class="stat"><span class="muted">الغياب</span><b>${(at||[]).filter(x=>x.status==='غائب').length}</b></div></div><h3>التقييم</h3>${ev?.map(x=>`<div class="student"><span>${esc(x.evaluation_categories?.name||'')}</span><b>${x.score}/10</b><span class="muted">${x.evaluation_date}</span></div>`).join('')||'<p class="muted">لا يوجد.</p>'}<h3>الملاحظات</h3>${ns?.map(x=>`<p class="card">${esc(x.note)}</p>`).join('')||'<p class="muted">لا يوجد.</p>'}</div>`}
-function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
-sb.auth.getSession().then(({data})=>{if(data.session)start(data.session.user)});sb.auth.onAuthStateChange((e,s)=>{if(e==='SIGNED_IN'&&s&&!user)start(s.user)});
-</script></body></html>
+
+  const results =
+    await Promise.all([
+
+      sb
+        .from('students')
+        .select('*')
+        .eq('active',true)
+        .order('full_name'),
+
+      sb
+        .from('evaluation_categories')
+        .select('*')
+        .order('sort_order'),
+
+      sb
+        .from('evaluations')
+        .select(
+          '*,students(full_name),evaluation_categories(name)'
+        )
+        .order('created_at',{
+          ascending:false
+        })
+        .limit(300),
+
+      sb
+        .from('student_notes')
+        .select(
+          '*,students(full_name)'
+        )
+        .order('created_at',{
+          ascending:false
+        })
+        .limit(200),
+
+      sb
+        .from('awards')
+        .select(
+          '*,students(full_name)'
+        )
+        .order('created_at',{
+          ascending:false
+        })
+        .limit(200),
+
+      sb
+        .from('attendance')
+        .select('*')
+        .eq(
+          'attendance_date',
+          today()
+        )
+
+    ]);
+
+
+  const [
+    s,
+    c,
+    e,
+    n,
+    a,
+    at
+  ] = results;
+
+
+  if(s.error){
+
+    toast(
+      'خطأ في الطلاب: ' +
+      s.error.message
+    );
+
+  }
+
+  if(c.error){
+
+    toast(
+      'خطأ في محاور التقييم: ' +
+      c.error.message
+    );
+
+  }
+
+  if(e.error){
+
+    toast(
+      'خطأ في التقييمات: ' +
+      e.error.message
+    );
+
+  }
+
+  if(n.error){
+
+    toast(
+      'خطأ في الملاحظات: ' +
+      n.error.message
+    );
+
+  }
+
+  if(a.error){
+
+    toast(
+      'خطأ في الإنجازات: ' +
+      a.error.message
+    );
+
+  }
+
+  if(at.error){
+
+    toast(
+      'خطأ في الحضور: ' +
+      at.error.message
+    );
+
+  }
+
+
+  students = s.data || [];
+  cats = c.data || [];
+  evals = e.data || [];
+  notes = n.data || [];
+  awards = a.data || [];
+  attendance = at.data || [];
+
+
+  $('statStudents').textContent =
+    students.length;
+
+
+  $('statEval').textContent =
+    evals.filter(
+      x =>
+        x.evaluation_date === today()
+    ).length;
+
+
+  $('statAttend').textContent =
+    attendance.length;
+
+
+  fillSelects();
+
+  renderStudents();
+  renderEval();
+  renderAttendance();
+  renderNotes();
+  renderAwards();
+
+}
+
+
+function fillSelect(
+  id,
+  empty = 'اختر الطالب'
+){
+
+  const el = $(id);
+
+  if(!el) return;
+
+  const current = el.value;
+
+  el.innerHTML =
+    '<option value="">' +
+    empty +
+    '</option>' +
+
+    students.map(
+      s =>
+        `<option value="${esc(s.id)}">
+          ${esc(s.full_name)}
+        </option>`
+    ).join('');
+
+
+  if(
+    current &&
+    students.some(
+      s => s.id === current
+    )
+  ){
+
+    el.value = current;
+
+  }
+
+}
+
+
+function fillSelects(){
+
+  [
+    'evalStudent',
+    'noteStudent',
+    'awardStudent',
+    'reportStudent'
+  ].forEach(id =>
+    fillSelect(id)
+  );
+
+}
+
+
+function renderStudents(){
+
+  const box = $('studentsList');
+
+  if(!box) return;
+
+  const q =
+    (
+      $('studentSearch')?.value ||
+      ''
+    )
+    .trim()
+    .toLowerCase();
+
+
+  const arr =
+    students.filter(s => {
+
+      const text =
+        [
+          s.full_name,
+          s.parent_name,
+          s.parent_email,
+          s.parent_phone,
+          s.class_name,
+          s.section
+        ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+
+      return text.includes(q);
+
+    });
+
+
+  if(!arr.length){
+
+    box.innerHTML = `
+      <div class="empty">
+        <div class="emptyIcon">👨‍🎓</div>
+        لا يوجد طلاب مطابقون للبحث.
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  box.innerHTML =
+    arr.map(s => `
+
+      <div class="student">
+
+        <div class="studentMain">
+
+          <div class="avatar">
+            ${esc(
+              (s.full_name || '؟')
+              .trim()
+              .charAt(0)
+            )}
+          </div>
+
+          <div class="studentInfo">
+
+            <b>${esc(s.full_name)}</b>
+
+            <div class="muted">
+              ${esc(s.class_name || '')}
+              ${
+                s.section
+                  ? ' — ' + esc(s.section)
+                  : ''
+              }
+            </div>
+
+            <div class="muted">
+              ${
+                s.parent_name
+                  ? 'ولي الأمر: ' +
+                    esc(s.parent_name)
+                  : ''
+              }
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="actions">
+
+          <button
+            class="btn alt"
+            onclick="openStudent('${s.id}')">
+            تعديل
+          </button>
+
+          <button
+            class="btn danger"
+            onclick="deleteStudent('${s.id}')">
+            حذف
+          </button>
+
+        </div>
+
+      </div>
+
+    `).join('');
+
+}
+
+
+function openStudent(id){
+
+  editingId = id || null;
+
+  const s =
+    students.find(
+      x => x.id === id
+    );
+
+
+  $('modalTitle').textContent =
+    s
+      ? 'تعديل بيانات الطالب'
+      : 'إضافة طالب';
+
+
+  $('editStudentId').value =
+    id || '';
+
+
+  $('studentName').value =
+    s?.full_name || '';
+
+
+  $('className').value =
+    s?.class_name || '';
+
+
+  $('sectionName').value =
+    s?.section || '';
+
+
+  $('parentName').value =
+    s?.parent_name || '';
+
+
+  $('parentEmail').value =
+    s?.parent_email || '';
+
+
+  $('parentPhone').value =
+    s?.parent_phone || '';
+
+
+  $('modal').style.display =
+    'flex';
+
+}
+
+
+function closeModal(){
+
+  $('modal').style.display =
+    'none';
+
+  editingId = null;
+
+}
+
+
+async function saveStudent(){
+
+  const payload = {
+
+    full_name:
+      $('studentName')
+      .value
+      .trim(),
+
+    class_name:
+      $('className')
+      .value
+      .trim(),
+
+    section:
+      $('sectionName')
+      .value
+      .trim(),
+
+    parent_name:
+      $('parentName')
+      .value
+      .trim(),
+
+    parent_email:
+      $('parentEmail')
+      .value
+      .trim()
+      .toLowerCase() ||
+      null,
+
+    parent_phone:
+      $('parentPhone')
+      .value
+      .trim() ||
+      null,
+
+    active:true
+
+  };
+
+
+  if(!payload.full_name){
+
+    return toast(
+      'اسم الطالب مطلوب'
+    );
+
+  }
+
+
+  setLoading(
+    'saveStudentBtn',
+    true,
+    'جارٍ الحفظ...'
+  );
+
+
+  let result;
+
+
+  if(editingId){
+
+    result =
+      await sb
+        .from('students')
+        .update(payload)
+        .eq('id',editingId);
+
+  }else{
+
+    result =
+      await sb
+        .from('students')
+        .insert(payload);
+
+  }
+
+
+  setLoading(
+    'saveStudentBtn',
+    false
+  );
+
+
+  if(result.error){
+
+    return toast(
+      result.error.message
+    );
+
+  }
+
+
+  closeModal();
+
+  toast(
+    editingId
+      ? 'تم تحديث بيانات الطالب'
+      : 'تمت إضافة الطالب'
+  );
+
+
+  await loadAll();
+
+}
+
+
+async function deleteStudent(id){
+
+  const s =
+    students.find(
+      x => x.id === id
+    );
+
+
+  if(
+    !confirm(
+      `هل تريد إخفاء الطالب "${s?.full_name || ''}"؟`
+    )
+  ){
+
+    return;
+
+  }
+
+
+  const {error} =
+    await sb
+      .from('students')
+      .update({
+        active:false
+      })
+      .eq('id',id);
+
+
+  if(error){
+
+    return toast(
+      error.message
+    );
+
+  }
+
+
+  toast(
+    'تم حذف الطالب من القائمة'
+  );
+
+
+  await loadAll();
+
+}
+
+
+/* =========================
+   EVALUATION
+========================= */
+
+
+function renderEval(){
+
+  const box =
+    $('scoreFields');
+
+
+  if(!box) return;
+
+
+  if(!cats.length){
+
+    box.innerHTML = `
+
+      <div
+        class="notice"
+        style="grid-column:1/-1">
+
+        ⚠️ لم يتم تحميل محاور التقييم.
+
+        <br>
+
+        <span class="small">
+          تحقق من جدول evaluation_categories
+          في Supabase.
+        </span>
+
+      </div>
+
+    `;
+
+  }else{
+
+    box.innerHTML =
+      cats.map(c => `
+
+        <div class="scoreCard">
+
+          <label>
+            ${esc(c.name)}
+          </label>
+
+          <input
+            id="score_${c.id}"
+            type="number"
+            min="1"
+            max="10"
+            step="1"
+            value="10">
+
+          <div class="scoreHint">
+            الدرجة من 1 إلى 10
+          </div>
+
+        </div>
+
+      `).join('');
+
+  }
+
+
+  const t =
+    $('evalTable');
+
+
+  if(!t) return;
+
+
+  if(!evals.length){
+
+    t.innerHTML = `
+      <div class="empty">
+        <div class="emptyIcon">⭐</div>
+        لا توجد تقييمات حتى الآن.
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  t.innerHTML = `
+
+    <div class="tableWrap">
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>الطالب</th>
+            <th>المحور</th>
+            <th>الدرجة</th>
+            <th>التاريخ</th>
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          ${
+            evals.map(e => `
+
+              <tr>
+
+                <td>
+                  ${esc(
+                    e.students?.full_name ||
+                    ''
+                  )}
+                </td>
+
+                <td>
+                  ${esc(
+                    e.evaluation_categories?.name ||
+                    ''
+                  )}
+                </td>
+
+                <td class="score">
+                  ${esc(e.score)}/10
+                </td>
+
+                <td>
+                  ${esc(
+                    e.evaluation_date ||
+                    ''
+                  )}
+                </td>
+
+              </tr>
+
+            `).join('')
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  `;
+
+}
+
+
+async function loadTodayEvaluation(sid){
+
+  if(!sid){
+
+    $('evalStatus').textContent =
+      'اختر الطالب لعرض تقييم اليوم.';
+
+    cats.forEach(c => {
+
+      const input =
+        $('score_' + c.id);
+
+      if(input){
+        input.value = 10;
+      }
+
+    });
+
+    $('evalNote').value = '';
+
+    return;
+
+  }
+
+
+  $('evalStatus').textContent =
+    'جارٍ تحميل تقييم اليوم...';
+
+
+  const {
+    data,
+    error
+  } = await sb
+    .from('evaluations')
+    .select(
+      'id,category_id,score,note'
+    )
+    .eq('student_id',sid)
+    .eq(
+      'evaluation_date',
+      today()
+    );
+
+
+  if(error){
+
+    $('evalStatus').textContent =
+      'تعذر تحميل تقييم اليوم.';
+
+    return toast(
+      error.message
+    );
+
+  }
+
+
+  cats.forEach(c => {
+
+    const input =
+      $('score_' + c.id);
+
+    const found =
+      (data || []).find(
+        x =>
+          x.category_id === c.id
+      );
+
+
+    if(input){
+
+      input.value =
+        found
+          ? found.score
+          : 10;
+
+    }
+
+  });
+
+
+  const note =
+    (data || []).find(
+      x => x.note
+    )?.note || '';
+
+
+  $('evalNote').value =
+    note;
+
+
+  if(data && data.length){
+
+    $('evalStatus').innerHTML =
+      '<span class="badge success">' +
+      '✓ يوجد تقييم محفوظ لهذا اليوم — سيتم تحديثه عند الحفظ' +
+      '</span>';
+
+  }else{
+
+    $('evalStatus').innerHTML =
+      '<span class="badge">' +
+      'تقييم جديد لهذا اليوم' +
+      '</span>';
+
+  }
+
+}
+
+
+async function saveEvaluation(){
+
+  const sid =
+    $('evalStudent').value;
+
+
+  if(!sid){
+
+    return toast(
+      'اختر الطالب'
+    );
+
+  }
+
+
+  if(!cats.length){
+
+    return toast(
+      'لا توجد محاور تقييم محملة'
+    );
+
+  }
+
+
+  const date =
+    today();
+
+
+  const note =
+    $('evalNote')
+      .value
+      .trim() ||
+    null;
+
+
+  const rows =
+    cats.map(c => {
+
+      const value =
+        Number(
+          $('score_' + c.id)
+          ?.value
+        );
+
+
+      return {
+
+        student_id:sid,
+
+        category_id:c.id,
+
+        teacher_id:user.id,
+
+        score:value,
+
+        evaluation_date:date,
+
+        note:note
+
+      };
+
+    });
+
+
+  if(
+    rows.some(
+      x =>
+        !Number.isFinite(x.score) ||
+        x.score < 1 ||
+        x.score > 10
+    )
+  ){
+
+    return toast(
+      'كل درجة يجب أن تكون بين 1 و10'
+    );
+
+  }
+
+
+  setLoading(
+    'saveEvalBtn',
+    true,
+    'جارٍ حفظ التقييم...'
+  );
+
+
+  /*
+
+    أولًا نجلب تقييمات الطالب لليوم.
+
+    إذا كان المحور موجودًا:
+    UPDATE
+
+    وإذا لم يكن موجودًا:
+    INSERT
+
+    وهكذا لا نحذف الأيام السابقة.
+
+  */
+
+
+  const {
+    data:oldRows,
+    error:oldError
+  } =
+    await sb
+      .from('evaluations')
+      .select(
+        'id,category_id'
+      )
+      .eq(
+        'student_id',
+        sid
+      )
+      .eq(
+        'evaluation_date',
+        date
+      );
+
+
+  if(oldError){
+
+    setLoading(
+      'saveEvalBtn',
+      false
+    );
+
+    return toast(
+      'تعذر التحقق من تقييم اليوم: ' +
+      oldError.message
+    );
+
+  }
+
+
+  for(const row of rows){
+
+    const old =
+      (oldRows || []).find(
+        x =>
+          x.category_id ===
+          row.category_id
+      );
+
+
+    let result;
+
+
+    if(old){
+
+      result =
+        await sb
+          .from('evaluations')
+          .update({
+
+            teacher_id:
+              row.teacher_id,
+
+            score:
+              row.score,
+
+            note:
+              row.note,
+
+            evaluation_date:
+              row.evaluation_date
+
+          })
+          .eq(
+            'id',
+            old.id
+          );
+
+    }else{
+
+      result =
+        await sb
+          .from('evaluations')
+          .insert(row);
+
+    }
+
+
+    if(result.error){
+
+      setLoading(
+        'saveEvalBtn',
+        false
+      );
+
+      return toast(
+        result.error.message
+      );
+
+    }
+
+  }
+
+
+  setLoading(
+    'saveEvalBtn',
+    false
+  );
+
+
+  toast(
+    oldRows && oldRows.length
+      ? '✓ تم تحديث تقييم اليوم'
+      : '✓ تم حفظ تقييم اليوم'
+  );
+
+
+  await loadAll();
+
+
+  $('evalStudent').value =
+    sid;
+
+
+  await loadTodayEvaluation(
+    sid
+  );
+
+}
+
+
+/* =========================
+   ATTENDANCE
+========================= */
+
+
+async function loadAttendanceForDate(){
+
+  const date =
+    $('attDate')?.value ||
+    today();
+
+
+  const {
+    data,
+    error
+  } =
+    await sb
+      .from('attendance')
+      .select('*')
+      .eq(
+        'attendance_date',
+        date
+      );
+
+
+  if(error){
+
+    return toast(
+      error.message
+    );
+
+  }
+
+
+  attendance =
+    data || [];
+
+
+  renderAttendance();
+
+}
+
+
+function renderAttendance(){
+
+  const d =
+    $('attDate');
+
+
+  if(d && !d.value){
+    d.value = today();
+  }
+
+
+  const box =
+    $('attList');
+
+
+  if(!box) return;
+
+
+  if(!students.length){
+
+    box.innerHTML = `
+      <div class="empty">
+        أضف الطلاب أولًا.
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  box.innerHTML =
+    students.map(s => {
+
+      const old =
+        attendance.find(
+          a =>
+            a.student_id ===
+            s.id
+        );
+
+
+      return `
+
+        <div class="student">
+
+          <div class="studentMain">
+
+            <div class="avatar">
+              ${esc(
+                s.full_name
+                .trim()
+                .charAt(0)
+              )}
+            </div>
+
+            <div class="studentInfo">
+
+              <b>
+                ${esc(s.full_name)}
+              </b>
+
+              <div class="muted">
+                ${esc(
+                  s.class_name || ''
+                )}
+                ${
+                  s.section
+                    ? ' — ' +
+                      esc(s.section)
+                    : ''
+                }
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <select
+            id="att_${s.id}"
+            style="max-width:170px">
+
+            <option
+              value="حاضر"
+              ${
+                old?.status ===
+                'حاضر'
+                  ? 'selected'
+                  : ''
+              }>
+              حاضر
+            </option>
+
+            <option
+              value="غائب"
+              ${
+                old?.status ===
+                'غائب'
+                  ? 'selected'
+                  : ''
+              }>
+              غائب
+            </option>
+
+            <option
+              value="متأخر"
+              ${
+                old?.status ===
+                'متأخر'
+                  ? 'selected'
+                  : ''
+              }>
+              متأخر
+            </option>
+
+            <option
+              value="بعذر"
+              ${
+                old?.status ===
+                'بعذر'
+                  ? 'selected'
+                  : ''
+              }>
+              بعذر
+            </option>
+
+          </select>
+
+        </div>
+
+      `;
+
+    }).join('');
+
+}
+
+
+async function saveAttendance(){
+
+  const date =
+    $('attDate').value ||
+    today();
+
+
+  setLoading(
+    'saveAttendanceBtn',
+    true,
+    'جارٍ حفظ الحضور...'
+  );
+
+
+  for(const s of students){
+
+    const status =
+      $('att_' + s.id)
+      ?.value;
+
+
+    if(!status) continue;
+
+
+    const {
+      error
+    } =
+      await sb
+        .from('attendance')
+        .upsert(
+          {
+            student_id:s.id,
+            attendance_date:date,
+            status
+          },
+          {
+            onConflict:
+              'student_id,attendance_date'
+          }
+        );
+
+
+    if(error){
+
+      setLoading(
+        'saveAttendanceBtn',
+        false
+      );
+
+      return toast(
+        error.message
+      );
+
+    }
+
+  }
+
+
+  setLoading(
+    'saveAttendanceBtn',
+    false
+  );
+
+
+  toast(
+    '✓ تم حفظ الحضور'
+  );
+
+
+  await loadAll();
+
+
+  if(date !== today()){
+
+    await loadAttendanceForDate();
+
+  }
+
+}
+
+
+/* =========================
+   NOTES
+========================= */
+
+
+function renderNotes(){
+
+  const t =
+    $('notesTable');
+
+
+  if(!t) return;
+
+
+  if(!notes.length){
+
+    t.innerHTML = `
+      <div class="empty">
+        <div class="emptyIcon">📝</div>
+        لا توجد ملاحظات.
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  t.innerHTML = `
+
+    <div class="tableWrap">
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>الطالب</th>
+            <th>الملاحظة</th>
+            <th>التاريخ</th>
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          ${
+            notes.map(n => `
+
+              <tr>
+
+                <td>
+                  ${esc(
+                    n.students?.full_name ||
+                    ''
+                  )}
+                </td>
+
+                <td>
+                  ${esc(n.note)}
+                </td>
+
+                <td>
+                  ${
+                    n.created_at
+                      ? new Date(
+                          n.created_at
+                        ).toLocaleDateString(
+                          'ar'
+                        )
+                      : ''
+                  }
+                </td>
+
+              </tr>
+
+            `).join('')
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  `;
+
+}
+
+
+async function saveNote(){
+
+  const sid =
+    $('noteStudent').value;
+
+  const text =
+    $('noteText')
+      .value
+      .trim();
+
+
+  if(!sid || !text){
+
+    return toast(
+      'اختر الطالب واكتب الملاحظة'
+    );
+
+  }
+
+
+  setLoading(
+    'saveNoteBtn',
+    true,
+    'جارٍ الحفظ...'
+  );
+
+
+  const {
+    error
+  } =
+    await sb
+      .from('student_notes')
+      .insert({
+        student_id:sid,
+        note:text
+      });
+
+
+  setLoading(
+    'saveNoteBtn',
+    false
+  );
+
+
+  if(error){
+
+    return toast(
+      error.message
+    );
+
+  }
+
+
+  $('noteText').value = '';
+
+  toast(
+    '✓ تم حفظ الملاحظة'
+  );
+
+
+  await loadAll();
+
+}
+
+
+/* =========================
+   AWARDS
+========================= */
+
+
+function renderAwards(){
+
+  const t =
+    $('awardsTable');
+
+
+  if(!t) return;
+
+
+  if(!awards.length){
+
+    t.innerHTML = `
+      <div class="empty">
+        <div class="emptyIcon">🏆</div>
+        لا توجد إنجازات.
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  t.innerHTML = `
+
+    <div class="tableWrap">
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>الطالب</th>
+            <th>الإنجاز</th>
+            <th>الفترة</th>
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          ${
+            awards.map(a => `
+
+              <tr>
+
+                <td>
+                  ${esc(
+                    a.students?.full_name ||
+                    ''
+                  )}
+                </td>
+
+                <td>
+                  🏆 ${esc(a.title)}
+                </td>
+
+                <td>
+                  ${esc(
+                    a.period || ''
+                  )}
+                </td>
+
+              </tr>
+
+            `).join('')
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  `;
+
+}
+
+
+async function saveAward(){
+
+  const sid =
+    $('awardStudent').value;
+
+  const title =
+    $('awardTitle')
+      .value
+      .trim();
+
+  const period =
+    $('awardPeriod')
+      .value
+      .trim();
+
+
+  if(!sid || !title){
+
+    return toast(
+      'اختر الطالب واكتب الإنجاز'
+    );
+
+  }
+
+
+  setLoading(
+    'saveAwardBtn',
+    true,
+    'جارٍ الحفظ...'
+  );
+
+
+  const {
+    error
+  } =
+    await sb
+      .from('awards')
+      .insert({
+        student_id:sid,
+        title,
+        period
+      });
+
+
+  setLoading(
+    'saveAwardBtn',
+    false
+  );
+
+
+  if(error){
+
+    return toast(
+      error.message
+    );
+
+  }
+
+
+  $('awardTitle').value = '';
+  $('awardPeriod').value = '';
+
+  toast(
+    '✓ تم حفظ الإنجاز'
+  );
+
+
+  await loadAll();
+
+}
+
+
+/* =========================
+   REPORTS
+========================= */
+
+
+async function loadReport(){
+
+  const sid =
+    $('reportStudent').value;
+
+
+  if(!sid){
+
+    $('reportBox').innerHTML =
+      '<div class="empty">اختر طالبًا لعرض التقرير.</div>';
+
+    return;
+
+  }
+
+
+  const s =
+    students.find(
+      x => x.id === sid
+    );
+
+
+  if(!s) return;
+
+
+  $('reportBox').innerHTML = `
+    <div class="card">
+      <div class="empty">
+        جارٍ تجهيز التقرير...
+      </div>
+    </div>
+  `;
+
+
+  const [
+    evResult,
+    atResult,
+    nsResult,
+    awResult
+  ] =
+    await Promise.all([
+
+      sb
+        .from('evaluations')
+        .select(
+          'score,evaluation_date,evaluation_categories(name)'
+        )
+        .eq(
+          'student_id',
+          sid
+        )
+        .order(
+          'evaluation_date',
+          {ascending:false}
+        )
+        .limit(300),
+
+      sb
+        .from('attendance')
+        .select(
+          'status,attendance_date'
+        )
+        .eq(
+          'student_id',
+          sid
+        )
+        .order(
+          'attendance_date',
+          {ascending:false}
+        ),
+
+      sb
+        .from('student_notes')
+        .select('*')
+        .eq(
+          'student_id',
+          sid
+        )
+        .order(
+          'created_at',
+          {ascending:false}
+        )
+        .limit(10),
+
+      sb
+        .from('awards')
+        .select('*')
+        .eq(
+          'student_id',
+          sid
+        )
+        .order(
+          'created_at',
+          {ascending:false}
+        )
+        .limit(10)
+
+    ]);
+
+
+  if(evResult.error){
+
+    return toast(
+      'خطأ في التقييمات: ' +
+      evResult.error.message
+    );
+
+  }
+
+
+  if(atResult.error){
+
+    return toast(
+      'خطأ في الحضور: ' +
+      atResult.error.message
+    );
+
+  }
+
+
+  const ev =
+    evResult.data || [];
+
+  const at =
+    atResult.data || [];
+
+  const ns =
+    nsResult.data || [];
+
+  const aw =
+    awResult.data || [];
+
+
+  const avg =
+    ev.length
+      ? (
+          ev.reduce(
+            (sum,x) =>
+              sum +
+              Number(x.score),
+            0
+          ) / ev.length
+        ).toFixed(1)
+      : '—';
+
+
+  const present =
+    at.filter(
+      x => x.status === 'حاضر'
+    ).length;
+
+
+  const absent =
+    at.filter(
+      x => x.status === 'غائب'
+    ).length;
+
+
+  const late =
+    at.filter(
+      x => x.status === 'متأخر'
+    ).length;
+
+
+  const excused =
+    at.filter(
+      x => x.status === 'بعذر'
+    ).length;
+
+
+  const total =
+    at.length;
+
+
+  const attendancePercent =
+    total
+      ? Math.round(
+          (present / total) * 100
+        )
+      : 0;
+
+
+  $('reportBox').innerHTML = `
+
+    <div class="reportHero">
+
+      <h2>
+        ${esc(s.full_name)}
+      </h2>
+
+      <div class="muted">
+
+        ${esc(
+          s.class_name || ''
+        )}
+
+        ${
+          s.section
+            ? ' — ' +
+              esc(s.section)
+            : ''
+        }
+
+      </div>
+
+    </div>
+
+
+    <div class="grid4">
+
+      <div class="stat">
+        <span class="muted">
+          متوسط التقييم
+        </span>
+        <b>${avg}</b>
+      </div>
+
+      <div class="stat">
+        <span class="muted">
+          حاضر
+        </span>
+        <b>${present}</b>
+      </div>
+
+      <div class="stat">
+        <span class="muted">
+          غائب
+        </span>
+        <b>${absent}</b>
+      </div>
+
+      <div class="stat">
+        <span class="muted">
+          الحضور %
+        </span>
+        <b>${attendancePercent}%</b>
+      </div>
+
+    </div>
+
+
+    <div class="card">
+
+      <h3>تفاصيل الحضور</h3>
+
+      <div class="grid">
+
+        <div>
+          <span class="badge success">
+            حاضر: ${present}
+          </span>
+
+          <span class="badge danger">
+            غائب: ${absent}
+          </span>
+
+          <span class="badge warning">
+            متأخر: ${late}
+          </span>
+
+          <span class="badge">
+            بعذر: ${excused}
+          </span>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="card">
+
+      <h3>آخر التقييمات</h3>
+
+      ${
+        ev.length
+          ? ev.slice(0,30).map(x => `
+
+              <div class="student">
+
+                <div>
+                  <b>
+                    ${esc(
+                      x.evaluation_categories?.name ||
+                      ''
+                    )}
+                  </b>
+
+                  <div class="muted">
+                    ${esc(
+                      x.evaluation_date ||
+                      ''
+                    )}
+                  </div>
+                </div>
+
+                <strong class="score">
+                  ${esc(x.score)}/10
+                </strong>
+
+              </div>
+
+            `).join('')
+          : '<div class="empty">لا توجد تقييمات.</div>'
+      }
+
+    </div>
+
+
+    <div class="card">
+
+      <h3>آخر الملاحظات</h3>
+
+      ${
+        ns.length
+          ? ns.map(n => `
+
+              <div class="student">
+
+                <div>
+
+                  <b>
+                    ${esc(n.note)}
+                  </b>
+
+                  <div class="muted">
+                    ${
+                      n.created_at
+                        ? new Date(
+                            n.created_at
+                          ).toLocaleDateString(
+                            'ar'
+                          )
+                        : ''
+                    }
+                  </div>
+
+                </div>
+
+              </div>
+
+            `).join('')
+          : '<div class="empty">لا توجد ملاحظات.</div>'
+      }
+
+    </div>
+
+
+    <div class="card">
+
+      <h3>الإنجازات</h3>
+
+      ${
+        aw.length
+          ? aw.map(a => `
+
+              <div class="student">
+
+                <div>
+                  <b>
+                    🏆 ${esc(a.title)}
+                  </b>
+
+                  <div class="muted">
+                    ${esc(a.period || '')}
+                  </div>
+                </div>
+
+              </div>
+
+            `).join('')
+          : '<div class="empty">لا توجد إنجازات.</div>'
+      }
+
+    </div>
+
+  `;
+
+}
+
+
+/* =========================
+   PARENT
+========================= */
+
+
+async function loadParent(){
+
+  const {
+    data,
+    error
+  } =
+    await sb
+      .from('students')
+      .select('*')
+      .eq(
+        'active',
+        true
+      )
+      .order(
+        'full_name'
+      );
+
+
+  if(error){
+
+    return toast(
+      error.message
+    );
+
+  }
+
+
+  parentStudentsData =
+    data || [];
+
+
+  const box =
+    $('parentStudents');
+
+
+  if(!box) return;
+
+
+  if(!parentStudentsData.length){
+
+    box.innerHTML = `
+
+      <div class="empty">
+
+        <div class="emptyIcon">
+          👨‍👩‍👧
+        </div>
+
+        لا يوجد طلاب مرتبطون بهذا الحساب.
+
+        <br><br>
+
+        <span class="small">
+          يجب أن يضع المعلم بريد حساب ولي الأمر
+          في بيانات الطالب.
+        </span>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  box.innerHTML =
+    parentStudentsData.map(s => `
+
+      <div class="parentStudent">
+
+        <div class="studentMain">
+
+          <div class="avatar">
+            ${esc(
+              s.full_name
+              .trim()
+              .charAt(0)
+            )}
+          </div>
+
+          <div class="studentInfo">
+
+            <b>
+              ${esc(s.full_name)}
+            </b>
+
+            <div class="muted">
+
+              ${esc(
+                s.class_name || ''
+              )}
+
+              ${
+                s.section
+                  ? ' — ' +
+                    esc(s.section)
+                  : ''
+              }
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <br>
+
+
+        <button
+          class="btn alt"
+          onclick="parentReport('${s.id}')">
+
+          عرض ملف الطالب
+
+        </button>
+
+      </div>
+
+    `).join('');
+
+}
+
+
+async function parentReport(id){
+
+  const s =
+    parentStudentsData.find(
+      x => x.id === id
+    ) || {};
+
+
+  const [
+    evResult,
+    atResult,
+    nsResult
+  ] =
+    await Promise.all([
+
+      sb
+        .from('evaluations')
+        .select(
+          'score,evaluation_date,evaluation_categories(name)'
+        )
+        .eq(
+          'student_id',
+          id
+        )
+        .order(
+          'evaluation_date',
+          {ascending:false}
+        )
+        .limit(200),
+
+      sb
+        .from('attendance')
+        .select(
+          'status,attendance_date'
+        )
+        .eq(
+          'student_id',
+          id
+        )
+        .order(
+          'attendance_date',
+          {ascending:false}
+        )
+        .limit(200),
+
+      sb
+        .from('student_notes')
+        .select(
+          'note,created_at'
+        )
+        .eq(
+          'student_id',
+          id
+        )
+        .order(
+          'created_at',
+          {ascending:false}
+        )
+        .limit(20)
+
+    ]);
+
+
+  if(evResult.error){
+
+    return toast(
+      evResult.error.message
+    );
+
+  }
+
+
+  const ev =
+    evResult.data || [];
+
+  const at =
+    atResult.data || [];
+
+  const ns =
+    nsResult.data || [];
+
+
+  const avg =
+    ev.length
+      ? (
+          ev.reduce(
+            (a,x) =>
+              a +
+              Number(x.score),
+            0
+          ) / ev.length
+        ).toFixed(1)
+      : '—';
+
+
+  const present =
+    at.filter(
+      x =>
+        x.status === 'حاضر'
+    ).length;
+
+
+  const absent =
+    at.filter(
+      x =>
+        x.status === 'غائب'
+    ).length;
+
+
+  $('parentStudents').innerHTML = `
+
+    <button
+      class="btn gray"
+      onclick="loadParent()">
+      ← رجوع إلى أبنائي
+    </button>
+
+
+    <br><br>
+
+
+    <div class="reportHero">
+
+      <h2>
+        ${esc(s.full_name)}
+      </h2>
+
+      <div class="muted">
+
+        ${esc(
+          s.class_name || ''
+        )}
+
+        ${
+          s.section
+            ? ' — ' +
+              esc(s.section)
+            : ''
+        }
+
+      </div>
+
+    </div>
+
+
+    <div class="grid3">
+
+      <div class="stat">
+
+        <span class="muted">
+          متوسط التقييم
+        </span>
+
+        <b>
+          ${avg}
+        </b>
+
+      </div>
+
+
+      <div class="stat">
+
+        <span class="muted">
+          أيام الحضور
+        </span>
+
+        <b>
+          ${present}
+        </b>
+
+      </div>
+
+
+      <div class="stat">
+
+        <span class="muted">
+          أيام الغياب
+        </span>
+
+        <b>
+          ${absent}
+        </b>
+
+      </div>
+
+    </div>
+
+
+    <div class="card">
+
+      <h3>
+        ⭐ التقييمات
+      </h3>
+
+
+      ${
+        ev.length
+          ? ev.map(x => `
+
+              <div class="student">
+
+                <div>
+
+                  <b>
+                    ${esc(
+                      x.evaluation_categories?.name ||
+                      ''
+                    )}
+                  </b>
+
+                  <div class="muted">
+                    ${esc(
+                      x.evaluation_date ||
+                      ''
+                    )}
+                  </div>
+
+                </div>
+
+                <strong class="score">
+                  ${esc(x.score)}/10
+                </strong>
+
+              </div>
+
+            `).join('')
+          : '<div class="empty">لا توجد تقييمات.</div>'
+      }
+
+    </div>
+
+
+    <div class="card">
+
+      <h3>
+        📝 الملاحظات
+      </h3>
+
+
+      ${
+        ns.length
+          ? ns.map(x => `
+
+              <div class="student">
+
+                <div>
+
+                  <b>
+                    ${esc(x.note)}
+                  </b>
+
+                  <div class="muted">
+                    ${
+                      x.created_at
+                        ? new Date(
+                            x.created_at
+                          ).toLocaleDateString(
+                            'ar'
+                          )
+                        : ''
+                    }
+                  </div>
+
+                </div>
+
+              </div>
+
+            `).join('')
+          : '<div class="empty">لا توجد ملاحظات.</div>'
+      }
+
+    </div>
+
+  `;
+
+}
+
+
+/* =========================
+   AUTH
+========================= */
+
+
+sb.auth
+  .getSession()
+  .then(({data}) => {
+
+    if(data.session){
+
+      start(
+        data.session.user
+      );
+
+    }
+
+  });
+
+
+sb.auth.onAuthStateChange(
+  (event,session) => {
+
+    if(
+      event === 'SIGNED_IN' &&
+      session &&
+      !user
+    ){
+
+      start(
+        session.user
+      );
+
+    }
+
+  }
+);
+
+</script>
+
+</body>
+ </html>
