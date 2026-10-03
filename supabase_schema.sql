@@ -1,9 +1,0 @@
-create extension if not exists pgcrypto;
-create table if not exists classes(id uuid primary key default gen_random_uuid(),name text not null,section text,created_at timestamptz default now());
-create table if not exists students(id uuid primary key default gen_random_uuid(),class_id uuid references classes(id) on delete set null,full_name text not null,parent_name text,parent_phone text,active boolean default true,created_at timestamptz default now());
-create table if not exists evaluation_categories(id uuid primary key default gen_random_uuid(),name text unique not null,weight numeric default 1,sort_order int default 0);
-insert into evaluation_categories(name,sort_order) values ('التحصيل',1),('المشاركة',2),('الانضباط',3),('الواجبات',4),('التطور',5),('السلوك',6) on conflict(name) do nothing;
-create table if not exists evaluations(id uuid primary key default gen_random_uuid(),student_id uuid references students(id) on delete cascade,category_id uuid references evaluation_categories(id) on delete cascade,score numeric check(score between 1 and 10),evaluation_date date default current_date,note text,created_at timestamptz default now());
-create table if not exists attendance(id uuid primary key default gen_random_uuid(),student_id uuid references students(id) on delete cascade,attendance_date date default current_date,status text check(status in ('حاضر','غائب','متأخر','بعذر')),note text,created_at timestamptz default now());
-create table if not exists student_notes(id uuid primary key default gen_random_uuid(),student_id uuid references students(id) on delete cascade,note text not null,created_at timestamptz default now());
-create table if not exists awards(id uuid primary key default gen_random_uuid(),student_id uuid references students(id) on delete cascade,title text not null,period text,created_at timestamptz default now());
