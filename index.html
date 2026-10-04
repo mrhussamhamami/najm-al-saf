@@ -6711,12 +6711,13 @@ async function saveNote(){
 
     const {error} =
       await sb
-        .from('student_notes')
+        .from('teacher_notes')
         .insert({
 
-          student_id:studentId,
-
-          note:text
+          student_id: studentId,
+          teacher_id: user.id,
+          note: text,
+          visible_to_parent: false
 
         });
 
@@ -6763,7 +6764,7 @@ async function deleteNote(id){
 
         const {error} =
           await sb
-            .from('student_notes')
+            .from('teacher_notes')
             .delete()
             .eq('id',id);
 
