@@ -5111,7 +5111,7 @@ async function loadStudentProfile(id){
       }),
 
     sb
-      .from('student_notes')
+      .from('teacher_notes')
       .select('*')
       .eq('student_id',id)
       .order('created_at',{
