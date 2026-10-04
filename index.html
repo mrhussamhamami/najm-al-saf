@@ -4084,7 +4084,7 @@ async function loadAll(){
       .limit(1000),
 
     sb
-      .from('student_notes')
+      .from('teacher_notes')
       .select('*')
       .order('created_at',{ascending:false})
       .limit(500),
