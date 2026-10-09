@@ -2524,6 +2524,34 @@ button:active{transform:scale(.98)}
 .report-trend-canvas-wrap{height:250px}
 @media(max-width:560px){.report-chart-card{padding:12px;border-radius:14px}.report-chart-canvas-wrap{height:240px}.report-trend-canvas-wrap{height:220px}}
 @media print{.report-chart-card{break-inside:avoid;box-shadow:none}.report-chart-canvas-wrap{height:220px}}
+
+/* تحسين واجهة إدخال التقييمات دون تغيير آلية الحفظ */
+.evaluation-grid{gap:12px}
+.evaluation-row{
+  grid-template-columns:minmax(0,1fr) minmax(92px,118px);
+  gap:10px 12px;
+  padding:14px;
+  border-radius:16px;
+  border:1px solid #e2e9df;
+  background:linear-gradient(145deg,#fff 0%,#f8faf6 100%);
+  box-shadow:0 3px 12px rgba(39,65,48,.045);
+  transition:border-color .18s ease,box-shadow .18s ease,transform .18s ease;
+}
+.evaluation-row:focus-within{border-color:#83a780;box-shadow:0 0 0 3px rgba(88,129,87,.12)}
+.evaluation-row-title{display:flex;align-items:center;gap:10px;min-width:0}
+.evaluation-row-title strong{display:block;font-size:.92rem;line-height:1.5;color:var(--text,#26352d)}
+.evaluation-row-title small{display:block;margin-top:3px;color:var(--muted,#738075);font-size:.75rem}
+.category-icon{width:40px;height:40px;flex:0 0 40px;display:grid;place-items:center;border-radius:13px;background:#eaf1e7;font-size:1.2rem}
+.score-input{width:100%;min-height:46px;border:1px solid #d7e2d3!important;border-radius:12px!important;background:#fff!important;color:var(--primary,#344e41)!important;font-weight:850;font-size:1.05rem;text-align:center;outline:none}
+.score-input:focus,.evaluation-note:focus{border-color:#588157!important;box-shadow:0 0 0 3px rgba(88,129,87,.12)}
+.evaluation-note{grid-column:1/-1;width:100%;min-height:42px;padding:9px 11px;border:1px solid #e1e7dd;border-radius:11px;background:#fff;color:var(--text);font:inherit;font-size:.84rem}
+.evaluation-save-card{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:8px;padding:16px;border:1px solid #dce7d7;border-radius:16px;background:linear-gradient(135deg,#f3f7f0,#fff)}
+.evaluation-save-card strong{display:block;color:var(--primary);font-weight:850}
+.evaluation-save-card small{display:block;max-width:440px;margin-top:4px;color:var(--muted);line-height:1.6}
+.evaluation-save-card .btn{min-height:44px;white-space:nowrap}
+@media(max-width:420px){.evaluation-row{grid-template-columns:minmax(0,1fr) 92px;padding:11px;gap:9px}.category-icon{width:36px;height:36px;flex-basis:36px}.evaluation-row-title strong{font-size:.85rem}.evaluation-save-card{align-items:stretch}.evaluation-save-card .btn{width:100%}}
+@media print{.evaluation-row,.evaluation-save-card{box-shadow:none}}
+
 </style>
 </head>
 
@@ -13776,6 +13804,30 @@ function printCurrentReport() {
       )
       .join('\n');
 
+  // Canvas charts do not reliably print from a copied HTML fragment.
+  // Convert each rendered chart to a PNG image in the print-only clone.
+  const reportClone = box.cloneNode(true);
+  reportClone.querySelectorAll('canvas').forEach(canvas => {
+    try {
+      const chart = (window.__najmReportCharts || {})[canvas.id];
+      if (chart) chart.update('none');
+      const image = document.createElement('img');
+      image.src = canvas.toDataURL('image/png', 1);
+      image.alt = canvas.getAttribute('aria-label') || 'رسم بياني للتقرير';
+      image.style.display = 'block';
+      image.style.width = '100%';
+      image.style.maxWidth = '100%';
+      image.style.height = 'auto';
+      image.style.maxHeight = '320px';
+      image.style.objectFit = 'contain';
+      image.style.margin = '0 auto';
+      canvas.replaceWith(image);
+    } catch (error) {
+      console.warn('تعذر تجهيز أحد الرسوم للطباعة:', error);
+    }
+  });
+  const reportHTML = reportClone.innerHTML;
+
   printWindow.document.write(`
     <!DOCTYPE html>
 
@@ -13821,6 +13873,23 @@ function printCurrentReport() {
             border: 0 !important;
           }
 
+          .report-chart-card {
+            break-inside: avoid !important;
+            page-break-inside: avoid !important;
+            box-shadow: none !important;
+            print-color-adjust: exact !important;
+            -webkit-print-color-adjust: exact !important;
+          }
+
+          .report-chart-card img {
+            print-color-adjust: exact !important;
+            -webkit-print-color-adjust: exact !important;
+          }
+
+          @media print {
+            .report-chart-canvas-wrap { height: auto !important; min-height: 180px; }
+          }
+
         </style>
 
       </head>
@@ -13828,7 +13897,7 @@ function printCurrentReport() {
       <body>
 
         <main class="report-box">
-          ${box.innerHTML}
+          ${reportHTML}
         </main>
 
         <script>
@@ -17475,13 +17544,40 @@ async function createTeacherAccount(){
     await renderAdminPage();
 
   }catch(error){
-    console.error('createTeacherAccount:',error);
-    const message = error?.message || 'تعذر إنشاء حساب المدرس';
-    const detail = error?.context?.json?.message || error?.context?.message || message;
+    console.error('createTeacherAccount:', error);
+
+    // Supabase FunctionsHttpError.context is commonly a Response object.
+    // Read its body so the real server-side error is shown instead of a generic message.
+    let detail = error?.message || 'تعذر إنشاء حساب المدرس';
+    try {
+      const response = error?.context;
+      if (response && typeof response.clone === 'function') {
+        const responseCopy = response.clone();
+        const contentType = responseCopy.headers?.get?.('content-type') || '';
+        if (contentType.includes('application/json')) {
+          const body = await responseCopy.json();
+          detail = body?.message || body?.error || body?.details || body?.hint || JSON.stringify(body) || detail;
+        } else {
+          const bodyText = (await responseCopy.text()).trim();
+          if (bodyText) {
+            try {
+              const bodyJson = JSON.parse(bodyText);
+              detail = bodyJson?.message || bodyJson?.error || bodyJson?.details || bodyText;
+            } catch (_) { detail = bodyText; }
+          }
+        }
+      } else if (error?.context?.message) {
+        detail = error.context.message;
+      }
+    } catch (readError) {
+      console.warn('تعذر قراءة تفاصيل خطأ create-teacher:', readError);
+    }
+
+    const detailText = String(detail || 'خطأ غير محدد');
     showToast(
-      /not found|function.*not.*found|404/i.test(String(detail))
-        ? 'لم يعثر Supabase على خدمة create-teacher. تحقق من اسم الخدمة ومشروع Supabase.'
-        : `تعذر إنشاء حساب المدرس: ${String(detail).slice(0,180)}`,
+      /function.*not.*found|not found|404/i.test(detailText)
+        ? 'لم يعثر Supabase على خدمة create-teacher في المشروع المحدد. تحقق من اسمها وعنوان مشروع Supabase.'
+        : `تعذر إنشاء حساب المدرس: ${detailText.slice(0,220)}`,
       'error'
     );
   }finally{
