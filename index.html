@@ -18,6 +18,7 @@
 <link rel="manifest" href="manifest.json">
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
 <script src="config.js"></script>
 
 <style>
@@ -2516,6 +2517,13 @@ button:active{transform:scale(.98)}
 @media(max-width:480px){.student-card{gap:10px;padding:12px}.student-avatar{width:42px;height:42px;flex-basis:42px;border-radius:13px}.student-action{flex:1;min-width:calc(50% - 8px)}.report-header{padding:17px}.report-score{min-width:105px}.report-score strong{font-size:1.65rem}.report-section{padding:14px}.report-table-row{grid-template-columns:minmax(0,1fr) auto;gap:7px}.report-table-row>span:nth-child(2){display:none}.report-bars{height:165px}}
 @media print{body{background:#fff!important}.report-header{print-color-adjust:exact;-webkit-print-color-adjust:exact}.report-section,.report-chart-card{break-inside:avoid;box-shadow:none}}
 
+
+.report-chart-card{background:var(--surface,#fff);border:1px solid var(--border,#e1e7dc);border-radius:18px;padding:16px;margin:14px 0;min-width:0;box-shadow:0 5px 18px rgba(24,45,57,.045)}
+.report-chart-title{font-size:1rem;font-weight:800;margin:0 0 14px;color:var(--text,#26352d)}
+.report-chart-canvas-wrap{position:relative;width:100%;height:270px;min-width:0}
+.report-trend-canvas-wrap{height:250px}
+@media(max-width:560px){.report-chart-card{padding:12px;border-radius:14px}.report-chart-canvas-wrap{height:240px}.report-trend-canvas-wrap{height:220px}}
+@media print{.report-chart-card{break-inside:avoid;box-shadow:none}.report-chart-canvas-wrap{height:220px}}
 </style>
 </head>
 
@@ -3143,6 +3151,14 @@ button:active{transform:scale(.98)}
           class="heading-actions"
           style="margin-top:5px"
         >
+
+          <button
+            class="btn btn-primary btn-sm"
+            type="button"
+            onclick="loadReport()"
+          >
+            📊 إنشاء التقرير
+          </button>
 
           <button
             class="btn btn-secondary btn-sm"
@@ -12614,18 +12630,36 @@ function buildSmartAnalysis(
 
 function buildReportBarChart(items, title) {
   const rows = (items || []).filter(item => Number.isFinite(Number(item.value)));
-  if (!rows.length) return '';
-  const max = Math.max(100, ...rows.map(item => Number(item.value) || 0));
-  return `<div class="report-chart-card"><h4 class="report-chart-title">${escapeHtml(title)}</h4><div class="report-bars" role="img" aria-label="${escapeAttr(title)}">${rows.map(item=>{const v=Math.max(0,Math.min(100,Number(item.value)||0));const h=Math.max(3,(v/max)*132);return `<div class="report-bar-item" title="${escapeAttr(item.label)}: ${formatNumber(v)}%"><span class="report-bar-value">${formatNumber(v)}%</span><div class="report-bar" style="height:${h}px" aria-label="${formatNumber(v)} بالمئة"></div><span class="report-bar-label">${escapeHtml(item.label)}</span></div>`}).join('')}</div></div>`;
+  if (!rows.length) return `<div class="report-chart-card"><h4 class="report-chart-title">${escapeHtml(title)}</h4><p class="muted">لا توجد بيانات كافية للرسم ضمن الفترة المحددة.</p></div>`;
+  const id = title.includes('المادة') ? 'reportSubjectChart' : 'reportCategoryChart';
+  return `<div class="report-chart-card"><h4 class="report-chart-title">${escapeHtml(title)}</h4><div class="report-chart-canvas-wrap"><canvas id="${id}" role="img" aria-label="${escapeAttr(title)}"></canvas></div></div>`;
 }
 function buildReportTrendChart(items) {
   const rows=(items||[]).filter(item=>Number.isFinite(Number(item.average)));
-  if(rows.length<2) return '';
-  const width=640,height=190,pad=28,plotW=width-pad*2,plotH=height-pad*2;
-  const points=rows.map((item,i)=>({x:pad+(rows.length===1?plotW/2:i*plotW/(rows.length-1)),y:pad+plotH-(Math.max(0,Math.min(100,Number(item.average)||0))/100)*plotH,v:Number(item.average)||0,label:formatDate(item.date)}));
-  const line=points.map(p=>`${p.x},${p.y}`).join(' ');
-  const labels=points.filter((p,i)=>i===0||i===points.length-1||i===Math.floor(points.length/2));
-  return `<div class="report-chart-card"><h4 class="report-chart-title">منحنى تطور التقييم خلال الفترة</h4><svg class="report-line-chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="منحنى التقييم عبر الزمن"><line x1="${pad}" y1="${pad}" x2="${width-pad}" y2="${pad}" stroke="#e6ebe1"/><line x1="${pad}" y1="${pad+plotH/2}" x2="${width-pad}" y2="${pad+plotH/2}" stroke="#e6ebe1"/><line x1="${pad}" y1="${pad+plotH}" x2="${width-pad}" y2="${pad+plotH}" stroke="#dfe6dc"/><text x="${pad-5}" y="${pad+4}" text-anchor="end">100%</text><text x="${pad-5}" y="${pad+plotH/2+4}" text-anchor="end">50%</text><text x="${pad-5}" y="${pad+plotH+4}" text-anchor="end">0%</text><polyline points="${line}" fill="none" stroke="#588157" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>${points.map(p=>`<circle cx="${p.x}" cy="${p.y}" r="4" fill="#344e41"><title>${escapeAttr(p.label)}: ${formatNumber(p.v)}%</title></circle>`).join('')}${labels.map(p=>`<text x="${p.x}" y="${height-5}" text-anchor="middle">${escapeHtml(p.label)}</text>`).join('')}</svg></div>`;
+  if(rows.length<2) return `<div class="report-chart-card"><h4 class="report-chart-title">منحنى تطور التقييم خلال الفترة</h4><p class="muted">يلزم وجود تقييمات في تاريخين مختلفين لعرض المنحنى.</p></div>`;
+  return `<div class="report-chart-card"><h4 class="report-chart-title">منحنى تطور التقييم خلال الفترة</h4><div class="report-chart-canvas-wrap report-trend-canvas-wrap"><canvas id="reportTrendChart" role="img" aria-label="منحنى تطور التقييم"></canvas></div></div>`;
+}
+
+function renderReportCharts(data) {
+  if (!window.Chart || !data) return;
+  window.__najmReportCharts = window.__najmReportCharts || {};
+  Object.values(window.__najmReportCharts).forEach(chart => { try { chart.destroy(); } catch (_) {} });
+  window.__najmReportCharts = {};
+  const make = (id, config) => {
+    const canvas = document.getElementById(id);
+    if (canvas) window.__najmReportCharts[id] = new Chart(canvas, config);
+  };
+  const commonOptions = {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { rtl: true, textDirection: 'rtl' } },
+    scales: { y: { beginAtZero: true, min: 0, max: 100, ticks: { callback: value => value + '%' } }, x: { grid: { display: false } } }
+  };
+  const subjects = calculateSubjectReport(data.evaluations || []);
+  const categories = calculateCategoryReport(data.evaluations || []);
+  const trend = calculateEvaluationTrend(data.evaluations || []);
+  make('reportSubjectChart', { type:'bar', data:{ labels:subjects.map(x=>x.subjectName), datasets:[{label:'المتوسط',data:subjects.map(x=>Number(x.average)||0),borderRadius:8,backgroundColor:'#588157',maxBarThickness:48}] }, options:{...commonOptions} });
+  make('reportCategoryChart', { type:'bar', data:{ labels:categories.map(x=>x.categoryName), datasets:[{label:'المتوسط',data:categories.map(x=>Number(x.average)||0),borderRadius:8,backgroundColor:'#0f9b8e',maxBarThickness:48}] }, options:{...commonOptions,indexAxis:categories.length>4?'y':'x',scales:categories.length>4?{x:{beginAtZero:true,min:0,max:100,ticks:{callback:value=>value+'%'},grid:{color:'#e7ece5'}},y:{grid:{display:false}}}:commonOptions.scales} });
+  make('reportTrendChart', { type:'line', data:{ labels:trend.map(x=>formatDate(x.date)), datasets:[{label:'المتوسط',data:trend.map(x=>Number(x.average)||0),borderColor:'#344e41',backgroundColor:'rgba(88,129,87,.15)',fill:true,tension:.3,pointRadius:3}] }, options:{...commonOptions,scales:{...commonOptions.scales,x:{...commonOptions.scales.x,ticks:{maxRotation:0,autoSkip:true,maxTicksLimit:8}}}} });
 }
 
 function buildDetailedReportHTML(
@@ -13395,6 +13429,8 @@ async function loadReport() {
         buildDetailedReportHTML(
           data
         );
+
+      requestAnimationFrame(() => renderReportCharts(data));
     }
 
   } catch (error) {
@@ -17441,10 +17477,11 @@ async function createTeacherAccount(){
   }catch(error){
     console.error('createTeacherAccount:',error);
     const message = error?.message || 'تعذر إنشاء حساب المدرس';
+    const detail = error?.context?.json?.message || error?.context?.message || message;
     showToast(
-      message.includes('create-teacher') || message.includes('Function')
-        ? 'خدمة إنشاء المدرسين غير منشورة في Supabase بعد'
-        : message,
+      /not found|function.*not.*found|404/i.test(String(detail))
+        ? 'لم يعثر Supabase على خدمة create-teacher. تحقق من اسم الخدمة ومشروع Supabase.'
+        : `تعذر إنشاء حساب المدرس: ${String(detail).slice(0,180)}`,
       'error'
     );
   }finally{
