@@ -28,18 +28,18 @@
 
 :root{
 
-  --primary:#087f73;
-  --primary-2:#0b9b8c;
-  --primary-soft:#e8f7f4;
+  --primary:#344e41;
+  --primary-2:#588157;
+  --primary-soft:#eaf0e8;
 
-  --bg:#f5f7f8;
+  --bg:#f7f8f2;
   --surface:#ffffff;
-  --surface-2:#f8fafb;
+  --surface-2:#f0f3ec;
 
-  --text:#17212b;
-  --muted:#71808d;
+  --text:#26352d;
+  --muted:#718075;
 
-  --border:#e4e9ec;
+  --border:#e1e7dc;
 
   --success:#16855b;
   --warning:#d28a13;
@@ -2460,6 +2460,61 @@ select.form-control{
   .evaluation-save-card{flex-direction:column;align-items:stretch;}
   .evaluation-save-card .btn{width:100%;}
 }
+
+
+/* =========================================================
+   واجهة نجم الصف — تحسين بصري متكامل
+   ========================================================= */
+:root{--primary:#344e41;--primary-2:#588157;--primary-soft:#eaf0e8;--bg:#f7f8f2;--surface:#fff;--surface-2:#f0f3ec;--text:#26352d;--muted:#718075;--border:#e1e7dc;--shadow:0 8px 28px rgba(38,53,45,.07);--shadow-lg:0 20px 55px rgba(38,53,45,.13);--radius:20px;--radius-sm:14px}
+body{background:radial-gradient(ellipse at top right,rgba(88,129,87,.07),transparent 34%),var(--bg);color:var(--text);line-height:1.65}
+button,input,select,textarea{font:inherit}
+button{transition:transform .16s ease,box-shadow .16s ease,background .16s ease}
+button:active{transform:scale(.98)}
+.card,.report-section,.student-card,.stats-grid>.stat-card,.stats-grid>.card{border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+.card{padding:clamp(16px,3vw,24px);margin-bottom:18px;background:var(--surface)}
+.page-heading{gap:14px;margin:10px 0 22px;align-items:center}
+.page-heading h1{font-size:clamp(1.35rem,4vw,1.9rem);font-weight:850;letter-spacing:-.025em;color:var(--primary);margin:0}
+.page-heading p{margin:5px 0 0;color:var(--muted);font-size:.93rem}
+.btn{border-radius:12px!important;font-weight:750!important;min-height:42px;padding:9px 15px!important;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn-primary{background:var(--primary)!important;box-shadow:0 5px 14px rgba(52,78,65,.16)}
+.btn-secondary{background:#eef2eb!important;color:var(--primary)!important;border:1px solid #dce5d8!important}
+.form-control{border:1px solid #dce4d9!important;border-radius:12px!important;background:#fff!important;min-height:45px;padding:10px 12px!important;color:var(--text)!important}
+.form-control:focus{outline:3px solid rgba(88,129,87,.16);border-color:var(--primary-2)!important}
+.student-card{position:relative;display:flex;align-items:center;gap:13px;padding:15px;margin:10px 0;background:#fff;cursor:pointer;min-width:0;flex-wrap:wrap}
+.student-card:hover{box-shadow:var(--shadow-lg);border-color:#c8d8c4}
+.student-card .student-card-main{flex:1;min-width:150px}
+.student-card-title{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.student-card-title h3{font-size:1rem;margin:0;font-weight:800;color:var(--text)}
+.student-card-meta{display:flex;gap:8px 14px;flex-wrap:wrap;color:var(--muted);font-size:.8rem;margin-top:5px}
+.student-avatar{width:48px;height:48px;flex:0 0 48px;border-radius:16px;background:var(--primary-soft);color:var(--primary);display:grid;place-items:center;font-weight:850;overflow:hidden}
+.student-avatar img{width:100%;height:100%;object-fit:cover}
+.student-card-arrow{display:none}
+.student-card-actions{display:flex;align-items:center;gap:7px;width:100%;padding-top:11px;border-top:1px solid #edf0e9;flex-wrap:wrap}
+.student-action{border:1px solid var(--border);background:#f8faf6;color:var(--primary);border-radius:10px;min-height:36px;padding:6px 10px;display:inline-flex;align-items:center;justify-content:center;gap:6px;font-size:.8rem;font-weight:750;cursor:pointer}
+.student-action svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.student-action.edit{background:#eaf0e8;border-color:#d4e1cf}.student-action.danger{color:#a63e3e;background:#fff4f2;border-color:#f0d6d1}
+.report-header{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;background:linear-gradient(135deg,#344e41,#588157);color:white;border-radius:22px;padding:22px;margin:8px 0 18px;box-shadow:var(--shadow)}
+.report-period-label{font-size:.82rem!important;margin-top:8px!important;opacity:.9}.report-header h2{color:#fff;margin:5px 0;font-size:1.45rem}.report-header p,.report-header .eyebrow{color:rgba(255,255,255,.82)}
+.report-score{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.24);border-radius:17px;padding:14px 18px;min-width:130px;text-align:center}.report-score strong{display:block;font-size:2rem;color:#fff;line-height:1.2}.report-score span{font-size:.8rem}
+.report-section{background:#fff;padding:18px;margin:15px 0;border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow)}
+.section-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:15px}.section-heading h3{margin:0;font-size:1.04rem;font-weight:850;color:var(--primary)}
+.report-chart-card{border:1px solid #e6ebe1;border-radius:16px;background:linear-gradient(180deg,#fff,#fafbf7);padding:14px;margin:12px 0 16px;overflow:hidden}
+.report-chart-title{font-size:.9rem;font-weight:800;color:var(--text);margin:0 0 12px}
+.report-bars{display:flex;align-items:flex-end;gap:clamp(8px,2vw,18px);height:190px;padding:12px 4px 0;border-bottom:1px solid #dfe6dc;overflow-x:auto}
+.report-bar-item{flex:1;min-width:54px;max-width:120px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:7px}
+.report-bar-value{font-size:.78rem;font-weight:850;color:var(--primary)}
+.report-bar{width:min(54px,78%);min-height:3px;border-radius:10px 10px 3px 3px;background:linear-gradient(180deg,#81a77b,#344e41);box-shadow:0 3px 9px rgba(52,78,65,.12)}
+.report-bar-label{font-size:.72rem;color:var(--muted);text-align:center;line-height:1.3;max-width:100%;overflow-wrap:anywhere;padding-bottom:8px}
+.report-line-chart{width:100%;height:auto;display:block;overflow:visible}
+.report-line-chart text{font-family:Tahoma,Arial,sans-serif;fill:#718075;font-size:10px}
+.report-table-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:12px;padding:12px 3px;border-bottom:1px solid #edf0e9}
+.report-table-row:last-child{border-bottom:0}
+.trend-list{display:grid;gap:11px}.trend-row{display:grid;grid-template-columns:86px minmax(60px,1fr) 48px;gap:10px;align-items:center;font-size:.8rem}.trend-bar{height:9px;border-radius:20px;background:#edf1e9;overflow:hidden}.trend-bar span{display:block;height:100%;border-radius:20px;background:linear-gradient(90deg,#588157,#344e41)}
+.stats-grid{gap:12px}
+.stats-grid .stat-card,.stats-grid .card{border-radius:16px}
+@media(min-width:650px){.student-card{flex-wrap:nowrap}.student-card-actions{width:auto;padding:0 0 0 12px;border-top:0;border-right:1px solid #edf0e9}.report-section{padding:22px}}
+@media(max-width:480px){.student-card{gap:10px;padding:12px}.student-avatar{width:42px;height:42px;flex-basis:42px;border-radius:13px}.student-action{flex:1;min-width:calc(50% - 8px)}.report-header{padding:17px}.report-score{min-width:105px}.report-score strong{font-size:1.65rem}.report-section{padding:14px}.report-table-row{grid-template-columns:minmax(0,1fr) auto;gap:7px}.report-table-row>span:nth-child(2){display:none}.report-bars{height:165px}}
+@media print{body{background:#fff!important}.report-header{print-color-adjust:exact;-webkit-print-color-adjust:exact}.report-section,.report-chart-card{break-inside:avoid;box-shadow:none}}
 
 </style>
 </head>
@@ -8507,10 +8562,15 @@ function buildStudentCard(student) {
 
       </div>
 
-      <div class="student-card-arrow">
-        ‹
+      <div class="student-card-arrow">›</div>
+      <div class="student-card-actions" onclick="event.stopPropagation()">
+        <button type="button" class="student-action edit" onclick="openStudentModal('${escapeAttr(student.id)}');event.stopPropagation()" aria-label="تعديل بيانات ${name}">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg><span>تعديل</span>
+        </button>
+        <button type="button" class="student-action" onclick="openStudentProfile('${escapeAttr(student.id)}');event.stopPropagation()" aria-label="فتح ملف ${name}">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg><span>الملف</span>
+        </button>
       </div>
-
     </article>
   `;
 }
@@ -9502,12 +9562,8 @@ async function saveEvaluations() {
     todayISO();
 
   if (!studentId) {
-
-    showToast(
-      'اختر الطالب أولاً',
-      'warning'
-    );
-
+    if (box) box.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><h3>ابدأ بإنشاء التقرير</h3><p>اختر الطالب وحدد فترة التقييم لعرض المؤشرات والرسوم البيانية.</p></div>`;
+    showToast('اختر الطالب أولاً','warning');
     return;
   }
 
@@ -12556,6 +12612,22 @@ function buildSmartAnalysis(
    بناء التقرير الكامل
    ========================================================= */
 
+function buildReportBarChart(items, title) {
+  const rows = (items || []).filter(item => Number.isFinite(Number(item.value)));
+  if (!rows.length) return '';
+  const max = Math.max(100, ...rows.map(item => Number(item.value) || 0));
+  return `<div class="report-chart-card"><h4 class="report-chart-title">${escapeHtml(title)}</h4><div class="report-bars" role="img" aria-label="${escapeAttr(title)}">${rows.map(item=>{const v=Math.max(0,Math.min(100,Number(item.value)||0));const h=Math.max(3,(v/max)*132);return `<div class="report-bar-item" title="${escapeAttr(item.label)}: ${formatNumber(v)}%"><span class="report-bar-value">${formatNumber(v)}%</span><div class="report-bar" style="height:${h}px" aria-label="${formatNumber(v)} بالمئة"></div><span class="report-bar-label">${escapeHtml(item.label)}</span></div>`}).join('')}</div></div>`;
+}
+function buildReportTrendChart(items) {
+  const rows=(items||[]).filter(item=>Number.isFinite(Number(item.average)));
+  if(rows.length<2) return '';
+  const width=640,height=190,pad=28,plotW=width-pad*2,plotH=height-pad*2;
+  const points=rows.map((item,i)=>({x:pad+(rows.length===1?plotW/2:i*plotW/(rows.length-1)),y:pad+plotH-(Math.max(0,Math.min(100,Number(item.average)||0))/100)*plotH,v:Number(item.average)||0,label:formatDate(item.date)}));
+  const line=points.map(p=>`${p.x},${p.y}`).join(' ');
+  const labels=points.filter((p,i)=>i===0||i===points.length-1||i===Math.floor(points.length/2));
+  return `<div class="report-chart-card"><h4 class="report-chart-title">منحنى تطور التقييم خلال الفترة</h4><svg class="report-line-chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="منحنى التقييم عبر الزمن"><line x1="${pad}" y1="${pad}" x2="${width-pad}" y2="${pad}" stroke="#e6ebe1"/><line x1="${pad}" y1="${pad+plotH/2}" x2="${width-pad}" y2="${pad+plotH/2}" stroke="#e6ebe1"/><line x1="${pad}" y1="${pad+plotH}" x2="${width-pad}" y2="${pad+plotH}" stroke="#dfe6dc"/><text x="${pad-5}" y="${pad+4}" text-anchor="end">100%</text><text x="${pad-5}" y="${pad+plotH/2+4}" text-anchor="end">50%</text><text x="${pad-5}" y="${pad+plotH+4}" text-anchor="end">0%</text><polyline points="${line}" fill="none" stroke="#588157" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>${points.map(p=>`<circle cx="${p.x}" cy="${p.y}" r="4" fill="#344e41"><title>${escapeAttr(p.label)}: ${formatNumber(p.v)}%</title></circle>`).join('')}${labels.map(p=>`<text x="${p.x}" y="${height-5}" text-anchor="middle">${escapeHtml(p.label)}</text>`).join('')}</svg></div>`;
+}
+
 function buildDetailedReportHTML(
   data
 ) {
@@ -12622,6 +12694,9 @@ function buildDetailedReportHTML(
               student
             )
           )}
+        </p>
+        <p class="report-period-label">
+          فترة التقرير: ${escapeHtml(data.filters?.from || 'بداية السجل')} — ${escapeHtml(data.filters?.to || 'حتى اليوم')}
         </p>
 
       </div>
@@ -12716,6 +12791,7 @@ function buildDetailedReportHTML(
       ${
         subjects.length
           ? `
+            ${buildReportBarChart(subjects.map(item=>({label:item.subjectName,value:Number(item.average)||0})), 'المتوسط حسب المادة')}
             <div class="report-table">
 
               ${subjects
@@ -12773,6 +12849,7 @@ function buildDetailedReportHTML(
       ${
         categories.length
           ? `
+            ${buildReportBarChart(categories.map(item=>({label:item.categoryName,value:Number(item.average)||0})), 'المتوسط حسب مجال التقييم')}
             <div class="report-table">
 
               ${categories
@@ -12858,6 +12935,7 @@ function buildDetailedReportHTML(
       ${
         trend.length
           ? `
+            ${buildReportTrendChart(trend)}
             <div class="trend-list">
 
               ${trend
@@ -13709,17 +13787,7 @@ function printCurrentReport() {
 
         </style>
 
-      
-<style id="najm-polished-ui-v2">
-:root{--primary:#344e41;--primary-2:#588157;--primary-soft:#eaf0e8;--bg:#f7f8f2;--surface:#fff;--surface-2:#f2f5ee;--text:#26352d;--muted:#738076;--border:#e1e7dc;--success:#43845c;--warning:#b8872e;--danger:#c64d4d;--info:#4385a3;--shadow:0 8px 26px rgba(39,59,44,.065);--shadow-lg:0 18px 46px rgba(39,59,44,.13);--radius:20px;--radius-sm:14px}
-body{background:var(--bg);color:var(--text);letter-spacing:0;line-height:1.7}body.dark{--primary:#9bb99a;--primary-2:#6d9c70;--primary-soft:#263b2e;--bg:#111914;--surface:#19241d;--surface-2:#202d24;--text:#edf3eb;--muted:#a3b1a4;--border:#314235}
-.container{width:min(100% - 28px,1180px);margin-inline:auto}.page{padding-block:10px 28px}.page-heading{align-items:center;gap:14px;margin-bottom:20px}.page-heading h1{font-size:clamp(23px,4vw,31px);letter-spacing:-.5px;margin:0;color:var(--text)}.page-heading p{margin:5px 0 0;color:var(--muted);font-size:13px}
-.card,.form-section,.modal,.modal-overlay>.modal{border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}.card{padding:clamp(15px,3vw,23px);margin-bottom:16px;background:var(--surface)}.card-title{gap:12px;align-items:center}.card-title h2,.form-section-title{color:var(--text);font-size:16px;font-weight:800}.form-section{background:var(--surface-2);padding:17px;margin-bottom:14px}.form-control,select.form-control,textarea.form-control,input.form-control{min-height:45px;border:1px solid var(--border);border-radius:13px;background:var(--surface);color:var(--text);padding:10px 13px;max-width:100%;transition:border-color .18s,box-shadow .18s}.form-control:focus,select.form-control:focus,textarea.form-control:focus{outline:none;border-color:var(--primary-2);box-shadow:0 0 0 3px color-mix(in srgb,var(--primary-2) 15%,transparent)}.btn{border-radius:12px;font-weight:700;transition:transform .16s,box-shadow .16s,background .16s}.btn:active{transform:scale(.98)}.btn-primary{background:var(--primary);border-color:var(--primary)}.btn-secondary{background:var(--surface);color:var(--text);border:1px solid var(--border)}.modal-backdrop,.modal-overlay{backdrop-filter:blur(5px);background:rgba(18,31,23,.48)}.modal{max-height:min(88dvh,850px);overflow:auto}.modal-header{position:sticky;top:0;z-index:2;background:var(--surface);border-bottom:1px solid var(--border);padding:17px 20px}.modal-footer{position:sticky;bottom:0;background:var(--surface);border-top:1px solid var(--border);padding:14px 20px}.dashboard-hero{border-radius:26px;padding:clamp(22px,4vw,34px);margin-bottom:18px;background:linear-gradient(125deg,#344e41 0%,#456b50 62%,#588157 100%);box-shadow:0 14px 32px rgba(52,78,65,.18)}.dashboard-hero h1{font-size:clamp(24px,4vw,32px);font-weight:850}.dashboard-hero p{font-size:14px}.dashboard-date{font-size:12px;padding:6px 12px;margin-top:15px}.stats-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:18px}.stat-card{min-width:0;display:flex;align-items:center;gap:12px;padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:19px;box-shadow:var(--shadow)}.stat-icon{width:45px;height:45px;display:grid;place-items:center;border-radius:15px;background:var(--primary-soft);font-size:22px;flex:0 0 auto}.stat-copy{display:flex;flex-direction:column;min-width:0}.stat-copy span{font-size:12px;color:var(--muted);font-weight:700}.stat-copy strong{font-size:26px;line-height:1.35;font-weight:850;color:var(--text)}.stat-gold .stat-icon{background:#f8f0dc}.stat-blue .stat-icon{background:#e7f1f5}.dashboard-shortcuts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:4px 0 25px}.shortcut-card{position:relative;display:flex;align-items:center;gap:10px;text-align:right;padding:15px 13px;border:1px solid var(--border);border-radius:16px;background:var(--surface-2);color:var(--text);font:inherit;cursor:pointer;min-height:66px}.shortcut-card>span{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:var(--primary-soft);font-size:20px}.shortcut-card b{font-size:13px}.shortcut-card i{margin-inline-start:auto;font-style:normal;color:var(--muted)}.dashboard-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}.dashboard-section-head h3{font-size:15px;margin:0}.dashboard-section-head p{font-size:12px;color:var(--muted);margin:3px 0 0}.dashboard-student-list{display:grid;gap:7px}.dashboard-student-row{display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid var(--border)}.dashboard-student-row:last-child{border-bottom:0}.student-avatar{width:39px;height:39px;display:grid;place-items:center;flex:0 0 auto;border-radius:13px;background:var(--primary-soft);color:var(--primary);font-weight:900}.dashboard-student-info{min-width:0;display:flex;flex:1;flex-direction:column}.dashboard-student-info b{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dashboard-student-info small{font-size:11px;color:var(--muted)}.empty-state{padding:20px 12px;text-align:center;color:var(--muted);font-size:13px;background:var(--surface-2);border-radius:14px}.student-list,.students-grid{gap:13px}.table-wrap,.table-responsive{max-width:100%;overflow-x:auto;border-radius:14px}.table-wrap table,.table-responsive table{border-collapse:separate;border-spacing:0;min-width:600px;width:100%}table th{background:var(--surface-2);color:var(--text);font-weight:800}table th,table td{padding:12px;border-bottom:1px solid var(--border);text-align:right}button:focus-visible,a:focus-visible{outline:3px solid color-mix(in srgb,var(--primary-2) 60%,white);outline-offset:2px}
-@media(min-width:700px){.stats-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.dashboard-shortcuts{grid-template-columns:repeat(4,minmax(0,1fr))}.dashboard-shortcuts .shortcut-card{flex-direction:column;align-items:flex-start;min-height:110px;padding:17px}.dashboard-shortcuts .shortcut-card i{position:absolute;left:15px;bottom:15px}}
-@media(max-width:420px){.container{width:calc(100% - 20px)}.stats-grid{gap:9px}.stat-card{padding:12px;gap:9px}.stat-icon{width:38px;height:38px;border-radius:12px;font-size:19px}.stat-copy strong{font-size:23px}.stat-copy span{font-size:11px}.dashboard-hero{border-radius:21px}.card{padding:14px}.page-heading{align-items:flex-start;flex-direction:column}.heading-actions{width:100%}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
-</style>
-</head>
+      </head>
 
       <body>
 
@@ -13876,43 +13944,114 @@ function renderStudentStats() {
    ========================================================= */
 
 async function renderDashboard() {
+
   renderStudentStats();
-  const page = document.getElementById('pageDashboard');
+
+  const page =
+    document.getElementById(
+      'pageDashboard'
+    );
+
   if (!page) return;
 
-  const students = Array.isArray(APP.students) ? APP.students : [];
-  const activeStudents = students.filter(student => student.active !== false && student.status !== 'inactive');
-  const classes = Array.isArray(APP.classes) ? APP.classes : [];
-  const subjects = Array.isArray(APP.subjects) ? APP.subjects : [];
-  const evaluations = Array.isArray(APP.evaluations) ? APP.evaluations : [];
-  const attendance = Array.isArray(APP.attendance) ? APP.attendance : [];
+  const students =
+    Array.isArray(APP.students)
+      ? APP.students
+      : [];
 
-  const greeting = document.getElementById('dashboardGreeting');
-  if (greeting) greeting.textContent = `أهلاً ${APP.profile?.full_name || 'بك'} 👋`;
-  const role = document.getElementById('dashboardRole');
-  if (role) role.textContent = `${ROLE_LABELS[APP.role] || 'لوحة المتابعة'} · ملخص العمل اليومي`;
-  const date = document.getElementById('dashboardDate');
-  if (date) date.textContent = new Intl.DateTimeFormat('ar', {weekday:'long', year:'numeric', month:'long', day:'numeric'}).format(new Date());
+  const activeStudents =
+    students.filter(
+      student =>
+        student.active !== false &&
+        student.status !==
+          'inactive'
+    );
 
-  const stats = document.getElementById('dashboardStats');
-  if (stats) {
-    const cards = APP.role === 'parent'
-      ? [{label:'أبنائي',value:activeStudents.length,icon:'👨‍👩‍👧',tone:'green'}, {label:'المواد',value:subjects.length,icon:'📚',tone:'teal'}, {label:'التقييمات',value:evaluations.length,icon:'📊',tone:'gold'}, {label:'سجلات الحضور',value:attendance.length,icon:'🗓️',tone:'blue'}]
-      : [{label:'الطلاب النشطون',value:activeStudents.length,icon:'🎓',tone:'green'}, {label:'الصفوف',value:classes.length,icon:'🏫',tone:'teal'}, {label:'المواد',value:subjects.length,icon:'📚',tone:'gold'}, {label:'التقييمات',value:evaluations.length,icon:'📈',tone:'blue'}];
-    stats.innerHTML = cards.map(c => `<article class="stat-card stat-${c.tone}"><div class="stat-icon" aria-hidden="true">${c.icon}</div><div class="stat-copy"><span>${c.label}</span><strong>${Number(c.value)||0}</strong></div></article>`).join('');
+  const dashboardStudents =
+    document.getElementById(
+      'dashboardStudents'
+    );
+
+  if (
+    dashboardStudents
+  ) {
+
+    dashboardStudents.innerHTML =
+      activeStudents
+        .slice(0, 8)
+        .map(
+          student =>
+            buildStudentCard(
+              student
+            )
+        )
+        .join('') ||
+      emptyInline(
+        'لا يوجد طلاب مسجلون بعد.'
+      );
   }
 
-  const content = document.getElementById('dashboardContent');
-  if (content) {
-    const shortcuts = APP.role === 'parent'
-      ? [{page:'parent',icon:'👨‍👩‍👧',label:'متابعة الأبناء'},{page:'parentReport',icon:'📑',label:'تقارير الأبناء'}]
-      : [{page:'students',icon:'🎓',label:'إدارة الطلاب'},{page:'evaluation',icon:'✍️',label:'تسجيل تقييم'},{page:'attendance',icon:'🗓️',label:'تسجيل الحضور'},{page:'reports',icon:'📊',label:'التقارير'}];
-    content.innerHTML = `<div class="dashboard-shortcuts">${shortcuts.map(x=>`<button type="button" class="shortcut-card" data-dashboard-page="${x.page}"><span>${x.icon}</span><b>${x.label}</b><i>←</i></button>`).join('')}</div><div class="dashboard-section-head"><div><h3>الطلاب المضافون حديثاً</h3><p>وصول سريع إلى ملفات الطلاب</p></div>${APP.role !== 'parent' ? '<button type="button" class="btn btn-secondary btn-sm" data-dashboard-page="students">عرض الكل</button>' : ''}</div><div class="dashboard-student-list">${APP.role === 'parent' ? '<div class="empty-state">اختر متابعة الأبناء لعرض بياناتهم.</div>' : activeStudents.slice(0,5).map(st=>`<div class="dashboard-student-row"><span class="student-avatar">${escapeHtml((st.full_name||'ط').trim().charAt(0))}</span><div class="dashboard-student-info"><b>${escapeHtml(st.full_name||'طالب بدون اسم')}</b><small>${escapeHtml(getStudentClassText(st)||'الصف غير محدد')}</small></div><button type="button" class="btn btn-ghost btn-sm" data-student-open="${escapeAttr(st.id)}">عرض</button></div>`).join('') || '<div class="empty-state">لا يوجد طلاب مسجلون بعد. أضف أول طالب للبدء.</div>'}</div>`;
-    content.querySelectorAll('[data-dashboard-page]').forEach(btn=>btn.addEventListener('click',()=>navigate(btn.dataset.dashboardPage)));
-    content.querySelectorAll('[data-student-open]').forEach(btn=>btn.addEventListener('click',()=>{APP.selectedStudentId=btn.dataset.studentOpen;navigate('studentProfile');}));
+  const welcomeName =
+    document.getElementById(
+      'dashboardUserName'
+    );
+
+  if (welcomeName) {
+
+    welcomeName.textContent =
+      APP.profile?.full_name ||
+      APP.user?.email ||
+      'المستخدم';
   }
-  const dashboardStudents = document.getElementById('dashboardStudents');
-  if (dashboardStudents) dashboardStudents.innerHTML = activeStudents.slice(0,8).map(buildStudentCard).join('') || emptyInline('لا يوجد طلاب مسجلون بعد.');
+
+  const roleLabel =
+    document.getElementById(
+      'dashboardRole'
+    );
+
+  if (roleLabel) {
+
+    roleLabel.textContent =
+      ROLE_LABELS[
+        APP.role
+      ] ||
+      '';
+  }
+
+  /*
+    تحديث العدادات من بيانات
+    الصفحة إذا كانت العناصر
+    موجودة في التصميم.
+  */
+
+  const dynamicCounters = {
+
+    students:
+      document.querySelectorAll(
+        '[data-counter="students"]'
+      ),
+
+    classes:
+      document.querySelectorAll(
+        '[data-counter="classes"]'
+      ),
+
+    subjects:
+      document.querySelectorAll(
+        '[data-counter="subjects"]'
+      )
+  };
+
+  const counterValues = {
+    students: activeStudents.length,
+    classes: Array.isArray(APP.classes) ? APP.classes.length : 0,
+    subjects: Array.isArray(APP.subjects) ? APP.subjects.length : 0
+  };
+
+  Object.entries(dynamicCounters).forEach(([key,nodes])=>{
+    const value = counterValues[key] ?? 0;
+    Array.from(nodes || []).forEach(node=>{ node.textContent = String(value); });
+  });
 }
 
 
