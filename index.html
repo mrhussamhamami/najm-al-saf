@@ -2672,6 +2672,44 @@ body{font-family:var(--font)}
 .ba-opt.on.late{background:#fff5dc;color:#b07508;border-color:#b07508}.ba-opt.on.excused{background:#e8f0fc;color:#3478d4;border-color:#3478d4}
 .v2-chart{position:relative;height:230px}
 body.dark .vtabs,body.dark .ba-row,body.dark .qs-bar{border-color:var(--border)}
+/* ===== إصلاح: درجات تقرير ولي الأمر على الجوال ===== */
+@media(max-width:480px){.report-table-row>span:nth-child(2):last-child{display:inline-block!important;font-weight:900;color:var(--primary)}}
+.report-table-row>span:nth-child(2):last-child{font-weight:900;color:var(--primary)}
+/* ===== قائمة المزيد: بلاطات عصرية ===== */
+.bottom-sheet{display:grid!important;grid-template-columns:repeat(3,1fr);gap:10px;align-content:start;border-radius:30px 30px 0 0;padding-top:12px;bottom:0}
+.bottom-sheet>.sheet-handle,.bottom-sheet>.sheet-title,.bottom-sheet>.sheet-user{grid-column:1/-1}
+.bottom-sheet>.sheet-handle{margin:0 auto 4px}
+.bottom-sheet>.sheet-title{display:none}
+.sheet-user{display:flex;align-items:center;gap:12px;padding:12px;border-radius:20px;background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;margin-bottom:4px}
+.sheet-user .su-av{width:46px;height:46px;border-radius:15px;background:rgba(255,255,255,.2);display:grid;place-items:center;font-weight:900}
+.sheet-user strong{display:block;font-size:.95rem}.sheet-user small{opacity:.85;font-size:.72rem}
+.bottom-sheet .sheet-item{flex-direction:column;justify-content:center;gap:8px;min-height:92px;padding:12px 6px;border-radius:20px;background:var(--surface-2);border:1px solid var(--border);text-align:center;font-size:.8rem;font-weight:800}
+.bottom-sheet .sheet-item-icon{width:44px;height:44px;border-radius:15px;font-size:1.3rem;background:var(--surface)}
+.bottom-sheet .sheet-item:active{transform:scale(.96)}
+.bottom-sheet .sheet-item:last-of-type{background:#fff0f0;color:var(--danger);border-color:transparent}
+body.dark .bottom-sheet .sheet-item:last-of-type{background:#321d1d}
+/* ===== V4 ===== */
+.prev-score{display:block;margin-top:2px;font-size:.72rem;color:var(--muted)}.prev-score b.up{color:var(--success)}.prev-score b.down{color:var(--danger)}
+.school-head{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:2px solid var(--primary-2);margin-bottom:14px}
+.school-head img{height:52px;width:auto;border-radius:10px}.school-head strong{display:block;font-size:1.05rem}.school-head small{color:var(--muted)}
+.sign-row{display:flex;gap:16px;margin-top:26px}.sign-row div{flex:1;text-align:center;font-size:.8rem;color:var(--muted)}.sign-row span{display:block;border-bottom:1px solid var(--muted);height:34px;margin-top:6px}
+.bottom-nav button,#sideNav button{position:relative}
+.nav-badge{position:absolute;top:6px;right:50%;margin-right:-26px;background:var(--danger);color:#fff;font-size:.62rem;font-style:normal;min-width:17px;height:17px;border-radius:99px;display:grid;place-items:center;padding:0 4px}
+#sideNav .nav-badge{top:50%;margin-top:-9px;right:auto;left:12px;margin-right:0}
+#fab{position:fixed;left:16px;bottom:96px;z-index:300;display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+@media(min-width:1000px){#fab{bottom:26px}}
+.fab-btn{width:56px;height:56px;border-radius:20px;background:var(--primary);color:#fff;font-size:1.8rem;box-shadow:var(--shadow-lg);transition:transform .2s}
+#fab.open .fab-btn{transform:rotate(45deg)}
+.fab-menu{display:none;flex-direction:column;gap:8px}#fab.open .fab-menu{display:flex}
+.fab-menu button{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:14px;min-height:44px;padding:0 16px;font-weight:800;box-shadow:var(--shadow)}
+#ptr{position:fixed;top:calc(var(--header-height) + 8px);left:50%;transform:translate(-50%,-80px);background:var(--surface);border:1px solid var(--border);border-radius:99px;padding:8px 16px;font-size:.8rem;font-weight:800;box-shadow:var(--shadow-lg);z-index:900;transition:transform .15s}
+.loading-box .spinner{display:none}
+.loading-box::after{content:"";display:block;height:110px;margin-top:12px;border-radius:16px;background:linear-gradient(90deg,var(--surface-2) 25%,var(--border) 50%,var(--surface-2) 75%);background-size:200% 100%;animation:shim 1.2s infinite}
+@keyframes shim{to{background-position:-200% 0}}
+.student-card[data-lv]{border-right:4px solid var(--border)}
+.student-card[data-lv="excellent"],.student-card[data-lv="very-good"]{border-right-color:var(--success)}
+.student-card[data-lv="good"],.student-card[data-lv="acceptable"]{border-right-color:var(--warning)}
+.student-card[data-lv="needs-work"]{border-right-color:var(--danger)}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet"></head>
 
@@ -20350,12 +20388,13 @@ async function deleteEvaluation(id){
   if(!await confirmAction('سيتم حذف هذا التقييم نهائياً. هل أنت متأكد؟')) return;
   setLoading(true);
   try{
+    const __row=(APP.evaluations||[]).find(e=>String(e.id)===String(id))||((APP.studentProfileData&&APP.studentProfileData.evaluations)||[]).find(e=>String(e.id)===String(id));
     const {data,error} = await sb.from('evaluations').delete().eq('id',id).select('id');
     if(error) throw error;
     if(!data || !data.length){ showToast('لا تملك صلاحية حذف هذا التقييم أو أنه محذوف مسبقاً','warning'); return; }
     APP.evaluations = (APP.evaluations||[]).filter(e=>String(e.id)!==String(id));
     calculateDashboardStats();
-    showToast('تم حذف التقييم','success');
+    if(__row) showUndoToast('تم حذف التقييم',async()=>{ const r={id:__row.id,student_id:__row.student_id,subject_id:__row.subject_id,category_id:__row.category_id,teacher_id:__row.teacher_id,score:__row.score,note:__row.note,evaluation_date:__row.evaluation_date}; const {error:ie}=await sb.from('evaluations').insert(r); if(ie) throw ie; APP.evaluations.push(r); calculateDashboardStats(); showToast('تم التراجع عن الحذف','success'); if(APP.currentPage==='studentProfile') loadStudentProfile(APP.selectedStudentId); }); else showToast('تم حذف التقييم','success');
     if(APP.currentPage==='studentProfile') await loadStudentProfile(APP.selectedStudentId);
     else if(APP.currentPage==='reports' && APP.reportData) await loadReport();
     else if(APP.currentPage==='dashboard') renderDashboard();
@@ -20645,7 +20684,7 @@ function addAdminDeleteButtons(){
   add('button[onclick*="toggleProfileStatus("]',/toggleProfileStatus\(\s*'([^']+)'/,deleteUserAccount,id=>{const p=(APP.adminData?.profiles||[]).find(x=>x.id===id);return p&&p.role!=='admin'&&id!==APP.user?.id;});
 }
 const __rapBase2 = renderAdminPage;
-renderAdminPage = async function(){ await __rapBase2(); addAdminDeleteButtons(); };
+renderAdminPage = async function(){ await __rapBase2(); addAdminDeleteButtons(); addSchoolSettings(); };
 
 /* ================= V3: واجهة عصرية، PDF، رسوم، تبويبات ================= */
 window.__v2Charts = {};
@@ -20821,7 +20860,7 @@ const __rapBase3=renderAdminPage;
 renderAdminPage=async function(){
   await __rapBase3();
   const wrap=document.querySelector('#adminContent .admin-sections'); if(!wrap||!isAdmin()) return;
-  const kids=[...wrap.children], labels=['👥 الحسابات','🏫 الشعب','📚 المواد','🧑‍🏫 التكليفات','👨‍👩‍👧 أولياء الأمور'];
+  const kids=[...wrap.children], labels=['👥 الحسابات','🏫 الشعب','📚 المواد','🧑‍🏫 التكليفات','👨‍👩‍👧 أولياء الأمور','🏷️ المدرسة'];
   makeTabs(wrap,kids.map((e,i)=>({i,label:labels[i]||('قسم '+(i+1)),els:[e]})),'__adminTab');
 };
 const __lspBase2=loadStudentProfile;
@@ -20863,6 +20902,191 @@ renderDashboard=async function(){
     if($('dTrend')) mkChart('dTrend',{type:'line',data:{labels:tr.slice(-20).map(x=>formatDate(x.date)),datasets:[{data:tr.slice(-20).map(x=>Number(x.average)||0),borderColor:'#344e41',backgroundColor:'rgba(88,129,87,.15)',fill:true,tension:.3,pointRadius:2}]},options:barOpts(false)});
     if($('dAtt')) mkChart('dAtt',{type:'doughnut',data:{labels:['حاضر','متأخر','بعذر','غائب'],datasets:[{data:[st.present,st.late,st.excused,st.absent],backgroundColor:['#16855b','#d28a13','#3478d4','#d64545']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
   });
+};
+
+/* ---------- بطاقة المستخدم في قائمة المزيد ---------- */
+const __aruBase2=applyRoleUI;
+applyRoleUI=function(){
+  __aruBase2();
+  const sh=$('moreSheet'); if(!sh) return;
+  let u=sh.querySelector('.sheet-user');
+  if(!u){ u=document.createElement('div'); u.className='sheet-user'; const h=sh.querySelector('.sheet-handle'); h?h.after(u):sh.prepend(u); }
+  const n=APP.profile?.full_name||APP.user?.email||'المستخدم';
+  u.innerHTML='<div class="su-av">'+escapeHtml(getInitials(n))+'</div><div><strong>'+escapeHtml(n)+'</strong><small>'+escapeHtml(ROLE_LABELS[APP.role]||'')+'</small></div>';
+};
+
+/* ================= V4 ================= */
+/* 3) نافذة تأكيد بتصميم التطبيق */
+confirmAction=function(msg){
+  return new Promise(res=>{
+    const o=document.createElement('div'); o.className='modal-overlay active'; o.style.zIndex=3000;
+    o.innerHTML='<div class="modal" role="alertdialog"><div class="confirm-icon">⚠️</div><div style="text-align:center;font-weight:900;font-size:1.05rem;margin-bottom:6px">تأكيد العملية</div><div class="confirm-text">'+escapeHtml(msg||'هل أنت متأكد؟')+'</div><div class="modal-actions"><button type="button" class="btn btn-danger-solid" data-y>تأكيد</button><button type="button" class="btn btn-secondary" data-n>إلغاء</button></div></div>';
+    document.body.appendChild(o);
+    const done=v=>{o.remove();res(v);};
+    o.querySelector('[data-y]').onclick=()=>done(true); o.querySelector('[data-n]').onclick=()=>done(false);
+    o.addEventListener('click',e=>{ if(e.target===o) done(false); });
+  });
+};
+/* 4) تراجع */
+function showUndoToast(msg,fn){
+  const c=$('toastContainer'); if(!c){ showToast(msg,'success'); return; }
+  const t=document.createElement('div'); t.className='toast success';
+  t.innerHTML='<span style="flex:1">'+escapeHtml(msg)+'</span><button type="button" class="btn btn-small btn-secondary">↩ تراجع</button>';
+  c.appendChild(t); const rm=()=>t.remove();
+  t.querySelector('button').onclick=async()=>{ rm(); try{ await fn(); }catch(e){ handleSupabaseError(e,'تعذر التراجع'); } };
+  setTimeout(rm,8000);
+}
+const __dsBase=deactivateStudent;
+deactivateStudent=async function(id){
+  const st=getStudentById(id), was=st&&st.active!==false;
+  await __dsBase(id);
+  if(was && getStudentById(id)?.active===false) showUndoToast('تم تعطيل الطالب',()=>activateStudent(id));
+};
+/* 1) بطاقات الطلاب: متوسط وحضور وترتيب */
+function studentStatsMap(){
+  const ev={},at={},out={};
+  (APP.evaluations||[]).forEach(e=>(ev[e.student_id]=ev[e.student_id]||[]).push(e));
+  (APP.attendance||[]).forEach(a=>(at[a.student_id]=at[a.student_id]||[]).push(a));
+  (APP.students||[]).forEach(s=>{ const a=calculateWeightedAverage(ev[s.id]||[]), t=calculateAttendanceStats(at[s.id]||[]); out[s.id]={avg:a,att:t.total?t.percentage:null}; });
+  return out;
+}
+const __rsBase2=renderStudents;
+renderStudents=function(){
+  __rsBase2();
+  const f=$('studentFilters');
+  if(f && !$('studentSort')){
+    const s=document.createElement('select'); s.id='studentSort'; s.className='form-control'; s.style.flex='1';
+    s.innerHTML='<option value="name">ترتيب: الاسم</option><option value="avg">ترتيب: الأعلى متوسطاً</option><option value="low">ترتيب: الأقل متوسطاً</option><option value="att">ترتيب: الحضور</option>';
+    s.addEventListener('change',()=>renderStudents()); f.appendChild(s);
+  }
+  const list=$('studentsList'); if(!list) return;
+  const m=studentStatsMap(), cards=[...list.querySelectorAll('.student-card[data-student-id]')];
+  cards.forEach(c=>{
+    const x=m[c.dataset.studentId]; if(!x) return;
+    c.dataset.lv=x.avg===null?'':getScoreLevel(x.avg).className;
+    const meta=c.querySelector('.student-card-meta');
+    if(meta && !meta.querySelector('.sc-chip')) meta.insertAdjacentHTML('beforeend',
+      '<span class="sc-chip score-pill '+(x.avg===null?'':getScoreLevel(x.avg).className)+'">'+(x.avg===null?'بدون تقييم':'متوسط '+formatNumber(x.avg)+'%')+'</span>'+
+      '<span class="sc-chip status-badge '+(x.att===null?'':(x.att>=90?'success':x.att>=75?'warning':'danger'))+'">'+(x.att===null?'بدون حضور':'حضور '+formatNumber(x.att)+'%')+'</span>');
+  });
+  const mode=$('studentSort')?.value||'name';
+  if(mode!=='name' && cards.length){
+    const key=c=>{ const x=m[c.dataset.studentId]||{}; return mode==='att'?(x.att??-1):(x.avg??-1); };
+    cards.sort((a,b)=>mode==='low'?(key(a)-key(b)):(key(b)-key(a))).forEach(c=>list.appendChild(c));
+  }
+};
+/* 2) التقييم: الدرجة السابقة + مسودة تلقائية */
+function draftKey(){ return 'najm_draft_'+($('evalStudent')?.value||'')+'_'+($('evalSubject')?.value||'')+'_'+($('evalDate')?.value||''); }
+function markPrev(){
+  const st=$('evalStudent')?.value, su=$('evalSubject')?.value, date=$('evalDate')?.value; if(!st||!su) return;
+  document.querySelectorAll('.evaluation-row').forEach(row=>{
+    const cid=row.dataset.categoryId, inp=row.querySelector('.score-input');
+    const prev=(APP.evaluations||[]).filter(e=>e.student_id===st&&e.subject_id===su&&e.category_id===cid&&e.evaluation_date<date).sort((a,b)=>String(b.evaluation_date).localeCompare(String(a.evaluation_date)))[0];
+    let t=row.querySelector('.prev-score'); if(!t){ t=document.createElement('small'); t.className='prev-score'; row.querySelector('.evaluation-row-title div')?.appendChild(t); }
+    const upd=()=>{ if(!prev){ t.textContent=''; return; } const cur=inp.value===''?null:Number(inp.value); const a=cur===null?'':(cur>prev.score?' <b class="up">▲</b>':cur<prev.score?' <b class="down">▼</b>':' ●'); t.innerHTML='سابقاً: '+formatNumber(prev.score)+a; };
+    if(!inp.dataset.pv){ inp.dataset.pv='1'; inp.addEventListener('input',upd); }
+    upd();
+  });
+}
+function restoreDraft(){
+  try{
+    const d=JSON.parse(localStorage.getItem(draftKey())||'null'); if(!d) return;
+    document.querySelectorAll('.evaluation-row').forEach(row=>{ const x=d[row.dataset.categoryId]; if(!x) return; const s=row.querySelector('.score-input'), n=row.querySelector('.evaluation-note'); if(s&&s.value===''&&x.s!=='') s.value=x.s; if(n&&n.value===''&&x.n) n.value=x.n; });
+  }catch(e){}
+}
+let __draftT=null;
+document.addEventListener('input',e=>{
+  if(!e.target.matches||!e.target.matches('.score-input,.evaluation-note')) return;
+  clearTimeout(__draftT);
+  __draftT=setTimeout(()=>{ try{ const d={}; document.querySelectorAll('.evaluation-row').forEach(r=>{ d[r.dataset.categoryId]={s:r.querySelector('.score-input').value,n:r.querySelector('.evaluation-note').value}; }); if($('evalStudent')?.value&&$('evalSubject')?.value) localStorage.setItem(draftKey(),JSON.stringify(d)); }catch(_){} },400);
+});
+const __leeBase=loadExistingEvaluations;
+loadExistingEvaluations=async function(){ await __leeBase(); restoreDraft(); markPrev(); };
+const __seBase=saveEvaluations;
+saveEvaluations=async function(){ const k=draftKey(); await __seBase(); try{ localStorage.removeItem(k); }catch(e){} };
+/* 5) رأس التقارير + بيانات المدرسة */
+window.__school={name:'',logo:''};
+async function loadSchool(){
+  try{ const {data,error}=await sb.from('app_settings').select('value').eq('key','school').maybeSingle(); if(!error&&data&&data.value){ window.__school={name:data.value.name||'',logo:data.value.logo||''}; return; } }catch(e){}
+  try{ const l=JSON.parse(localStorage.getItem('najm_school')||'null'); if(l) window.__school=l; }catch(e){}
+}
+const __ladBase=loadAllData;
+loadAllData=async function(f){ await __ladBase(f); try{ await loadSchool(); }catch(e){} try{ updateParentBadge(); }catch(e){} };
+function decorateReport(box){
+  if(!box) return;
+  const host=box.querySelector('.report-header')?box:box.querySelector('.table-wrap'); if(!host||host.querySelector('.school-head')) return;
+  const s=window.__school||{};
+  host.insertAdjacentHTML('afterbegin','<div class="school-head">'+(s.logo?'<img src="'+escapeAttr(s.logo)+'" alt="" crossorigin="anonymous" onerror="this.remove()">':'')+'<div><strong>'+escapeHtml(s.name||'نجم الصف')+'</strong><small>تاريخ الإصدار: '+escapeHtml(formatDate(todayISO()))+'</small></div></div>');
+  host.insertAdjacentHTML('beforeend','<div class="sign-row"><div>توقيع المعلم<span></span></div><div>توقيع ولي الأمر<span></span></div><div>ختم المدرسة<span></span></div></div>');
+}
+const __lrBase=loadReport; loadReport=async function(){ await __lrBase(); decorateReport($('reportBox')); };
+const __gcrBase2=generateClassReport; generateClassReport=async function(){ await __gcrBase2(); decorateReport($('classReportBox')); };
+function addSchoolSettings(){
+  const wrap=document.querySelector('#adminContent .admin-sections'); if(!wrap||$('adminSchoolBox')) return;
+  const d=document.createElement('section'); d.className='card'; d.id='adminSchoolBox';
+  d.innerHTML='<div class="card-header"><div><div class="card-title">بيانات المدرسة</div><div class="card-subtitle">تظهر في رأس التقارير وملفات PDF</div></div></div><div class="form-grid"><div class="field"><label>اسم المدرسة</label><input id="schName" type="text" maxlength="120"></div><div class="field"><label>رابط الشعار (اختياري)</label><input id="schLogo" type="url" dir="ltr" placeholder="https://..."></div></div><button class="btn btn-primary" type="button" style="margin-top:12px" onclick="saveSchool()">حفظ</button>';
+  wrap.appendChild(d); $('schName').value=window.__school.name||''; $('schLogo').value=window.__school.logo||'';
+}
+async function saveSchool(){
+  if(!requireRole(['admin'])) return;
+  const v={name:$('schName').value.trim(),logo:$('schLogo').value.trim()};
+  window.__school=v; try{ localStorage.setItem('najm_school',JSON.stringify(v)); }catch(e){}
+  const {error}=await sb.from('app_settings').upsert({key:'school',value:v});
+  if(error){ console.error(error); showToast('حُفظت على هذا الجهاز فقط. شغّل SQL جدول app_settings ليظهر عند الجميع','warning'); } else showToast('تم حفظ بيانات المدرسة','success');
+}
+/* 6) ولي الأمر: شارة الجديد + مقارنة أسبوعية */
+function updateParentBadge(){
+  if(APP.role!=='parent') return;
+  const seen=new Date(localStorage.getItem('najm_seen_'+APP.user.id)||0);
+  const n=[].concat(APP.evaluations||[],APP.notes||[],APP.awards||[]).filter(x=>new Date(x.created_at)>seen).length;
+  document.querySelectorAll('[data-tab="parentReport"]').forEach(b=>{ b.querySelector('.nav-badge')?.remove(); if(n>0) b.insertAdjacentHTML('beforeend','<i class="nav-badge">'+(n>9?'9+':n)+'</i>'); });
+}
+const __rprp2=renderParentReportPage;
+renderParentReportPage=async function(){ await __rprp2(); try{ localStorage.setItem('najm_seen_'+APP.user.id,new Date().toISOString()); }catch(e){} document.querySelectorAll('.nav-badge').forEach(b=>b.remove()); };
+const __lprBase4=loadParentReport;
+loadParentReport=async function(id){
+  await __lprBase4(id);
+  const d=APP.parentReportData, box=$('parentReportBox'); if(!d||!box||!d.evaluations||box.querySelector('#weekCmp')) return;
+  const t=todayISO(), a1=addDays(t,-6), a0=addDays(t,-13), b1=addDays(t,-7);
+  const cur=calculateWeightedAverage(d.evaluations.filter(e=>e.evaluation_date>=a1&&e.evaluation_date<=t));
+  const prv=calculateWeightedAverage(d.evaluations.filter(e=>e.evaluation_date>=a0&&e.evaluation_date<=b1));
+  const diff=(cur!==null&&prv!==null)?cur-prv:null;
+  const html='<section class="report-section" id="weekCmp"><div class="section-heading"><h3>مقارنة بالأسبوع الماضي</h3></div>'+(diff===null?emptyInline('لا توجد تقييمات كافية في الأسبوعين للمقارنة.'):'<div class="grid-3"><div class="score-box"><div class="score-number">'+formatNumber(cur)+'%</div><div class="score-caption">هذا الأسبوع</div></div><div class="score-box"><div class="score-number">'+formatNumber(prv)+'%</div><div class="score-caption">الأسبوع الماضي</div></div><div class="score-box"><div class="score-number" style="color:var(--'+(diff>=0?'success':'danger')+')">'+(diff>=0?'▲ ':'▼ ')+formatNumber(Math.abs(diff))+'</div><div class="score-caption">الفرق</div></div></div>')+'</section>';
+  const sg=box.querySelector('.stats-grid'); if(sg) sg.insertAdjacentHTML('afterend',html);
+  decorateReport(box);
+};
+/* 7) سحب للتحديث */
+(function(){
+  let y0=null,dy=0; const ind=document.createElement('div'); ind.id='ptr'; ind.textContent='↓ اسحب للتحديث'; document.body.appendChild(ind);
+  document.addEventListener('touchstart',e=>{ y0=(window.scrollY===0&&APP.initialized&&!document.querySelector('.modal-backdrop.show,.modal-overlay.active,.bottom-sheet.show'))?e.touches[0].clientY:null; dy=0; },{passive:true});
+  document.addEventListener('touchmove',e=>{ if(y0===null) return; dy=e.touches[0].clientY-y0; if(dy>0){ ind.style.transform='translate(-50%,'+Math.min(dy/2-60,20)+'px)'; ind.textContent=dy>110?'↑ اترك للتحديث':'↓ اسحب للتحديث'; } },{passive:true});
+  document.addEventListener('touchend',()=>{ if(y0!==null&&dy>110) refreshData(); ind.style.transform='translate(-50%,-80px)'; y0=null; });
+})();
+/* 8) حالات فارغة بزر مباشر */
+const __eiBase=emptyInline;
+emptyInline=function(text){
+  const map={'لا توجد تقييمات بعد.':['＋ أضف تقييم','openStudentEvaluation(APP.selectedStudentId)'],'لا توجد ملاحظات.':['＋ أضف ملاحظة','openNoteModal()'],'لا توجد ملاحظات مسجلة.':['＋ أضف ملاحظة','openNoteModal()'],'لا توجد جوائز.':['＋ أضف إنجاز','openAwardModal()'],'لا توجد إنجازات مسجلة بعد.':['＋ أضف إنجاز','openAwardModal()'],'لا يوجد طلاب مسجلون بعد.':['＋ أضف طالباً','openStudentModal()']};
+  let h=__eiBase(text); const m=map[text];
+  if(m&&isStaff()) h=h.replace(/<\/div>\s*$/,'<div style="margin-top:10px"><button type="button" class="btn btn-primary btn-small" onclick="'+m[1]+'">'+m[0]+'</button></div></div>');
+  return h;
+};
+/* 9) زر عائم للمدرس */
+const __aruBase3=applyRoleUI;
+applyRoleUI=function(){
+  __aruBase3();
+  const app=$('app'); if(!app) return;
+  let f=$('fab');
+  if(!f){
+    f=document.createElement('div'); f.id='fab';
+    f.innerHTML='<div class="fab-menu"><button type="button" data-a="evaluation">📝 تقييم</button><button type="button" data-a="attendance">✅ حضور</button><button type="button" data-a="note">🗒️ ملاحظة</button></div><button type="button" class="fab-btn" aria-label="إجراء سريع">＋</button>';
+    f.addEventListener('click',e=>{
+      if(e.target.closest('.fab-btn')){ f.classList.toggle('open'); return; }
+      const b=e.target.closest('[data-a]'); if(!b) return; f.classList.remove('open');
+      if(b.dataset.a==='note') openNoteModal(); else tab(b.dataset.a);
+    });
+    app.appendChild(f);
+  }
+  f.classList.toggle('hidden',!isStaff());
 };
 </script>
 </body>
