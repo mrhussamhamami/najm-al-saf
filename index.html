@@ -2637,8 +2637,43 @@ body.dark .page-heading h1,body.dark .section-heading h3,body.dark .evaluation-s
 body.dark .danger-zone{background:#2a1a1a;border-color:#4a2b2b}
 body.dark .category-icon,body.dark .student-avatar{background:var(--primary-soft)}
 body.dark .report-line-chart text{fill:#9eafb2}
+/* ===== مظهر عصري V3 ===== */
+:root{--font:'Tajawal',Tahoma,Arial,sans-serif;--radius:22px}
+body{font-family:var(--font)}
+.card,.stat-card,.profile-section,.report-section{transition:transform .2s,box-shadow .2s}
+.stat-card:hover,.student-card:hover{transform:translateY(-2px)}
+.dashboard-hero{background:linear-gradient(135deg,#344e41,#588157 60%,#8fb98a)!important;border-radius:26px}
+.stat-value{font-size:1.7rem}
+#app{padding-bottom:calc(var(--bottom-height) + 40px)}
+.bottom-nav{left:12px!important;right:12px!important;bottom:max(10px,env(safe-area-inset-bottom))!important;height:68px!important;padding-bottom:0!important;border-radius:26px;border:1px solid var(--border);box-shadow:var(--shadow-lg)}
+.bottom-nav button{height:68px!important}
+.bottom-nav button.active .nav-icon{background:var(--primary);color:#fff}
+#sideNav{display:none}
+@media(min-width:1000px){
+  .bottom-nav{display:none!important}
+  #app{padding-bottom:30px}
+  #sideNav{display:flex;flex-direction:column;gap:4px;position:fixed;top:calc(var(--header-height) + 14px);bottom:14px;right:14px;width:220px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:22px;box-shadow:var(--shadow);overflow:auto;z-index:90}
+  #sideNav button{display:flex;align-items:center;gap:10px;min-height:46px;padding:0 12px;border-radius:14px;background:transparent;color:var(--muted);font-weight:800;font-size:.9rem;text-align:right}
+  #sideNav button:hover{background:var(--surface-2)}
+  #sideNav button.active{background:var(--primary);color:#fff}
+  #app main.container{margin-right:250px;margin-left:auto;max-width:1100px}
+}
+.vtabs{display:flex;gap:6px;overflow:auto;padding:5px;margin-bottom:14px;border-radius:16px;background:var(--surface-2);border:1px solid var(--border)}
+.vtabs button{flex:1;min-width:max-content;padding:9px 14px;border-radius:12px;background:transparent;color:var(--muted);font-weight:800;font-size:.82rem}
+.vtabs button.on{background:var(--primary);color:#fff;box-shadow:0 4px 12px rgba(52,78,65,.25)}
+.chips-row{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.qs{border:1px solid var(--border);background:var(--surface-2);border-radius:10px;min-height:34px;padding:0 12px;font-weight:800;color:var(--primary)}
+.qs:active{background:var(--primary);color:#fff}
+.qs-bar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:12px;margin-bottom:12px;border:1px dashed var(--border);border-radius:14px}
+.ba-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px;border:1px solid var(--border);border-radius:14px;margin-bottom:8px;flex-wrap:wrap}
+.ba-row strong{font-size:.88rem}.ba-opts{display:flex;gap:5px}
+.ba-opt{min-width:58px;min-height:38px;border-radius:10px;border:1px solid var(--border);background:var(--surface-2);color:var(--muted);font-size:.76rem;font-weight:800}
+.ba-opt.on.present{background:#e3f6ec;color:#12714d;border-color:#12714d}.ba-opt.on.absent{background:#fde8e8;color:#c13838;border-color:#c13838}
+.ba-opt.on.late{background:#fff5dc;color:#b07508;border-color:#b07508}.ba-opt.on.excused{background:#e8f0fc;color:#3478d4;border-color:#3478d4}
+.v2-chart{position:relative;height:230px}
+body.dark .vtabs,body.dark .ba-row,body.dark .qs-bar{border-color:var(--border)}
 </style>
-</head>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet"></head>
 
 <body>
 
@@ -20498,7 +20533,7 @@ renderReportsPage = function(){
     '<div class="form-group"><label class="form-label">المادة</label><select id="crSubject" class="form-control"></select></div>'+
     '<div class="form-group"><label class="form-label">من</label><input id="crFrom" type="date" class="form-control"></div>'+
     '<div class="form-group"><label class="form-label">إلى</label><input id="crTo" type="date" class="form-control"></div></div>'+
-    '<div class="heading-actions"><button class="btn btn-primary btn-sm" type="button" onclick="generateClassReport()">📊 إنشاء تقرير الشعبة</button><button class="btn btn-secondary btn-sm" type="button" onclick="printClassReport()">🖨️ طباعة</button></div><div id="classReportBox" style="margin-top:14px"></div>';
+    '<div class="heading-actions"><button class="btn btn-primary btn-sm" type="button" onclick="generateClassReport()">📊 إنشاء تقرير الشعبة</button><button class="btn btn-secondary btn-sm" type="button" onclick="printClassReport()">🖨️ طباعة</button><button class="btn btn-secondary btn-sm" type="button" onclick="exportElementPDF($(\'classReportBox\'),\'تقرير-الشعبة.pdf\')">📄 PDF</button></div><div id="classReportBox" style="margin-top:14px"></div>';
   const rb=$('reportBox'); rb.parentNode.insertBefore(card,rb.nextSibling);
 };
 function fillClassReportSelects(){
@@ -20526,6 +20561,7 @@ async function generateClassReport(){
     const rows=students.map(s=>{ const ev=evals.filter(e=>e.student_id===s.id); const a=calculateAttendanceStats(att.filter(x=>x.student_id===s.id)); return {s,n:ev.length,avg:calculateWeightedAverage(ev),att:a.total?a.percentage:null}; }).sort((a,b)=>(b.avg??-1)-(a.avg??-1));
     const cAvg=calculateWeightedAverage(evals), cls=getClassById(classId), sub=subjectId?getSubjectById(subjectId):null;
     const subs=subjectId?[]:calculateSubjectReport(evals);
+    window.__classChart={rows:rows.map(r=>({n:r.s.full_name,a:r.avg})),subs};
     window.__classReportHTML='<h2>تقرير الشعبة: '+escapeHtml(cls?(cls.grade+' / '+cls.section):'')+(sub?' — '+escapeHtml(sub.name):'')+'</h2><p>الفترة: '+escapeHtml(from||'البداية')+' — '+escapeHtml(to||'اليوم')+'</p><div class="stats"><div>الطلاب: '+students.length+'</div><div>التقييمات: '+evals.length+'</div><div>متوسط الشعبة: '+(cAvg===null?'—':formatNumber(cAvg)+'%')+'</div></div>'+
       (subs.length?'<h3>حسب المادة</h3><table><tr><th>المادة</th><th>التقييمات</th><th>المتوسط</th></tr>'+subs.map(x=>'<tr><td>'+escapeHtml(x.subjectName)+'</td><td>'+x.count+'</td><td>'+formatNumber(x.average)+'%</td></tr>').join('')+'</table>':'')+
       '<h3>ترتيب الطلاب</h3><table><tr><th>#</th><th>الطالب</th><th>التقييمات</th><th>المتوسط</th><th>الحضور</th></tr>'+rows.map((r,i)=>'<tr><td>'+(i+1)+'</td><td>'+escapeHtml(r.s.full_name)+'</td><td>'+r.n+'</td><td>'+(r.avg===null?'—':formatNumber(r.avg)+'%')+'</td><td>'+(r.att===null?'—':formatNumber(r.att)+'%')+'</td></tr>').join('')+'</table>';
@@ -20536,6 +20572,298 @@ function printClassReport(){
   if(!window.__classReportHTML){showToast('أنشئ التقرير أولاً','warning');return;}
   printHTML('تقرير الشعبة',window.__classReportHTML);
 }
+
+/* ---------- حذف: مدرس / مادة / شعبة / تكليف / ولي أمر ---------- */
+async function adminRefreshAll(){
+  try{ await loadReferenceData(); await loadAdminData(); await loadTeacherAssignments(); fillAllSelects(); }catch(e){ console.error(e); }
+  await renderAdminPage();
+}
+async function adminCount(table,col,id){
+  const r=await sb.from(table).select('id',{count:'exact',head:true}).eq(col,id);
+  if(r.error) throw r.error; return r.count||0;
+}
+async function adminDelete(table,col,id){
+  const {data,error}=await sb.from(table).delete().eq(col,id).select(col);
+  if(error) throw error; return (data||[]).length;
+}
+function adminDeleteError(e){
+  if(e && e.code==='23503') showToast('لا يمكن الحذف لوجود بيانات مرتبطة. استخدم التعطيل بدلاً منه','warning');
+  else handleSupabaseError(e,'تعذر الحذف');
+}
+async function deleteAdminAssignment(id){
+  if(!isAdmin()) return;
+  if(!await confirmAction('حذف هذا التكليف؟ (لن تُحذف التقييمات السابقة)')) return;
+  setLoading(true);
+  try{ const n=await adminDelete('teacher_assignments','id',id); if(!n){showToast('لم يتم الحذف','warning');return;} showToast('تم حذف التكليف','success'); await adminRefreshAll(); }
+  catch(e){ adminDeleteError(e); } finally{ setLoading(false); }
+}
+async function deleteAdminSubject(id){
+  if(!isAdmin()) return;
+  setLoading(true);
+  try{
+    const [ev,aw,as]=await Promise.all([adminCount('evaluations','subject_id',id),adminCount('awards','subject_id',id),adminCount('teacher_assignments','subject_id',id)]);
+    if(ev||aw){ showToast('لا يمكن حذف المادة: لديها '+ev+' تقييم و'+aw+' إنجاز. عطّلها بدلاً من حذفها','warning'); return; }
+    if(!await confirmAction('حذف المادة نهائياً'+(as?' مع '+as+' تكليف مرتبط':'')+'؟')) return;
+    if(as) await adminDelete('teacher_assignments','subject_id',id);
+    const n=await adminDelete('subjects','id',id); if(!n){showToast('لم يتم الحذف','warning');return;}
+    showToast('تم حذف المادة','success'); await adminRefreshAll();
+  }catch(e){ adminDeleteError(e); } finally{ setLoading(false); }
+}
+async function deleteAdminClass(id){
+  if(!isAdmin()) return;
+  setLoading(true);
+  try{
+    const [st,as]=await Promise.all([adminCount('students','class_id',id),adminCount('teacher_assignments','class_id',id)]);
+    if(st){ showToast('لا يمكن حذف الشعبة: فيها '+st+' طالب. انقل الطلاب أو عطّلها بدلاً من حذفها','warning'); return; }
+    if(!await confirmAction('حذف الشعبة نهائياً'+(as?' مع '+as+' تكليف مرتبط':'')+'؟')) return;
+    if(as) await adminDelete('teacher_assignments','class_id',id);
+    const n=await adminDelete('classes','id',id); if(!n){showToast('لم يتم الحذف','warning');return;}
+    showToast('تم حذف الشعبة','success'); await adminRefreshAll();
+  }catch(e){ adminDeleteError(e); } finally{ setLoading(false); }
+}
+async function deleteUserAccount(id){
+  if(!isAdmin()) return;
+  if(id===APP.user?.id){ showToast('لا يمكنك حذف حسابك','warning'); return; }
+  const p=(APP.adminData?.profiles||[]).find(x=>x.id===id); if(!p||p.role==='admin') return;
+  const label=p.role==='teacher'?'المدرس':'ولي الأمر';
+  if(!await confirmAction('حذف '+label+' "'+(p.full_name||'')+'" وحسابه نهائياً؟'+(p.role==='teacher'?' (يُمنع إن كان قد سجّل تقييمات أو ملاحظات، فعطّله بدلاً من ذلك)':' (تُحذف ارتباطاته بالطلاب فقط)'))) return;
+  setLoading(true);
+  try{ await invokeFn('delete-user',{user_id:id}); showToast('تم حذف الحساب','success'); await adminRefreshAll(); }
+  catch(e){ showToast(String(e.message).slice(0,220),'error'); } finally{ setLoading(false); }
+}
+function addAdminDeleteButtons(){
+  const root=$('adminContent'); if(!root) return;
+  const add=(sel,re,fn,check)=>root.querySelectorAll(sel).forEach(b=>{
+    const m=(b.getAttribute('onclick')||'').match(re); if(!m) return;
+    if(check && !check(m[1])) return;
+    if(b.parentNode.querySelector('[data-del="'+m[1]+'"]')) return;
+    const x=document.createElement('button'); x.type='button'; x.className='btn btn-small btn-danger'; x.dataset.del=m[1]; x.textContent='🗑️ حذف'; x.onclick=()=>fn(m[1]); b.parentNode.appendChild(x);
+  });
+  add('button[onclick*="toggleAdminClass("]',/toggleAdminClass\(\s*'([^']+)'/,deleteAdminClass);
+  add('button[onclick*="toggleAdminSubject("]',/toggleAdminSubject\(\s*'([^']+)'/,deleteAdminSubject);
+  add('button[onclick*="toggleAdminAssignment("]',/toggleAdminAssignment\(\s*'([^']+)'/,deleteAdminAssignment);
+  add('button[onclick*="toggleProfileStatus("]',/toggleProfileStatus\(\s*'([^']+)'/,deleteUserAccount,id=>{const p=(APP.adminData?.profiles||[]).find(x=>x.id===id);return p&&p.role!=='admin'&&id!==APP.user?.id;});
+}
+const __rapBase2 = renderAdminPage;
+renderAdminPage = async function(){ await __rapBase2(); addAdminDeleteButtons(); };
+
+/* ================= V3: واجهة عصرية، PDF، رسوم، تبويبات ================= */
+window.__v2Charts = {};
+function mkChart(id,cfg){
+  const cv=$(id); if(!cv||!window.Chart) return;
+  try{ window.__v2Charts[id]&&window.__v2Charts[id].destroy(); }catch(e){}
+  window.__v2Charts[id]=new Chart(cv,cfg);
+}
+const barOpts=(horiz)=>({responsive:true,maintainAspectRatio:false,indexAxis:horiz?'y':'x',plugins:{legend:{display:false}},scales:{[horiz?'x':'y']:{min:0,max:100,ticks:{callback:v=>v+'%'}},[horiz?'y':'x']:{grid:{display:false}}}});
+const chartCard=(title,id,h)=>'<div class="report-chart-card"><h4 class="report-chart-title">'+escapeHtml(title)+'</h4><div class="v2-chart" style="height:'+(h||230)+'px"><canvas id="'+id+'"></canvas></div></div>';
+
+/* ---------- PDF مع الرسوم البيانية ---------- */
+function loadScriptOnce(src){ return new Promise((res,rej)=>{ const s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=()=>rej(new Error('تعذر تحميل مكتبة PDF، تحقق من الاتصال')); document.head.appendChild(s); }); }
+async function exportElementPDF(el,name){
+  if(!el || !el.innerHTML.trim()){ showToast('أنشئ التقرير أولاً','warning'); return; }
+  setLoading(true); showToast('جاري إنشاء PDF...','info');
+  try{
+    if(!window.html2canvas) await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+    if(!window.jspdf) await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+    Object.values(window.__najmReportCharts||{}).concat(Object.values(window.__v2Charts)).forEach(c=>{ try{c.update('none');}catch(e){} });
+    const canvas=await html2canvas(el,{scale:2,backgroundColor:'#ffffff',useCORS:true,windowWidth:900,onclone:d=>{ d.body.classList.remove('dark'); d.documentElement.classList.remove('dark'); }});
+    const pdf=new window.jspdf.jsPDF('p','mm','a4'), W=210, H=297, M=8, iw=W-2*M, pageHpx=Math.floor((H-2*M)*canvas.width/iw);
+    for(let y=0,i=0; y<canvas.height; y+=pageHpx,i++){
+      const part=document.createElement('canvas'); part.width=canvas.width; part.height=Math.min(pageHpx,canvas.height-y);
+      part.getContext('2d').drawImage(canvas,0,y,canvas.width,part.height,0,0,canvas.width,part.height);
+      if(i) pdf.addPage();
+      pdf.addImage(part.toDataURL('image/jpeg',0.92),'JPEG',M,M,iw,part.height*iw/canvas.width);
+    }
+    pdf.save(name||'تقرير.pdf'); showToast('تم إنشاء PDF','success');
+  }catch(e){ console.error(e); showToast(e.message||'تعذر إنشاء PDF','error'); }
+  finally{ setLoading(false); }
+}
+function addBtnAfter(sel,html){
+  const b=document.querySelector(sel); if(!b||b.parentNode.querySelector('[data-pdf]')) return;
+  const x=document.createElement('button'); x.type='button'; x.dataset.pdf='1'; x.className='btn btn-secondary btn-sm'; x.innerHTML='📄 PDF'; x.onclick=html; b.after(x);
+}
+const __rrp3=renderReportsPage;
+renderReportsPage=function(){ __rrp3(); addBtnAfter('#pageReports button[onclick="printReport()"]',()=>exportElementPDF($('reportBox'),'تقرير-'+(APP.reportData?.student?.full_name||'طالب')+'.pdf')); };
+const __rprp=renderParentReportPage;
+renderParentReportPage=async function(){ await __rprp(); addBtnAfter('#pageParentReport button[onclick="printParentReport()"]',()=>exportElementPDF($('parentReportBox'),'تقرير-'+(APP.parentReportData?.student?.full_name||'ابن')+'.pdf')); };
+
+/* ---------- رسوم تقرير ولي الأمر ---------- */
+const __lprBase3=loadParentReport;
+loadParentReport=async function(id){
+  await __lprBase3(id);
+  const d=APP.parentReportData, box=$('parentReportBox'); if(!d||!box||!d.evaluations) return;
+  const html=buildReportBarChart(calculateSubjectReport(d.evaluations).map(i=>({label:i.subjectName,value:Number(i.average)||0})),'المتوسط حسب المادة')+buildReportBarChart(calculateCategoryReport(d.evaluations).map(i=>({label:i.categoryName,value:Number(i.average)||0})),'المتوسط حسب مجال التقييم')+buildReportTrendChart(calculateEvaluationTrend(d.evaluations));
+  const sg=box.querySelector('.stats-grid'); if(sg) sg.insertAdjacentHTML('afterend',html); else box.insertAdjacentHTML('beforeend',html);
+  requestAnimationFrame(()=>renderReportCharts(d));
+};
+
+/* ---------- رسوم الشعبة ---------- */
+const __gcrBase=generateClassReport;
+generateClassReport=async function(){
+  await __gcrBase();
+  const box=$('classReportBox'), d=window.__classChart; if(!box||!d||!box.querySelector('.table-wrap')) return;
+  const rows=d.rows.filter(r=>r.a!==null);
+  const wrap=box.querySelector('.table-wrap');
+  wrap.insertAdjacentHTML('afterbegin',(rows.length?chartCard('متوسط كل طالب','ccStudents',Math.max(240,rows.length*26)):'')+(d.subs.length?chartCard('المتوسط حسب المادة','ccSubjects'):''));
+  requestAnimationFrame(()=>{
+    if(rows.length) mkChart('ccStudents',{type:'bar',data:{labels:rows.map(r=>r.n),datasets:[{data:rows.map(r=>Number(r.a.toFixed(1))),backgroundColor:'#588157',borderRadius:6}]},options:barOpts(true)});
+    if(d.subs.length) mkChart('ccSubjects',{type:'bar',data:{labels:d.subs.map(x=>x.subjectName),datasets:[{data:d.subs.map(x=>Number(x.average)||0),backgroundColor:'#0f9b8e',borderRadius:8,maxBarThickness:46}]},options:barOpts(false)});
+  });
+};
+function printClassReport(){
+  const box=$('classReportBox'); if(!box||!box.querySelector('.table-wrap')){showToast('أنشئ التقرير أولاً','warning');return;}
+  const c=box.cloneNode(true);
+  c.querySelectorAll('canvas').forEach(cv=>{ try{ const src=$(cv.id); const im=document.createElement('img'); im.src=src.toDataURL('image/png',1); im.style.cssText='display:block;width:100%;max-height:340px;object-fit:contain'; cv.replaceWith(im);}catch(e){} });
+  printHTML('تقرير الشعبة',c.innerHTML);
+}
+
+/* ---------- شريط جانبي (سطح المكتب) ---------- */
+const __aruBase=applyRoleUI;
+applyRoleUI=function(){
+  __aruBase();
+  const app=$('app'); if(!app) return;
+  let s=$('sideNav'); if(!s){ s=document.createElement('nav'); s.id='sideNav'; app.insertBefore(s,app.querySelector('main')); }
+  const items = APP.role==='parent'
+    ? [['parent','👨‍👩‍👦','أبنائي',"tab('parent')"],['parentReport','📊','التقرير','openParentLatestReport()']]
+    : [['dashboard','🏠','الرئيسية',"tab('dashboard')"],['students','👨‍🎓','الطلاب',"tab('students')"],['evaluation','📝','التقييم',"tab('evaluation')"],['attendance','✅','الحضور',"tab('attendance')"],['notes','🗒️','الملاحظات',"tab('notes')"],['awards','🏆','الإنجازات',"tab('awards')"],['reports','📈','التقارير',"tab('reports')"]].concat(APP.role==='admin'?[['admin','⚙️','الإدارة',"tab('admin')"]]:[]);
+  s.innerHTML=items.map(i=>'<button type="button" data-tab="'+i[0]+'" onclick="'+i[3]+'"><span>'+i[1]+'</span><span>'+i[2]+'</span></button>').join('');
+  if(typeof updateNavigation==='function') updateNavigation(APP.currentPage);
+};
+
+/* ---------- تقييم سريع ---------- */
+const __rerBase=renderEvaluationRows;
+renderEvaluationRows=function(){
+  __rerBase();
+  const box=document.getElementById('evaluationRows')||$('evaluationBox'); if(!box) return;
+  const vals=[100,90,80,70,60];
+  box.querySelectorAll('.evaluation-row').forEach(row=>{
+    if(row.querySelector('.chips-row')) return;
+    const inp=row.querySelector('.score-input'), c=document.createElement('div'); c.className='chips-row';
+    c.innerHTML=vals.map(v=>'<button type="button" class="qs" data-v="'+v+'">'+v+'</button>').join('');
+    c.addEventListener('click',e=>{ const b=e.target.closest('.qs'); if(b){ inp.value=b.dataset.v; inp.dispatchEvent(new Event('input',{bubbles:true})); } });
+    row.insertBefore(c,row.querySelector('.evaluation-note'));
+  });
+  if(!box.querySelector('.qs-bar') && box.querySelector('.evaluation-row')){
+    const bar=document.createElement('div'); bar.className='qs-bar';
+    bar.innerHTML='<strong style="font-size:.85rem">طبّق الدرجة على كل المحاور:</strong>'+vals.map(v=>'<button type="button" class="qs" data-all="'+v+'">'+v+'</button>').join('')+'<button type="button" class="qs" data-all="">مسح</button>';
+    bar.addEventListener('click',e=>{ const b=e.target.closest('[data-all]'); if(!b) return; box.querySelectorAll('.score-input').forEach(i=>i.value=b.dataset.all); });
+    box.insertBefore(bar,box.firstChild);
+  }
+};
+
+/* ---------- حضور جماعي ---------- */
+window.__ba={};
+const BA_LABELS={present:'حاضر',absent:'غائب',late:'متأخر',excused:'بعذر'};
+function renderBulkAttendance(){
+  const ab=$('attendanceBox'); if(!ab) return;
+  let c=$('bulkAttCard');
+  if(!c){
+    c=document.createElement('div'); c.className='card'; c.id='bulkAttCard';
+    c.innerHTML='<div class="card-title"><h2>تسجيل حضور الشعبة</h2><small>كل الطلاب في شاشة واحدة</small></div><div class="grid-2"><div class="form-group"><label class="form-label">الشعبة</label><select id="baClass" class="form-control" onchange="bulkAttList()"></select></div><div class="form-group"><label class="form-label">التاريخ</label><input id="baDate" type="date" class="form-control" onchange="bulkAttList()"></div></div><div id="baList"></div>';
+    ab.parentNode.insertBefore(c,ab);
+  }
+  const sel=$('baClass'), v=sel.value;
+  sel.innerHTML='<option value="">اختر الشعبة</option>'+(APP.classes||[]).map(x=>'<option value="'+escapeAttr(x.id)+'">'+escapeHtml(x.grade+' / '+x.section)+'</option>').join('');
+  sel.value=v; if(!$('baDate').value) $('baDate').value=todayISO();
+}
+function bulkAttList(){
+  const cid=$('baClass').value, date=$('baDate').value, box=$('baList');
+  if(!cid||!date){ box.innerHTML=''; return; }
+  const sts=sortByName((APP.students||[]).filter(s=>s.class_id===cid&&s.active!==false),'full_name');
+  if(!sts.length){ box.innerHTML=emptyInline('لا يوجد طلاب في هذه الشعبة.'); return; }
+  window.__ba={};
+  sts.forEach(s=>{ const r=(APP.attendance||[]).find(a=>a.student_id===s.id&&a.attendance_date===date); window.__ba[s.id]=r?r.status:'present'; });
+  box.innerHTML='<div class="qs-bar"><button type="button" class="qs" onclick="bulkAttAll(\'present\')">الكل حاضر</button><button type="button" class="qs" onclick="bulkAttAll(\'absent\')">الكل غائب</button></div>'+
+    sts.map(s=>'<div class="ba-row" data-id="'+escapeAttr(s.id)+'"><strong>'+escapeHtml(s.full_name)+'</strong><div class="ba-opts">'+Object.keys(BA_LABELS).map(k=>'<button type="button" class="ba-opt '+k+'" data-k="'+k+'" onclick="bulkAttSet(\''+escapeAttr(s.id)+'\',\''+k+'\')">'+BA_LABELS[k]+'</button>').join('')+'</div></div>').join('')+
+    '<button class="btn btn-primary btn-block" type="button" onclick="bulkAttSave()" style="margin-top:8px">💾 حفظ حضور الشعبة ('+sts.length+')</button>';
+  bulkAttPaint();
+}
+function bulkAttPaint(){ document.querySelectorAll('#baList .ba-row').forEach(r=>{ const st=window.__ba[r.dataset.id]; r.querySelectorAll('.ba-opt').forEach(b=>b.classList.toggle('on',b.dataset.k===st)); }); }
+function bulkAttSet(id,k){ window.__ba[id]=k; bulkAttPaint(); }
+function bulkAttAll(k){ Object.keys(window.__ba).forEach(i=>window.__ba[i]=k); bulkAttPaint(); }
+async function bulkAttSave(){
+  if(!requireRole(['admin','teacher'])) return;
+  const date=$('baDate').value, payload=Object.entries(window.__ba).map(([id,st])=>({student_id:id,recorded_by:APP.user.id,attendance_date:date,status:st}));
+  if(!payload.length) return;
+  setLoading(true);
+  try{
+    const {error}=await sb.from('attendance').upsert(payload,{onConflict:'student_id,attendance_date'});
+    if(error) throw error;
+    await loadAttendanceData(); calculateDashboardStats();
+    showToast('تم حفظ حضور '+payload.length+' طالب','success');
+  }catch(e){ handleSupabaseError(e,'تعذر حفظ الحضور'); }
+  finally{ setLoading(false); }
+}
+const __rapg=renderAttendancePage;
+renderAttendancePage=function(){ __rapg(); renderBulkAttendance(); };
+
+/* ---------- فلتر الشعبة في صفحة الطلاب ---------- */
+const __rsBase=renderStudents;
+renderStudents=function(){
+  const f=$('studentFilters');
+  if(f && !$('studentClassFilter')){
+    f.innerHTML='<select id="studentClassFilter" class="form-control" style="flex:1"></select>';
+    fillStudentClassFilter(); $('studentClassFilter').addEventListener('change',()=>renderStudents());
+  }else if(f){ fillStudentClassFilter(); }
+  __rsBase();
+};
+
+/* ---------- تبويبات: الإدارة وملف الطالب ---------- */
+function makeTabs(host,items,key){
+  const old=host.previousElementSibling; if(old&&old.classList&&old.classList.contains('vtabs')) old.remove();
+  const bar=document.createElement('div'); bar.className='vtabs';
+  const show=i=>{ window[key]=i; items.forEach(it=>it.els.forEach(e=>e.classList.toggle('hidden',it.i!==i))); bar.querySelectorAll('button').forEach((b,j)=>b.classList.toggle('on',j===i)); window.dispatchEvent(new Event('v2tab')); };
+  bar.innerHTML=items.map(it=>'<button type="button">'+it.label+'</button>').join('');
+  bar.addEventListener('click',e=>{ const b=e.target.closest('button'); if(b) show([...bar.children].indexOf(b)); });
+  host.parentNode.insertBefore(bar,host); show(Math.min(window[key]||0,items.length-1));
+}
+const __rapBase3=renderAdminPage;
+renderAdminPage=async function(){
+  await __rapBase3();
+  const wrap=document.querySelector('#adminContent .admin-sections'); if(!wrap||!isAdmin()) return;
+  const kids=[...wrap.children], labels=['👥 الحسابات','🏫 الشعب','📚 المواد','🧑‍🏫 التكليفات','👨‍👩‍👧 أولياء الأمور'];
+  makeTabs(wrap,kids.map((e,i)=>({i,label:labels[i]||('قسم '+(i+1)),els:[e]})),'__adminTab');
+};
+const __lspBase2=loadStudentProfile;
+loadStudentProfile=async function(id){
+  await __lspBase2(id);
+  const box=$('studentProfileBox'); if(!box||!box.querySelector('.profile-section')) return;
+  const secs=[...box.querySelectorAll('.profile-section')], dz=box.querySelector('.danger-zone');
+  const over=[box.querySelector('.profile-hero'),box.querySelector('.stats-grid'),secs[0],dz].filter(Boolean);
+  const d=APP.studentProfileData;
+  if(d&&secs[1]&&!$('pfTrend')){
+    const tr=calculateEvaluationTrend(d.evaluations||[]);
+    if(tr.length>1) secs[1].insertAdjacentHTML('afterbegin',chartCard('تطور التقييم','pfTrend',200));
+    const st=calculateAttendanceStats(d.attendance||[]);
+    if(st.total&&secs[2]) secs[2].insertAdjacentHTML('afterbegin',chartCard('توزيع الحضور','pfAtt',200));
+  }
+  const tabs=[{i:0,label:'نظرة عامة',els:over},{i:1,label:'التقييمات',els:[secs[1]]},{i:2,label:'الحضور',els:[secs[2]]},{i:3,label:'الملاحظات',els:[secs[3]]},{i:4,label:'الإنجازات',els:[secs[4]]}].filter(t=>t.els[0]);
+  const anchor=box.querySelector('.profile-hero')||box.firstChild;
+  window.__pfTab=0; makeTabs(anchor,tabs,'__pfTab');
+  if(d){
+    const tr=calculateEvaluationTrend(d.evaluations||[]), st=calculateAttendanceStats(d.attendance||[]);
+    requestAnimationFrame(()=>{
+      if($('pfTrend')) mkChart('pfTrend',{type:'line',data:{labels:tr.map(x=>formatDate(x.date)),datasets:[{data:tr.map(x=>Number(x.average)||0),borderColor:'#344e41',backgroundColor:'rgba(88,129,87,.15)',fill:true,tension:.3}]},options:barOpts(false)});
+      if($('pfAtt')) mkChart('pfAtt',{type:'doughnut',data:{labels:['حاضر','متأخر','بعذر','غائب'],datasets:[{data:[st.present,st.late,st.excused,st.absent],backgroundColor:['#16855b','#d28a13','#3478d4','#d64545']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
+    });
+  }
+};
+/* الرسوم داخل التبويبات المخفية تحتاج إعادة قياس عند الإظهار */
+window.addEventListener('v2tab',()=>setTimeout(()=>Object.values(window.__v2Charts).forEach(c=>{try{c.resize();}catch(e){}}),50));
+
+/* ---------- رسوم إضافية في الرئيسية ---------- */
+const __rdBase=renderDashboard;
+renderDashboard=async function(){
+  await __rdBase();
+  const content=$('dashboardContent'); if(!content||!window.Chart) return;
+  const tr=calculateEvaluationTrend(APP.evaluations||[]), st=calculateAttendanceStats(APP.attendance||[]);
+  if(!tr.length&&!st.total) return;
+  content.insertAdjacentHTML('beforeend','<div class="dash-two" style="margin-top:14px">'+(tr.length>1?chartCard('تطور المتوسط عبر الزمن','dTrend'):'')+(st.total?chartCard('توزيع الحضور','dAtt'):'')+'</div>');
+  requestAnimationFrame(()=>{
+    if($('dTrend')) mkChart('dTrend',{type:'line',data:{labels:tr.slice(-20).map(x=>formatDate(x.date)),datasets:[{data:tr.slice(-20).map(x=>Number(x.average)||0),borderColor:'#344e41',backgroundColor:'rgba(88,129,87,.15)',fill:true,tension:.3,pointRadius:2}]},options:barOpts(false)});
+    if($('dAtt')) mkChart('dAtt',{type:'doughnut',data:{labels:['حاضر','متأخر','بعذر','غائب'],datasets:[{data:[st.present,st.late,st.excused,st.absent],backgroundColor:['#16855b','#d28a13','#3478d4','#d64545']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
+  });
+};
 </script>
 </body>
 </html>
