@@ -2710,6 +2710,40 @@ body.dark .bottom-sheet .sheet-item:last-of-type{background:#321d1d}
 .student-card[data-lv="excellent"],.student-card[data-lv="very-good"]{border-right-color:var(--success)}
 .student-card[data-lv="good"],.student-card[data-lv="acceptable"]{border-right-color:var(--warning)}
 .student-card[data-lv="needs-work"]{border-right-color:var(--danger)}
+/* ===== V5: طباعة نصوص وأيقونات ===== */
+*,*::before,*::after{min-width:0}
+body{line-height:1.7;-webkit-text-size-adjust:100%}
+h1,h2,h3,h4,p,strong,span,small,label,td,th,button,option{overflow-wrap:anywhere}
+.btn{white-space:normal;text-align:center;line-height:1.35}
+.status-badge,.score-pill,.badge,.chip,.qs{white-space:nowrap}
+.bottom-nav button{font-size:.72rem;white-space:nowrap;padding:0 2px}
+.bottom-nav button span:last-child{max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.brand-subtitle{font-size:.72rem}
+.stat-label,.mini-row-main span,.list-item-subtitle,.card-subtitle,.modal-subtitle,small,.muted{font-size:.78rem;line-height:1.5}
+.stat-value{font-size:clamp(1.25rem,5.5vw,1.7rem)}
+.page-heading,.card-title,.card-header,.section-heading,.mini-row,.list-item,.record-head,.note-card-head{flex-wrap:wrap}
+.student-card-title h3,.list-item-title{line-height:1.4}
+.student-card-meta{font-size:.82rem}
+.sheet-item{font-size:.82rem;line-height:1.3}
+select,select.form-control{max-width:100%;text-overflow:ellipsis}
+.table-wrap{overflow-x:auto}
+.ic{width:22px;height:22px;flex:none;stroke-width:1.9}
+.nav-icon .ic{width:21px;height:21px}
+.sheet-item-icon .ic{width:24px;height:24px}
+.stat-icon .ic{color:var(--primary-2)}
+#sideNav button .ic{width:20px;height:20px}
+.brand-icon .ic{color:#fff}.login-logo .ic{width:38px;height:38px;color:#fff}
+.award-icon .ic{color:#d28a13}
+.honor-grid{display:grid;gap:12px}@media(min-width:700px){.honor-grid{grid-template-columns:1fr 1fr}}
+.honor-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.honor-row:last-child{border-bottom:0}
+.honor-row .award-icon{width:40px;height:40px;flex:none;border-radius:12px;background:#fff4d7;display:grid;place-items:center}
+.alert-card{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 14px;border-radius:16px;border:1px solid #f0e0b4;background:#fff8e6;margin-bottom:10px;font-size:.88rem}
+.alert-card .btn{margin-right:auto}
+body.dark .alert-card{background:#352c18;border-color:#4a3d1f}
+.sug-card{border:1px solid var(--border);border-radius:16px;padding:12px;margin-bottom:10px;background:var(--surface)}
+.sug-card .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.pick-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 0;border-bottom:1px solid var(--border);flex-wrap:wrap}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet"></head>
 
@@ -20331,7 +20365,7 @@ loadEvaluationData = async function(){
 
 /* ---------- الصفحة الرئيسية حسب الدور ---------- */
 function dashStat(icon,label,value){
-  return '<div class="stat-card"><div class="stat-icon">'+icon+'</div><div class="stat-value">'+escapeHtml(String(value))+'</div><div class="stat-label">'+escapeHtml(label)+'</div></div>';
+  return '<div class="stat-card"><div class="stat-icon">'+ico(icon)+'</div><div class="stat-value">'+escapeHtml(String(value))+'</div><div class="stat-label">'+escapeHtml(label)+'</div></div>';
 }
 async function renderDashboard(){
   const role = APP.role;
@@ -20572,7 +20606,7 @@ renderReportsPage = function(){
     '<div class="form-group"><label class="form-label">المادة</label><select id="crSubject" class="form-control"></select></div>'+
     '<div class="form-group"><label class="form-label">من</label><input id="crFrom" type="date" class="form-control"></div>'+
     '<div class="form-group"><label class="form-label">إلى</label><input id="crTo" type="date" class="form-control"></div></div>'+
-    '<div class="heading-actions"><button class="btn btn-primary btn-sm" type="button" onclick="generateClassReport()">📊 إنشاء تقرير الشعبة</button><button class="btn btn-secondary btn-sm" type="button" onclick="printClassReport()">🖨️ طباعة</button><button class="btn btn-secondary btn-sm" type="button" onclick="exportElementPDF($(\'classReportBox\'),\'تقرير-الشعبة.pdf\')">📄 PDF</button></div><div id="classReportBox" style="margin-top:14px"></div>';
+    '<div class="heading-actions"><button class="btn btn-primary btn-sm" type="button" onclick="generateClassReport()">📊 إنشاء تقرير الشعبة</button><button class="btn btn-secondary btn-sm" type="button" onclick="printClassReport()">🖨️ طباعة</button><button class="btn btn-secondary btn-sm" type="button" onclick="exportElementPDF($(\'classReportBox\'),\'تقرير-الشعبة.pdf\')">📄 PDF</button><button class="btn btn-secondary btn-sm" type="button" onclick="printBlankSheet(\'att\')">كشف حضور فارغ</button><button class="btn btn-secondary btn-sm" type="button" onclick="printBlankSheet(\'grade\')">كشف درجات فارغ</button></div><div id="classReportBox" style="margin-top:14px"></div>';
   const rb=$('reportBox'); rb.parentNode.insertBefore(card,rb.nextSibling);
 };
 function fillClassReportSelects(){
@@ -20684,7 +20718,7 @@ function addAdminDeleteButtons(){
   add('button[onclick*="toggleProfileStatus("]',/toggleProfileStatus\(\s*'([^']+)'/,deleteUserAccount,id=>{const p=(APP.adminData?.profiles||[]).find(x=>x.id===id);return p&&p.role!=='admin'&&id!==APP.user?.id;});
 }
 const __rapBase2 = renderAdminPage;
-renderAdminPage = async function(){ await __rapBase2(); addAdminDeleteButtons(); addSchoolSettings(); };
+renderAdminPage = async function(){ await __rapBase2(); addAdminDeleteButtons(); addSchoolSettings(); addAdminExtras(); };
 
 /* ================= V3: واجهة عصرية، PDF، رسوم، تبويبات ================= */
 window.__v2Charts = {};
@@ -20764,8 +20798,8 @@ applyRoleUI=function(){
   let s=$('sideNav'); if(!s){ s=document.createElement('nav'); s.id='sideNav'; app.insertBefore(s,app.querySelector('main')); }
   const items = APP.role==='parent'
     ? [['parent','👨‍👩‍👦','أبنائي',"tab('parent')"],['parentReport','📊','التقرير','openParentLatestReport()']]
-    : [['dashboard','🏠','الرئيسية',"tab('dashboard')"],['students','👨‍🎓','الطلاب',"tab('students')"],['evaluation','📝','التقييم',"tab('evaluation')"],['attendance','✅','الحضور',"tab('attendance')"],['notes','🗒️','الملاحظات',"tab('notes')"],['awards','🏆','الإنجازات',"tab('awards')"],['reports','📈','التقارير',"tab('reports')"]].concat(APP.role==='admin'?[['admin','⚙️','الإدارة',"tab('admin')"]]:[]);
-  s.innerHTML=items.map(i=>'<button type="button" data-tab="'+i[0]+'" onclick="'+i[3]+'"><span>'+i[1]+'</span><span>'+i[2]+'</span></button>').join('');
+    : [['dashboard','🏠','الرئيسية',"tab('dashboard')"],['students','👨‍🎓','الطلاب',"tab('students')"],['evaluation','📝','التقييم',"tab('evaluation')"],['attendance','✅','الحضور',"tab('attendance')"],['notes','🗒️','الملاحظات',"tab('notes')"],['awards','🏆','الإنجازات',"tab('awards')"],['reports','📈','التقارير',"tab('reports')"],['honor','🏆','لوحة الشرف',"tab('honor')"]].concat(APP.role==='admin'?[['admin','⚙️','الإدارة',"tab('admin')"]]:[]);
+  s.innerHTML=items.map(i=>'<button type="button" data-tab="'+i[0]+'" onclick="'+i[3]+'"><span>'+ico(i[1])+'</span><span>'+i[2]+'</span></button>').join('');
   if(typeof updateNavigation==='function') updateNavigation(APP.currentPage);
 };
 
@@ -20860,7 +20894,7 @@ const __rapBase3=renderAdminPage;
 renderAdminPage=async function(){
   await __rapBase3();
   const wrap=document.querySelector('#adminContent .admin-sections'); if(!wrap||!isAdmin()) return;
-  const kids=[...wrap.children], labels=['👥 الحسابات','🏫 الشعب','📚 المواد','🧑‍🏫 التكليفات','👨‍👩‍👧 أولياء الأمور','🏷️ المدرسة'];
+  const kids=[...wrap.children], labels=['الحسابات','الشعب','المواد','التكليفات','أولياء الأمور','المدرسة','المحاور','نشاط المدرسين','العام الدراسي'];
   makeTabs(wrap,kids.map((e,i)=>({i,label:labels[i]||('قسم '+(i+1)),els:[e]})),'__adminTab');
 };
 const __lspBase2=loadStudentProfile;
@@ -21019,7 +21053,23 @@ function decorateReport(box){
   host.insertAdjacentHTML('afterbegin','<div class="school-head">'+(s.logo?'<img src="'+escapeAttr(s.logo)+'" alt="" crossorigin="anonymous" onerror="this.remove()">':'')+'<div><strong>'+escapeHtml(s.name||'نجم الصف')+'</strong><small>تاريخ الإصدار: '+escapeHtml(formatDate(todayISO()))+'</small></div></div>');
   host.insertAdjacentHTML('beforeend','<div class="sign-row"><div>توقيع المعلم<span></span></div><div>توقيع ولي الأمر<span></span></div><div>ختم المدرسة<span></span></div></div>');
 }
-const __lrBase=loadReport; loadReport=async function(){ await __lrBase(); decorateReport($('reportBox')); };
+function weekCmpHTML(evals,end){
+  const a1=addDays(end,-6), a0=addDays(end,-13), b1=addDays(end,-7);
+  const cur=calculateWeightedAverage(evals.filter(e=>e.evaluation_date>=a1&&e.evaluation_date<=end));
+  const prv=calculateWeightedAverage(evals.filter(e=>e.evaluation_date>=a0&&e.evaluation_date<=b1));
+  const diff=(cur!==null&&prv!==null)?cur-prv:null;
+  return '<section class="report-section weekCmpA"><div class="section-heading"><h3>مقارنة بالأسبوع الماضي</h3><small class="muted">حتى '+escapeHtml(formatDate(end))+'</small></div>'+(diff===null?emptyInline('لا توجد تقييمات كافية في الأسبوعين للمقارنة.'):'<div class="grid-3"><div class="score-box"><div class="score-number">'+formatNumber(cur)+'%</div><div class="score-caption">هذا الأسبوع</div></div><div class="score-box"><div class="score-number">'+formatNumber(prv)+'%</div><div class="score-caption">الأسبوع الماضي</div></div><div class="score-box"><div class="score-number" style="color:var(--'+(diff>=0?'success':'danger')+')">'+(diff>=0?'▲ ':'▼ ')+formatNumber(Math.abs(diff))+'</div><div class="score-caption">الفرق</div></div></div>')+'</section>';
+}
+const __lrBase=loadReport;
+loadReport=async function(){
+  await __lrBase();
+  const box=$('reportBox'), d=APP.reportData;
+  if(box && d && d.evaluations && box.querySelector('.report-header') && !box.querySelector('.weekCmpA')){
+    const sg=box.querySelector('.stats-grid');
+    if(sg) sg.insertAdjacentHTML('afterend',weekCmpHTML(d.evaluations,(d.filters&&d.filters.to)||todayISO()));
+  }
+  decorateReport(box);
+};
 const __gcrBase2=generateClassReport; generateClassReport=async function(){ await __gcrBase2(); decorateReport($('classReportBox')); };
 function addSchoolSettings(){
   const wrap=document.querySelector('#adminContent .admin-sections'); if(!wrap||$('adminSchoolBox')) return;
@@ -21078,7 +21128,7 @@ applyRoleUI=function(){
   let f=$('fab');
   if(!f){
     f=document.createElement('div'); f.id='fab';
-    f.innerHTML='<div class="fab-menu"><button type="button" data-a="evaluation">📝 تقييم</button><button type="button" data-a="attendance">✅ حضور</button><button type="button" data-a="note">🗒️ ملاحظة</button></div><button type="button" class="fab-btn" aria-label="إجراء سريع">＋</button>';
+    f.innerHTML='<div class="fab-menu"><button type="button" data-a="evaluation">'+icon('clipboard',18)+' تقييم</button><button type="button" data-a="attendance">'+icon('check',18)+' حضور</button><button type="button" data-a="note">'+icon('note',18)+' ملاحظة</button></div><button type="button" class="fab-btn" aria-label="إجراء سريع">'+icon('plus',26)+'</button>';
     f.addEventListener('click',e=>{
       if(e.target.closest('.fab-btn')){ f.classList.toggle('open'); return; }
       const b=e.target.closest('[data-a]'); if(!b) return; f.classList.remove('open');
@@ -21088,6 +21138,351 @@ applyRoleUI=function(){
   }
   f.classList.toggle('hidden',!isStaff());
 };
+
+/* ================= V5 ================= */
+/* ---------- أيقونات SVG موحّدة ---------- */
+const ICONS={
+ home:'<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
+ users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+ clipboard:'<rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/>',
+ check:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="m9 16 2 2 4-4"/>',
+ menu:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>',
+ note:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+ trophy:'<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>',
+ chart:'<path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>',
+ settings:'<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>',
+ moon:'<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
+ info:'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>',
+ logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/>',
+ star:'<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
+ search:'<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+ medal:'<path d="M7.21 15 2.66 7.14a2 2 0 0 1 .13-2.2L4.4 2.8A2 2 0 0 1 6 2h12a2 2 0 0 1 1.6.8l1.6 2.14a2 2 0 0 1 .14 2.2L16.79 15"/><path d="M11 12 5.12 2.2"/><path d="m13 12 5.88-9.8"/><path d="M8 7h8"/><circle cx="12" cy="17" r="5"/>',
+ school:'<path d="m4 6 8-4 8 4"/><path d="m18 10 4 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-8l4-2"/><path d="M18 5v17"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/>',
+ book:'<path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>',
+ plus:'<path d="M5 12h14M12 5v14"/>'
+};
+function icon(n,s,fill){ return '<svg class="ic" viewBox="0 0 24 24" fill="'+(fill?'currentColor':'none')+'" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"'+(s?' width="'+s+'" height="'+s+'"':'')+' aria-hidden="true">'+(ICONS[n]||'')+'</svg>'; }
+const EMOJI_ICON={'👨‍🎓':'users','🏫':'school','📚':'book','📊':'chart','📅':'check','📝':'clipboard','🗒️':'note','🏆':'trophy','👨‍👩‍👧':'users','👨‍👩‍👦':'users','📈':'chart','⭐':'star','🏠':'home','✅':'check','⚙️':'settings','🏅':'medal','🧑‍🏫':'users','👥':'users'};
+function ico(e){ return EMOJI_ICON[e]?icon(EMOJI_ICON[e]):e; }
+profileStatCard=function(i,label,value){ return '<div class="stat-card"><div class="stat-icon">'+ico(i)+'</div><div class="stat-content"><span>'+escapeHtml(label)+'</span><strong>'+escapeHtml(String(value))+'</strong></div></div>'; };
+const __basBase=buildAdminStatCard;
+buildAdminStatCard=function(t,v,i,d){ return __basBase(t,v,'§§',d).replace('§§',ico(i)); };
+const __bamBase=buildAwardsMiniList;
+buildAwardsMiniList=function(a){ return __bamBase(a).replace(/<div class="award-icon">\s*🏆\s*<\/div>/g,'<div class="award-icon">'+icon('medal')+'</div>'); };
+function applyIcons(){
+  const nav={dashboard:'home',students:'users',evaluation:'clipboard',attendance:'check',more:'menu',parent:'users',parentReport:'chart'};
+  document.querySelectorAll('.bottom-nav button[data-tab] .nav-icon').forEach(e=>{ const n=nav[e.parentNode.dataset.tab]; if(n) e.innerHTML=icon(n); });
+  const sh={sheetNotes:'note',sheetAwards:'trophy',sheetReports:'chart',sheetAdmin:'settings'};
+  Object.keys(sh).forEach(id=>{ const e=document.querySelector('#'+id+' .sheet-item-icon'); if(e) e.innerHTML=icon(sh[id]); });
+  const ms=$('moreSheet');
+  if(ms){
+    ms.querySelectorAll('.sheet-item').forEach(b=>{ const oc=b.getAttribute('onclick')||''; const m=oc.includes('toggleTheme')?'moon':oc.includes('showAbout')?'info':oc.includes('logout')?'logout':''; const e=b.querySelector('.sheet-item-icon'); if(m&&e) e.innerHTML=icon(m); });
+    if(!$('sheetHonor')){ const t=[...ms.querySelectorAll('.sheet-item')].find(b=>(b.getAttribute('onclick')||'').includes('toggleTheme')); if(t) t.insertAdjacentHTML('beforebegin','<button id="sheetHonor" class="sheet-item" type="button" onclick="closeMore();tab(\'honor\')"><span class="sheet-item-icon">'+icon('medal')+'</span><span>لوحة الشرف</span></button>'); }
+  }
+  document.querySelectorAll('.brand-icon').forEach(e=>e.innerHTML=icon('star',22,true));
+  document.querySelectorAll('.login-logo').forEach(e=>e.innerHTML=icon('star',38,true));
+  const ta=document.querySelector('.topbar-actions');
+  if(ta){
+    const b=ta.querySelectorAll('.icon-btn'); if(b[0]&&!b[0].dataset.ic){ b[0].dataset.ic=1; b[0].innerHTML=icon('moon',20); }
+    if(b[1]&&!b[1].dataset.ic){ b[1].dataset.ic=1; b[1].innerHTML=icon('menu',20); }
+    if(!$('topSearch')) ta.insertAdjacentHTML('afterbegin','<button class="icon-btn" id="topSearch" type="button" aria-label="بحث" onclick="openGlobalSearch()">'+icon('search',20)+'</button>');
+    $('topSearch').classList.toggle('hidden',APP.role==='parent');
+  }
+  document.querySelectorAll('#fab .fab-menu button').forEach(b=>{ const m={evaluation:'clipboard',attendance:'check',note:'note'}[b.dataset.a]; if(m&&!b.dataset.ic){ b.dataset.ic=1; b.innerHTML='<span style="display:inline-flex;align-items:center;gap:8px">'+icon(m,18)+b.textContent.replace(/^\S+\s/,'')+'</span>'; } });
+}
+document.addEventListener('DOMContentLoaded',applyIcons);
+const __aruBase4=applyRoleUI; applyRoleUI=function(){ __aruBase4(); applyIcons(); };
+/* ---------- بحث شامل ---------- */
+function openGlobalSearch(){
+  if(!APP.students) return;
+  document.getElementById('gsOverlay')?.remove();
+  const o=document.createElement('div'); o.id='gsOverlay'; o.className='modal-overlay active'; o.style.zIndex=2500;
+  o.innerHTML='<div class="modal"><div class="modal-header"><div class="modal-title">بحث عن طالب</div><button class="icon-btn" type="button" onclick="document.getElementById(\'gsOverlay\').remove()">✕</button></div><div class="field"><input id="gsInput" type="search" placeholder="الاسم أو الرمز..." autocomplete="off"></div><div id="gsList" style="margin-top:10px"></div></div>';
+  document.body.appendChild(o); o.addEventListener('click',e=>{ if(e.target===o) o.remove(); });
+  const inp=$('gsInput'), list=$('gsList');
+  const draw=()=>{ const q=inp.value.trim().toLowerCase(); const r=sortByName(APP.students.filter(s=>!q||String(s.full_name).toLowerCase().includes(q)||String(s.student_code||'').toLowerCase().includes(q)),'full_name').slice(0,25);
+    list.innerHTML=r.length?r.map(s=>'<div class="pick-row"><div><strong>'+escapeHtml(s.full_name)+'</strong><br><small>'+escapeHtml(getStudentClassText(s))+'</small></div><button type="button" class="btn btn-small btn-primary" onclick="document.getElementById(\'gsOverlay\').remove();openStudentProfile(\''+escapeAttr(s.id)+'\')">فتح الملف</button></div>').join(''):emptyInline('لا توجد نتائج'); };
+  inp.addEventListener('input',draw); draw(); setTimeout(()=>inp.focus(),50);
+}
+/* ---------- تنبيه التكرار عند إضافة طالب ---------- */
+const __ssBase=saveStudent;
+saveStudent=async function(){
+  if(!$('studentId')?.value){
+    const n=normalizeText($('studentName')?.value).toLowerCase(), c=normalizeText($('studentCode')?.value).toLowerCase();
+    const dup=(APP.students||[]).find(s=>(n&&normalizeText(s.full_name).toLowerCase()===n)||(c&&normalizeText(s.student_code).toLowerCase()===c));
+    if(dup && !await confirmAction('يوجد طالب مشابه: "'+dup.full_name+'". هل تريد إضافة طالب جديد رغم ذلك؟')) return;
+  }
+  return __ssBase();
+};
+/* ---------- رادار المحاور + مقارنة الشعبة في ملف الطالب ---------- */
+function radarCard(id){ return chartCard('نقاط القوة والضعف (المحاور)',id,260); }
+function drawRadar(id,evals){
+  const cats=calculateCategoryReport(evals||[]).filter(c=>c.average!==null);
+  mkChart(id,{type:'radar',data:{labels:cats.map(c=>c.categoryName),datasets:[{data:cats.map(c=>Number(c.average)||0),borderColor:'#344e41',backgroundColor:'rgba(88,129,87,.25)',pointBackgroundColor:'#344e41'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{r:{min:0,max:100,ticks:{stepSize:25,backdropColor:'transparent'}}}}});
+}
+function addRadarTo(box,evals,id){
+  if(!box||!evals||calculateCategoryReport(evals).length<3||box.querySelector('#'+id)) return;
+  const anchor=box.querySelector('.weekCmpA')||box.querySelector('#weekCmp')||box.querySelector('.stats-grid'); if(!anchor) return;
+  anchor.insertAdjacentHTML('afterend',radarCard(id)); requestAnimationFrame(()=>drawRadar(id,evals));
+}
+const __lrBase5=loadReport;
+loadReport=async function(){ await __lrBase5(); addRadarTo($('reportBox'),APP.reportData&&APP.reportData.evaluations,'rdAdmin'); };
+const __lprBase5=loadParentReport;
+loadParentReport=async function(id){ await __lprBase5(id); addRadarTo($('parentReportBox'),APP.parentReportData&&APP.parentReportData.evaluations,'rdParent'); };
+const __lspBase3=loadStudentProfile;
+loadStudentProfile=async function(id){
+  await __lspBase3(id);
+  const d=APP.studentProfileData, st=getStudentById(id);
+  if(!d||!st||!isStaff()||!$('pfTrend')||!window.__v2Charts.pfTrend) return;
+  const ids=new Set((APP.students||[]).filter(s=>s.class_id===st.class_id).map(s=>s.id)), by={};
+  (APP.evaluations||[]).filter(e=>ids.has(e.student_id)).forEach(e=>(by[e.evaluation_date]=by[e.evaluation_date]||[]).push(e));
+  const tr=calculateEvaluationTrend(d.evaluations||[]), ch=window.__v2Charts.pfTrend;
+  ch.data.datasets[0].label='الطالب';
+  ch.data.datasets.push({label:'متوسط الشعبة',data:tr.map(x=>by[x.date]?Number(calculateWeightedAverage(by[x.date]).toFixed(1)):null),borderColor:'#d28a13',borderDash:[6,4],fill:false,tension:.3,spanGaps:true});
+  ch.options.plugins.legend={display:true,position:'bottom'}; ch.update();
+  const sec=$('pfTrend').closest('.profile-section'); if(sec&&!sec.querySelector('#pfRadar')&&calculateCategoryReport(d.evaluations).length>=3){ sec.insertAdjacentHTML('afterbegin',radarCard('pfRadar')); requestAnimationFrame(()=>drawRadar('pfRadar',d.evaluations)); }
+};
+/* ---------- ولي الأمر: ملخص الأبناء + التبديل ---------- */
+const __rppBase=renderParentPage;
+renderParentPage=async function(){
+  await __rppBase();
+  const c=$('parentStudents'); if(!c||$('parentSummary')) return;
+  const kids=APP.parentStudents&&APP.parentStudents.length?APP.parentStudents:(APP.students||[]); if(!kids.length) return;
+  const t=todayISO(), a1=addDays(t,-6), a0=addDays(t,-29), sw=addDays(t,-13);
+  const html=kids.map(k=>{
+    const ev=(APP.evaluations||[]).filter(e=>e.student_id===k.id&&e.evaluation_date>=a1), avg=calculateWeightedAverage(ev);
+    const at=calculateAttendanceStats((APP.attendance||[]).filter(a=>a.student_id===k.id&&a.attendance_date>=a0));
+    const nt=(APP.notes||[]).filter(n=>n.student_id===k.id)[0], aw=(APP.awards||[]).filter(a=>a.student_id===k.id&&String(a.created_at).slice(0,10)>=sw).length;
+    return '<div class="sug-card"><strong>'+escapeHtml(k.full_name)+'</strong><div class="info-grid" style="margin-top:8px"><div class="info-item"><span>متوسط الأسبوع</span><strong>'+(avg===null?'—':formatNumber(avg)+'%')+'</strong></div><div class="info-item"><span>حضور آخر 30 يوماً</span><strong>'+(at.total?formatNumber(at.percentage)+'%':'—')+'</strong></div><div class="info-item"><span>إنجازات جديدة</span><strong>'+aw+'</strong></div><div class="info-item"><span>آخر ملاحظة</span><strong style="font-weight:600">'+(nt?escapeHtml(String(nt.note).slice(0,60)):'—')+'</strong></div></div></div>';
+  }).join('');
+  c.insertAdjacentHTML('afterbegin','<section class="card" id="parentSummary"><div class="card-header"><div><div class="card-title">ملخص الأسبوع</div><div class="card-subtitle">نظرة سريعة على أبنائك</div></div></div>'+html+'</section>');
+};
+const __rprp3=renderParentReportPage;
+renderParentReportPage=async function(){
+  await __rprp3();
+  const kids=APP.parentStudents&&APP.parentStudents.length?APP.parentStudents:(APP.students||[]); const box=$('parentReportBox');
+  if(!box||kids.length<2) return;
+  document.getElementById('childTabs')?.remove();
+  const bar=document.createElement('div'); bar.className='vtabs'; bar.id='childTabs';
+  bar.innerHTML=kids.map(k=>'<button type="button" data-id="'+escapeAttr(k.id)+'" class="'+(String(k.id)===String(APP.selectedStudentId)?'on':'')+'">'+escapeHtml(k.full_name)+'</button>').join('');
+  bar.addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; APP.selectedStudentId=b.dataset.id; bar.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b)); loadParentReport(b.dataset.id); });
+  box.parentNode.insertBefore(bar,box);
+};
+/* ---------- كشوف فارغة للطباعة ---------- */
+function printBlankSheet(kind){
+  const cid=$('crClass')?.value; if(!cid){ showToast('اختر الشعبة أولاً','warning'); return; }
+  const cls=getClassById(cid), sts=sortByName((APP.students||[]).filter(s=>s.class_id===cid&&s.active!==false),'full_name');
+  const title=(kind==='att'?'كشف حضور':'كشف درجات')+' — '+(cls?cls.grade+' / '+cls.section:'')+(kind==='grade'&&$('crSubject')?.value?' — '+getSubjectById($('crSubject').value)?.name:'');
+  let head,cell;
+  if(kind==='att'){ head='<th>#</th><th>الطالب</th>'+Array.from({length:26},(_,i)=>'<th class="d">'+(i+1)+'</th>').join(''); cell='<td></td>'.repeat(0); }
+  else{ const cats=(APP.categories||[]); head='<th>#</th><th>الطالب</th>'+cats.map(c=>'<th>'+escapeHtml(c.name)+'</th>').join('')+'<th>ملاحظات</th>'; }
+  const n=kind==='att'?26:((APP.categories||[]).length+1);
+  const rows=sts.map((s,i)=>'<tr><td>'+(i+1)+'</td><td style="text-align:right;white-space:nowrap">'+escapeHtml(s.full_name)+'</td>'+Array.from({length:n},()=>'<td class="d"></td>').join('')+'</tr>').join('');
+  printHTML(title,'<style>@page{size:landscape}td.d{min-width:'+(kind==='att'?'18':'70')+'px;height:26px;padding:4px 0}th.d{padding:4px 0;font-size:10px}</style><h2>'+escapeHtml(title)+'</h2><p>الشهر / التاريخ: ................................</p><table><tr>'+head+'</tr>'+rows+'</table>');
+}
+/* ---------- لوحة الشرف + أفضل طالب ---------- */
+if(PAGE_IDS.indexOf('honor')<0) PAGE_IDS.push('honor');
+const __capBase=canAccessPage; canAccessPage=function(p){ return p==='honor'?!!APP.role:__capBase(p); };
+const __apsBase=afterPageShown; afterPageShown=function(p){ if(p==='honor') return renderHonor(); return __apsBase(p); };
+(function(){ const m=document.querySelector('main.container'); if(m&&!$('pageHonor')){ const s=document.createElement('section'); s.id='pageHonor'; s.className='page'; s.innerHTML='<div class="page-heading"><div><h1>لوحة الشرف</h1><p>أفضل الطلاب في كل شعبة</p></div></div><div id="honorBox"></div>'; m.appendChild(s); } })();
+function renderHonor(){
+  const box=$('honorBox'); if(!box) return;
+  const all=(APP.awards||[]).filter(a=>a.is_automatic&&/^أفضل طالب/.test(a.award_type||''));
+  const sec=(label,re)=>{
+    const list=all.filter(a=>re.test(a.award_type)); if(!list.length) return '<div class="card"><div class="card-title"><h2>'+label+'</h2></div>'+emptyInline('لم تُعتمد إنجازات بعد.')+'</div>';
+    const last=list.map(a=>a.period_end).sort().pop(), cur=list.filter(a=>a.period_end===last), by={};
+    cur.forEach(a=>{ const s=getStudentById(a.student_id), k=s?getStudentClassText(s):'—'; (by[k]=by[k]||[]).push(a); });
+    return '<div class="card"><div class="card-title"><h2>'+label+'</h2><small>حتى '+escapeHtml(formatDate(last))+'</small></div><div class="honor-grid">'+Object.keys(by).sort().map(k=>'<div class="sug-card"><strong>'+escapeHtml(k)+'</strong>'+by[k].map(a=>{ const s=getStudentById(a.student_id), sub=getSubjectById(a.subject_id);
+      return '<div class="honor-row"><div class="award-icon">'+icon('medal')+'</div><div style="flex:1"><strong>'+escapeHtml(s?s.full_name:'طالب')+'</strong><br><small>'+escapeHtml(sub?sub.name:'كل المواد')+(a.score!=null?' · '+formatNumber(a.score)+'%':'')+'</small></div></div>'; }).join('')+'</div>').join('')+'</div></div>';
+  };
+  box.innerHTML=sec('أفضل طالب هذا الأسبوع',/الأسبوع/)+sec('أفضل طالب هذا الشهر',/الشهر/);
+}
+function periodWeek(){ const t=todayISO(), dow=new Date(t+'T00:00:00').getDay(), end=addDays(t,-((dow-4+7)%7)); return {scope:'week',start:addDays(end,-4),end,min:2}; }
+function periodMonth(){ const d=new Date(); let y=d.getFullYear(), m=d.getMonth(); if(d.getDate()!==new Date(y,m+1,0).getDate()){ m--; if(m<0){m=11;y--;} } const p=n=>String(n).padStart(2,'0'), ld=new Date(y,m+1,0).getDate(); return {scope:'month',start:y+'-'+p(m+1)+'-01',end:y+'-'+p(m+1)+'-'+p(ld),min:8}; }
+async function computeAwardSuggestions(){
+  if(!isStaff()) return;
+  const k='najm_sug_ts_'+APP.user.id, last=Number(localStorage.getItem(k)||0);
+  if(Date.now()-last<30*60*1000) { await loadPendingSuggestions(); return; }
+  const periods=[periodWeek(),periodMonth()];
+  const aq=sb.from('teacher_assignments').select('class_id,subject_id').eq('active',true);
+  const {data:as,error:ae}=await (APP.role==='teacher'?aq.eq('teacher_id',APP.user.id):aq); if(ae) throw ae;
+  const byClass={}; (as||[]).forEach(a=>{ (byClass[a.class_id]=byClass[a.class_id]||new Set()).add(a.subject_id); });
+  if(APP.role==='admin') (APP.classes||[]).forEach(c=>{ byClass[c.id]=byClass[c.id]||new Set(); });
+  const ex=await sb.from('award_suggestions').select('id,scope,kind,class_id,subject_id,period_start,status').in('period_start',periods.map(p=>p.start));
+  if(ex.error) throw ex.error;
+  const key=r=>[r.scope,r.kind,r.class_id,r.subject_id||'',r.period_start].join('|'), have={}; (ex.data||[]).forEach(r=>have[key(r)]=r);
+  const catIds=(APP.categories||[]).map(c=>c.id); if(!catIds.length) return;
+  for(const cid of Object.keys(byClass)){
+    const sts=(APP.students||[]).filter(s=>s.class_id===cid&&s.active!==false); if(!sts.length) continue;
+    const ids=sts.map(s=>s.id);
+    for(const p of periods){
+      const evs=await fetchAllRows(()=>sb.from('evaluations').select('student_id,subject_id,category_id,score,evaluation_date').in('student_id',ids).gte('evaluation_date',p.start).lte('evaluation_date',p.end).order('id'));
+      if(!evs.length) continue;
+      const att=await fetchAllRows(()=>sb.from('attendance').select('student_id,status').in('student_id',ids).gte('attendance_date',p.start).lte('attendance_date',p.end).order('id'));
+      const ap={}; sts.forEach(s=>{ const t=calculateAttendanceStats(att.filter(a=>a.student_id===s.id)); ap[s.id]=t.total?t.percentage:0; });
+      const stat=(sid,subj)=>{ const m={}; evs.filter(e=>e.student_id===sid&&(!subj||e.subject_id===subj)).forEach(e=>{ const kk=e.subject_id+'|'+e.evaluation_date; (m[kk]=m[kk]||{})[e.category_id]=e; }); const ss=Object.values(m).filter(o=>catIds.every(c=>o[c])); return {n:ss.length,avg:calculateWeightedAverage(ss.flatMap(o=>catIds.map(c=>o[c])))}; };
+      const targets=[...byClass[cid]].map(s=>({kind:'subject',subject:s})); if(APP.role==='admin') targets.push({kind:'overall',subject:null});
+      for(const t of targets){
+        const cand=sts.map(s=>{ const r=stat(s.id,t.subject); return {student_id:s.id,name:s.full_name,avg:r.avg,sessions:r.n,att:ap[s.id]}; }).filter(c=>c.avg!==null&&c.sessions>=p.min).map(c=>({...c,avg:round(c.avg,2),att:round(c.att,1)})).sort((a,b)=>b.avg-a.avg||b.att-a.att||b.sessions-a.sessions);
+        if(!cand.length) continue;
+        const w=cand[0], row={scope:p.scope,kind:t.kind,class_id:cid,subject_id:t.subject,student_id:w.student_id,period_start:p.start,period_end:p.end,avg:w.avg,full_sessions:w.sessions,attendance_pct:w.att,candidates:cand.slice(0,5),status:'pending'};
+        const old=have[key(row)];
+        if(!old){ const r=await sb.from('award_suggestions').insert(row); if(r.error&&r.error.code!=='23505') console.warn('suggestion insert',r.error); }
+        else if(old.status==='pending'){ const {status,...upd}=row; await sb.from('award_suggestions').update(upd).eq('id',old.id); }
+      }
+    }
+  }
+  localStorage.setItem(k,String(Date.now()));
+  await loadPendingSuggestions();
+}
+async function loadPendingSuggestions(){
+  const {data,error}=await sb.from('award_suggestions').select('*').eq('status','pending').order('created_at',{ascending:false});
+  window.__sugs=error?[]:(data||[]); window.__sugCount=window.__sugs.length; updateSugBadge();
+  if(APP.currentPage==='awards') renderSuggestions();
+}
+function updateSugBadge(){
+  const n=window.__sugCount||0;
+  document.querySelectorAll('#sideNav [data-tab="awards"],#sheetAwards').forEach(b=>{ b.querySelector('.nav-badge')?.remove(); if(n>0) b.insertAdjacentHTML('beforeend','<i class="nav-badge">'+(n>9?'9+':n)+'</i>'); });
+  const c=$('dashboardContent'); if(c){ $('sugAlert')?.remove(); if(n>0&&isStaff()) c.insertAdjacentHTML('afterbegin','<div class="alert-card" id="sugAlert"><span>'+icon('medal',20)+'</span><span>'+n+' اقتراح «أفضل طالب» بانتظار اعتمادك</span><button class="btn btn-small btn-primary" type="button" onclick="tab(\'awards\')">مراجعة</button></div>'); }
+}
+function sugTitle(s){ return (s.scope==='week'?'أفضل طالب في الأسبوع':'أفضل طالب في الشهر'); }
+function renderSuggestions(){
+  const list=$('awardsList'); if(!list||!isStaff()) return;
+  let box=$('awardSugBox'); if(!box){ box=document.createElement('div'); box.id='awardSugBox'; list.parentNode.insertBefore(box,list); }
+  const sg=window.__sugs||[]; if(!sg.length){ box.innerHTML=''; return; }
+  box.innerHTML='<div class="card"><div class="card-header"><div><div class="card-title">اقتراحات بانتظار الاعتماد</div><div class="card-subtitle">تُحتسب تلقائياً من عمليات التقييم الكاملة</div></div></div>'+sg.map(s=>{
+    const st=getStudentById(s.student_id), cl=getClassById(s.class_id), sub=getSubjectById(s.subject_id);
+    return '<div class="sug-card"><strong>'+sugTitle(s)+'</strong><div class="list-item-subtitle">'+escapeHtml(s.kind==='subject'?('مادة '+(sub?sub.name:'')):'جميع المواد')+' · شعبة '+escapeHtml(cl?cl.grade+' / '+cl.section:'')+' · '+escapeHtml(formatShortDate(s.period_start))+' — '+escapeHtml(formatShortDate(s.period_end))+'</div>'+
+      '<div style="margin-top:6px"><span class="score-pill good">'+escapeHtml(st?st.full_name:'طالب')+'</span> <span class="status-badge">متوسط '+formatNumber(s.avg)+'%</span> <span class="status-badge">'+s.full_sessions+' عملية كاملة</span> <span class="status-badge">حضور '+formatNumber(s.attendance_pct)+'%</span></div>'+
+      '<div class="row"><button class="btn btn-small btn-primary" type="button" onclick="decideSuggestion(\''+s.id+'\',\'approve\')">اعتماد</button><button class="btn btn-small btn-secondary" type="button" onclick="openSuggestionPick(\''+s.id+'\')">اختيار طالب آخر</button><button class="btn btn-small btn-danger" type="button" onclick="decideSuggestion(\''+s.id+'\',\'reject\')">رفض</button></div></div>';
+  }).join('')+'</div>';
+}
+function openSuggestionPick(id){
+  const s=(window.__sugs||[]).find(x=>x.id===id); if(!s) return;
+  openDynamicModal('<div class="modal-header"><div><div class="modal-title">اختيار الطالب</div><div class="modal-subtitle">المؤهلون فقط (الحد الأدنى '+(s.scope==='week'?2:8)+' عمليات كاملة)</div></div><button class="icon-btn" type="button" onclick="closeModal()">✕</button></div>'+
+    (s.candidates||[]).map(c=>'<div class="pick-row"><div><strong>'+escapeHtml(c.name)+'</strong><br><small>متوسط '+formatNumber(c.avg)+'% · '+c.sessions+' عملية · حضور '+formatNumber(c.att)+'%</small></div><button class="btn btn-small btn-primary" type="button" onclick="closeModal();decideSuggestion(\''+id+'\',\'approve\',\''+c.student_id+'\')">اعتماد</button></div>').join(''));
+}
+async function decideSuggestion(id,action,studentId){
+  const s=(window.__sugs||[]).find(x=>x.id===id); if(!s||!requireRole(['admin','teacher'])) return;
+  if(!await confirmAction(action==='approve'?'اعتماد هذا الإنجاز؟ سيظهر لولي الأمر والطالب.':'رفض هذا الاقتراح؟')) return;
+  setLoading(true);
+  try{
+    const now=new Date().toISOString();
+    if(action==='approve'){
+      const sid=studentId||s.student_id, c=(s.candidates||[]).find(x=>x.student_id===sid)||{avg:s.avg,sessions:s.full_sessions,att:s.attendance_pct};
+      const cl=getClassById(s.class_id), sub=getSubjectById(s.subject_id);
+      const award={student_id:sid,awarded_by:APP.user.id,award_type:sugTitle(s),reason:(s.kind==='subject'?'الأول في مادة '+(sub?sub.name:''):'الأول في جميع المواد')+' ضمن شعبة '+(cl?cl.grade+' / '+cl.section:''),subject_id:s.subject_id||null,category_id:null,period_start:s.period_start,period_end:s.period_end,score:c.avg,rank:1,is_automatic:true};
+      const r=await sb.from('awards').insert(award).select().single(); if(r.error) throw r.error;
+      APP.awards.unshift(r.data);
+      const u=await sb.from('award_suggestions').update({status:'approved',student_id:sid,avg:c.avg,decided_by:APP.user.id,decided_at:now}).eq('id',id); if(u.error) throw u.error;
+      showToast('تم اعتماد الإنجاز','success');
+    }else{
+      const u=await sb.from('award_suggestions').update({status:'rejected',decided_by:APP.user.id,decided_at:now}).eq('id',id); if(u.error) throw u.error;
+      showToast('تم رفض الاقتراح','success');
+    }
+    await loadPendingSuggestions(); renderAwardsPage(); calculateDashboardStats();
+  }catch(e){ handleSupabaseError(e,'تعذر تنفيذ القرار'); }
+  finally{ setLoading(false); }
+}
+const __rawBase=renderAwardsPage;
+renderAwardsPage=function(){ __rawBase(); renderSuggestions(); document.querySelectorAll('#awardsList .award-icon').forEach(e=>e.innerHTML=icon('medal')); };
+const __ladBase2=loadAllData;
+loadAllData=async function(f){ await __ladBase2(f); if(isStaff()) computeAwardSuggestions().catch(e=>console.warn('suggestions:',e)); };
+/* ---------- الرئيسية: تنبيهات + مقارنة الشعب + نشاط المدرسين ---------- */
+const __rdBase3=renderDashboard;
+renderDashboard=async function(){
+  await __rdBase3();
+  const c=$('dashboardContent'); if(!c||APP.role==='parent') return;
+  const t=todayISO(), dow=new Date().getDay(), ws=addDays(t,-dow); let h='';
+  const sts=(APP.students||[]).filter(s=>s.active!==false);
+  if(APP.role==='teacher'){
+    if(dow<=4) (APP.classes||[]).forEach(cl=>{ const ids=sts.filter(s=>s.class_id===cl.id).map(s=>s.id); if(ids.length&&!(APP.attendance||[]).some(a=>a.attendance_date===t&&ids.includes(a.student_id))) h+='<div class="alert-card"><span>'+icon('check',20)+'</span><span>لم تسجّل حضور اليوم لشعبة '+escapeHtml(cl.grade+' / '+cl.section)+'</span><button class="btn btn-small btn-primary" type="button" onclick="tab(\'attendance\')">تسجيل</button></div>'; });
+    const miss=sts.filter(s=>!(APP.evaluations||[]).some(e=>e.student_id===s.id&&e.evaluation_date>=ws));
+    if(sts.length&&miss.length) h+='<div class="alert-card"><span>'+icon('clipboard',20)+'</span><span>'+miss.length+' طالب لم يُقيَّموا هذا الأسبوع'+(miss.length<=4?': '+miss.map(s=>escapeHtml(s.full_name)).join('، '):'')+'</span><button class="btn btn-small btn-primary" type="button" onclick="tab(\'evaluation\')">تقييم</button></div>';
+  }
+  if(h) c.insertAdjacentHTML('afterbegin',h);
+  if(APP.role==='admin'){
+    const rows=(APP.classes||[]).map(cl=>{ const ids=new Set(sts.filter(s=>s.class_id===cl.id).map(s=>s.id)); const a=calculateWeightedAverage((APP.evaluations||[]).filter(e=>ids.has(e.student_id))), at=calculateAttendanceStats((APP.attendance||[]).filter(x=>ids.has(x.student_id))); return {n:cl.grade+' / '+cl.section,a,at:at.total?at.percentage:null,c:ids.size}; }).filter(r=>r.c);
+    if(rows.length>1){
+      c.insertAdjacentHTML('beforeend','<div class="card" style="margin-top:14px"><div class="card-title"><h3>مقارنة الشعب</h3></div><div class="dash-chart"><canvas id="dClasses"></canvas></div><div class="table-wrap" style="margin-top:12px"><table><tr><th>الشعبة</th><th>الطلاب</th><th>المتوسط</th><th>الحضور</th></tr>'+rows.map(r=>'<tr><td>'+escapeHtml(r.n)+'</td><td>'+r.c+'</td><td>'+(r.a===null?'—':formatNumber(r.a)+'%')+'</td><td>'+(r.at===null?'—':formatNumber(r.at)+'%')+'</td></tr>').join('')+'</table></div></div>');
+      requestAnimationFrame(()=>mkChart('dClasses',{type:'bar',data:{labels:rows.map(r=>r.n),datasets:[{label:'المتوسط',data:rows.map(r=>r.a===null?0:Number(r.a.toFixed(1))),backgroundColor:'#588157',borderRadius:8},{label:'الحضور',data:rows.map(r=>r.at===null?0:Number(r.at.toFixed(1))),backgroundColor:'#d28a13',borderRadius:8}]},options:{...barOpts(false),plugins:{legend:{display:true,position:'bottom'}}}}));
+    }
+    try{
+      const {data:tp}=await sb.from('profiles').select('id,full_name,status').eq('role','teacher').order('full_name');
+      if(tp&&tp.length&&$('dashboardContent')){
+        const lastOf=id=>[].concat((APP.evaluations||[]).filter(e=>e.teacher_id===id).map(e=>e.created_at),(APP.attendance||[]).filter(a=>a.recorded_by===id).map(a=>a.created_at),(APP.notes||[]).filter(n=>n.teacher_id===id).map(n=>n.created_at)).filter(Boolean).sort().pop();
+        c.insertAdjacentHTML('beforeend','<div class="card" style="margin-top:14px"><div class="card-title"><h3>نشاط المدرسين</h3></div>'+tp.filter(x=>x.status!=='inactive').map(x=>{ const l=lastOf(x.id), old=!l||(Date.now()-new Date(l))>7*864e5; return '<div class="mini-row"><div class="mini-row-main"><strong>'+escapeHtml(x.full_name||'مدرس')+'</strong><span>'+(l?'آخر تسجيل: '+escapeHtml(formatDate(l)):'لم يسجّل بعد')+'</span></div><span class="status-badge '+(old?'warning':'success')+'">'+(old?'لا نشاط هذا الأسبوع':'نشط')+'</span></div>'; }).join('')+'</div>');
+      }
+    }catch(e){}
+  }
+  updateSugBadge();
+};
+/* ---------- الإدارة: محاور التقييم + العام الدراسي ---------- */
+function addAdminExtras(){
+  const wrap=document.querySelector('#adminContent .admin-sections'); if(!wrap) return;
+  if(!$('adminCatBox')){ const d=document.createElement('section'); d.className='card'; d.id='adminCatBox'; wrap.appendChild(d); renderCatAdmin(); }
+  if(!$('adminYearBox')){
+    const d=document.createElement('section'); d.className='card'; d.id='adminYearBox';
+    const opts='<option value="">اختر الشعبة</option>'+(APP.adminData?.classes||[]).filter(x=>x.active!==false).map(x=>'<option value="'+x.id+'">'+escapeHtml(x.grade+' / '+x.section+' · '+x.academic_year)+'</option>').join('');
+    d.innerHTML='<div class="card-header"><div><div class="card-title">العام الدراسي</div><div class="card-subtitle">تجهيز العام الجديد وترحيل الطلاب</div></div></div>'+
+      '<h3 style="font-size:.95rem;margin:0 0 8px">1) إنشاء شعب العام الجديد</h3><div class="form-grid"><div class="field"><label>العام الجديد</label><input id="yrNew" type="text" dir="ltr" placeholder="مثال: 1449"></div><div class="field"><label style="display:flex;gap:8px;align-items:center"><input id="yrCopy" type="checkbox" checked style="width:auto;min-height:0"> نسخ تكليفات المدرسين</label></div></div><button class="btn btn-primary btn-small" type="button" style="margin:10px 0 18px" onclick="createNextYear()">إنشاء الشعب</button>'+
+      '<h3 style="font-size:.95rem;margin:0 0 8px">2) ترحيل طلاب شعبة</h3><div class="form-grid"><div class="field"><label>من شعبة</label><select id="mvFrom">'+opts+'</select></div><div class="field"><label>إلى شعبة</label><select id="mvTo">'+opts+'</select></div></div><button class="btn btn-primary btn-small" type="button" style="margin-top:10px" onclick="promoteStudents()">ترحيل الطلاب</button><p class="muted" style="margin-top:10px">بعد الترحيل عطّل الشعب القديمة من تبويب «الشعب».</p>';
+    wrap.appendChild(d);
+  }
+}
+async function renderCatAdmin(){
+  const b=$('adminCatBox'); if(!b) return;
+  const {data,error}=await sb.from('evaluation_categories').select('*').order('sort_order');
+  window.__cats=data||[];
+  b.innerHTML='<div class="card-header"><div><div class="card-title">محاور التقييم</div><div class="card-subtitle">تغيير الوزن يؤثر على حساب المتوسطات</div></div><button class="btn btn-primary btn-small" type="button" onclick="openCatModal()">+ محور</button></div><div class="list">'+(error?emptyInline('تعذر تحميل المحاور'):window.__cats.map(c=>'<div class="list-item"><div class="list-item-main"><div class="list-item-title">'+escapeHtml((c.icon||'')+' '+c.name)+'</div><div class="list-item-subtitle">الوزن '+formatNumber(c.weight??1)+' · الترتيب '+(c.sort_order||0)+' · '+(c.active!==false?'فعّال':'معطل')+'</div></div><div class="list-item-actions"><button class="btn btn-small btn-secondary" type="button" onclick="openCatModal(\''+c.id+'\')">تعديل</button><button class="btn btn-small '+(c.active!==false?'btn-danger':'btn-primary')+'" type="button" onclick="toggleCat(\''+c.id+'\','+(c.active!==false?'false':'true')+')">'+(c.active!==false?'تعطيل':'تفعيل')+'</button></div></div>').join('')||emptyInline('لا توجد محاور'))+'</div>';
+}
+function openCatModal(id){
+  const c=(window.__cats||[]).find(x=>x.id===id)||{};
+  openDynamicModal('<div class="modal-header"><div><div class="modal-title">'+(id?'تعديل محور':'إضافة محور')+'</div></div><button class="icon-btn" type="button" onclick="closeModal()">✕</button></div><div class="form-grid"><div class="field"><label>الاسم *</label><input id="catName" value="'+escapeAttr(c.name||'')+'"></div><div class="field"><label>رمز (إيموجي أو حرف)</label><input id="catIcon" maxlength="4" value="'+escapeAttr(c.icon||'')+'"></div><div class="field"><label>الوزن</label><input id="catW" type="number" step="0.1" min="0.1" value="'+(c.weight??1)+'"></div><div class="field"><label>الترتيب</label><input id="catOrd" type="number" value="'+(c.sort_order||0)+'"></div></div><div class="modal-actions"><button class="btn btn-primary" type="button" onclick="saveCat(\''+(id||'')+'\')">حفظ</button><button class="btn btn-secondary" type="button" onclick="closeModal()">إلغاء</button></div>');
+}
+async function refreshCats(){ await loadCategories(); fillAllSelects(); await renderCatAdmin(); }
+async function saveCat(id){
+  if(!isAdmin()) return;
+  const name=$('catName').value.trim(); if(!name){ showToast('اكتب اسم المحور','warning'); return; }
+  const v={name,icon:$('catIcon').value.trim()||null,weight:Number($('catW').value)||1,sort_order:Number($('catOrd').value)||0};
+  setLoading(true);
+  try{
+    const r=id?await sb.from('evaluation_categories').update(v).eq('id',id):await sb.from('evaluation_categories').insert({...v,key:'c_'+Date.now().toString(36),active:true});
+    if(r.error) throw r.error; closeModal(); showToast('تم الحفظ','success'); await refreshCats();
+  }catch(e){ handleSupabaseError(e,'تعذر حفظ المحور'); } finally{ setLoading(false); }
+}
+async function toggleCat(id,active){
+  if(!await confirmAction(active?'تفعيل المحور؟':'تعطيل المحور؟ لن يظهر في إدخال التقييم الجديد.')) return;
+  const r=await sb.from('evaluation_categories').update({active}).eq('id',id); if(r.error){ handleSupabaseError(r.error,'تعذر التحديث'); return; }
+  await refreshCats();
+}
+async function createNextYear(){
+  if(!isAdmin()) return;
+  const yr=$('yrNew').value.trim(); if(!yr){ showToast('اكتب العام الجديد','warning'); return; }
+  const cls=(APP.adminData?.classes||[]).filter(c=>c.active!==false&&c.academic_year!==yr); if(!cls.length){ showToast('لا توجد شعب فعّالة لنسخها','warning'); return; }
+  if(!await confirmAction('إنشاء '+cls.length+' شعبة للعام '+yr+'؟')) return;
+  setLoading(true);
+  try{
+    for(const c of cls){ const r=await sb.from('classes').insert({grade:c.grade,section:c.section,academic_year:yr,active:true}); if(r.error&&r.error.code!=='23505') throw r.error; }
+    if($('yrCopy').checked){
+      const {data:nc}=await sb.from('classes').select('id,grade,section').eq('academic_year',yr);
+      const map={}; (nc||[]).forEach(n=>map[n.grade+'|'+n.section]=n.id);
+      const old={}; cls.forEach(c=>old[c.id]=map[c.grade+'|'+c.section]);
+      const {data:as}=await sb.from('teacher_assignments').select('teacher_id,class_id,subject_id').eq('active',true);
+      for(const a of (as||[])){ if(!old[a.class_id]) continue; const r=await sb.from('teacher_assignments').insert({teacher_id:a.teacher_id,class_id:old[a.class_id],subject_id:a.subject_id,academic_year:yr,active:true}); if(r.error&&r.error.code!=='23505') throw r.error; }
+    }
+    showToast('تم إنشاء شعب العام الجديد','success'); await adminRefreshAll();
+  }catch(e){ handleSupabaseError(e,'تعذر إنشاء الشعب'); } finally{ setLoading(false); }
+}
+async function promoteStudents(){
+  if(!isAdmin()) return;
+  const f=$('mvFrom').value, t=$('mvTo').value; if(!f||!t||f===t){ showToast('اختر شعبتين مختلفتين','warning'); return; }
+  const n=(APP.students||[]).filter(s=>s.class_id===f).length;
+  if(!await confirmAction('نقل '+n+' طالب إلى الشعبة الجديدة؟')) return;
+  setLoading(true);
+  try{ const r=await sb.from('students').update({class_id:t}).eq('class_id',f).select('id'); if(r.error) throw r.error; showToast('تم ترحيل '+(r.data||[]).length+' طالب','success'); await loadAllData(true); await adminRefreshAll(); }
+  catch(e){ handleSupabaseError(e,'تعذر الترحيل'); } finally{ setLoading(false); }
+}
 </script>
 </body>
 </html>
