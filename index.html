@@ -2857,6 +2857,27 @@ body.dark .gb-wrap{background:var(--surface);color:var(--text)}
 .ex-tot{font-weight:900;text-align:center;color:var(--primary)}
 .ex-abs{display:flex;align-items:center;justify-content:center;gap:3px;font-size:.7rem}
 @media(max-width:520px){.ex-row{grid-template-columns:minmax(0,1fr) repeat(3,52px) 44px 40px;gap:4px;font-size:.78rem}}
+/* ===== V7.1: إصلاح كسر الكلمات والأزرار + دفتر الدرجات ===== */
+button,option{overflow-wrap:normal!important;word-break:normal}
+.chip-btn,.chip-row button,.vtabs button,.qs,.ba-opt{flex:0 0 auto;white-space:nowrap}
+.chip-row{-webkit-overflow-scrolling:touch}
+.tk-card *,.ann-card *,.notif-item *,.hon-pend *,.hon-row *,.gb-card *,.tk-sum *,.list-item *,.alert-card *{overflow-wrap:break-word!important;word-break:normal}
+.tk-card{padding:12px;gap:10px}.tk-ic{width:36px;height:36px}
+.tk-main strong{font-size:.95rem;line-height:1.55}.tk-meta{line-height:1.6}
+.tk-filters select{min-width:0;flex:1 1 140px}
+.tk-head .task-kind,.tk-head .tk-day{white-space:nowrap}
+.gb-wrap .gb-table th,.gb-wrap .gb-table td{overflow-wrap:break-word;word-break:normal;line-height:1.4}
+.gb-table td.sub{white-space:normal;min-width:90px}
+.gb-pdf{--surface:#fff;--surface-2:#eef2ea;--text:#111;--muted:#555;--border:#9aa89a;--primary:#344e41;--primary-2:#588157;color:#111;background:#fff}
+.gb-pdf .gb-wrap{border:0;background:#fff;color:#111;padding:14px}
+.gb-pdf .gb-table{display:table}.gb-pdf .gb-cards{display:none}
+.gb-pdf .gb-table th{background:#dfe8d9!important;color:#111}
+.gb-pdf .gb-table td.hl{background:#e7f3e4!important}
+.gb-pdf .gb-table th,.gb-pdf .gb-table td{padding:5px 3px;font-size:12px}
+.gb-pdf .gb-info{grid-template-columns:repeat(4,1fr)}
+.gb-wrap .gb-table th{background:#e3ebdd;color:#111}
+.gb-wrap,.gb-table th,.gb-table td.hl{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body.dark .gb-wrap .gb-table th{background:var(--surface-2);color:var(--text)}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet"></head>
 
@@ -22295,11 +22316,12 @@ function exBook(b){
 }
 function exBookPick(id){ window.__exBookSid=id; exBook($('exBody')); }
 function exAttendanceHTML(st){
-  const cfg=window.__exCfg.sem, cell=sem=>{ const c=cfg[sem]; if(!c||c.school_days==null) return ['—','—','—','—','—']; const rows=(APP.attendance||[]).filter(a=>a.student_id===st.id&&(!c.start_date||a.attendance_date>=c.start_date)&&(!c.end_date||a.attendance_date<=c.end_date));
+  const cfg=window.__exCfg.sem, cell=sem=>{ const c=cfg[sem]; if(!c||c.school_days==null) return ['—','—','—','—','—'];
+    const rows=(APP.attendance||[]).filter(a=>a.student_id===st.id&&(!c.start_date||a.attendance_date>=c.start_date)&&(!c.end_date||a.attendance_date<=c.end_date));
     const ab=rows.filter(a=>a.status==='absent').length, ex=rows.filter(a=>a.status==='excused').length, att=Math.max(0,c.school_days-ab-ex);
     return [c.school_days,ab,ex,att,c.school_days?formatNumber(Math.round(att/c.school_days*1000)/10)+'%':'—']; };
-  const a=cell(1), b=cell(2), labels=['الدوام المدرسي','الغياب غير المبرر','الغياب المبرر','دوام التلميذ','النسبة المئوية للدوام'];
-  return '<h4 style="margin:14px 0 6px">الدوام</h4><div class="table-wrap"><table class="gb-table" style="display:table"><tr><th></th><th>الفصل الأول</th><th>الفصل الثاني</th></tr>'+labels.map((l,i)=>'<tr><td class="sub">'+l+'</td><td>'+a[i]+'</td><td>'+b[i]+'</td></tr>').join('')+'</table></div>';
+  const r=n=>'<tr><td class="sub">'+(n===1?'الفصل الأول':'الفصل الثاني')+'</td>'+cell(n).map(v=>'<td>'+v+'</td>').join('')+'</tr>';
+  return '<h4 style="margin:12px 0 6px">الدوام</h4><div class="table-wrap"><table class="gb-table" style="display:table"><tr><th>الفصل</th><th>الدوام المدرسي</th><th>غياب غير مبرر</th><th>غياب مبرر</th><th>دوام التلميذ</th><th>النسبة</th></tr>'+r(1)+r(2)+'</table></div>';
 }
 function gradebookHTML(st,subs,idx){
   const sch=window.__school||{}, par=st.parent_name||'—', c=x=>x==null?'—':x, wrd=x=>x!=null?'<small>'+escapeHtml(numWords(x))+'</small>':'';
@@ -22320,13 +22342,28 @@ async function exRenderBook(){
   if(!subs.length){ box.innerHTML=emptyInline(APP.role==='admin'?'لم تُحدَّد مواد دفتر الدرجات لهذا الصف. حدّدها من تبويب «الإعدادات».':'لم تُحدَّد مواد دفتر الدرجات لهذا الصف بعد.'); return; }
   const r=await sb.from('exam_scores').select('*').eq('student_id',st.id); if(r.error){ handleSupabaseError(r.error,'تعذر تحميل الدفتر'); box.innerHTML=''; return; }
   if(APP.role==='parent'&&!(r.data||[]).length){ box.innerHTML=emptyInline('لم تُنشر نتائج الاختبارات بعد.'); return; }
-  box.innerHTML='<div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap"><button class="btn btn-secondary btn-sm" type="button" onclick="exportElementPDF($(\'gbPrint\'),\'دفتر-\'+(getStudentById(window.__exBookSid)||{}).full_name+\'.pdf\',true)">📄 PDF</button><button class="btn btn-secondary btn-sm" type="button" onclick="exPrintBook()">🖨️ طباعة</button></div>'+gradebookHTML(st,subs,exIndex(r.data));
+  box.innerHTML='<div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap"><button class="btn btn-secondary btn-sm" type="button" onclick="exPdfBook()">📄 PDF</button><button class="btn btn-secondary btn-sm" type="button" onclick="exPrintBook()">🖨️ طباعة</button></div>'+gradebookHTML(st,subs,exIndex(r.data));
 }
 function exPrintBook(){
   const el=$('gbPrint'); if(!el) return; const w=window.open('','_blank'); if(!w){ showToast('المتصفح منع نافذة الطباعة','warning'); return; }
   const c=el.cloneNode(true); c.querySelectorAll('.gb-cards').forEach(x=>x.remove());
-  w.document.write('<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>دفتر الدرجات</title><style>@page{size:A4 landscape;margin:10mm}body{font-family:Tahoma,Arial,sans-serif;color:#111}table{width:100%;border-collapse:collapse;margin-bottom:10px}th,td{border:1px solid #999;padding:5px 3px;text-align:center;font-size:11px}th{background:#eee}td.sub{text-align:right;font-weight:700}td.hl{background:#eef7ee;font-weight:800}small{display:block;font-size:9px;color:#555}.gb-info{display:grid;grid-template-columns:repeat(4,1fr);gap:4px 12px;font-size:12px;margin-bottom:10px}.gb-info b{color:#555;margin-left:4px}.sign-row{display:flex;gap:20px;margin-top:24px}.sign-row div{flex:1;text-align:center;font-size:12px}.sign-row span{display:block;border-bottom:1px solid #444;height:30px;margin-top:6px}.list-item-subtitle{font-size:11px;color:#555}h4{margin:10px 0 4px}.table-wrap{border:0}</style></head><body>'+c.innerHTML+'</body></html>');
-  w.document.close(); setTimeout(()=>{ try{ w.focus(); w.print(); }catch(e){} },500);
+  w.document.write('<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=1040"><title>دفتر الدرجات</title><style>@page{size:A4 landscape;margin:8mm}*{-webkit-print-color-adjust:exact;print-color-adjust:exact;box-sizing:border-box}html,body{margin:0;padding:0;background:#fff}body{font-family:Tahoma,Arial,sans-serif;color:#111}#pg{width:1040px;padding:6px}table{width:100%;border-collapse:collapse;table-layout:auto;margin-bottom:8px}th,td{border:1px solid #8a9a8a;padding:5px 3px;text-align:center;font-size:12px;line-height:1.35;overflow-wrap:break-word}th{background:#dfe8d9;font-weight:800}td.sub{text-align:right;font-weight:800;width:14%}td.hl{background:#e7f3e4;font-weight:900}small{display:block;font-size:9px;color:#444;font-weight:600;line-height:1.2}.gb-info{display:grid;grid-template-columns:repeat(4,1fr);gap:4px 12px;font-size:12px;margin-bottom:8px}.gb-info b{color:#555;margin-left:4px}.sign-row{display:flex;gap:20px;margin-top:14px}.sign-row div{flex:1;text-align:center;font-size:12px}.sign-row span{display:block;border-bottom:1px solid #444;height:26px;margin-top:4px}.list-item-subtitle{font-size:11px;color:#555}h4{margin:8px 0 4px;font-size:13px}.table-wrap{border:0}.gb-wrap{border:0;padding:0;background:#fff}img{max-height:46px}</style></head><body><div id="pg">'+c.innerHTML+'</div><script>window.onload=function(){var pg=document.getElementById("pg");var s=Math.min(1,700/pg.scrollHeight);if(s<1){if("zoom" in document.body.style){pg.style.zoom=s}else{pg.style.transform="scale("+s+")";pg.style.transformOrigin="top right"}}setTimeout(function(){window.print()},350)};<\/script></body></html>');
+  w.document.close();
+}
+async function exPdfBook(){
+  const el=$('gbPrint'); if(!el) return; setLoading(true); showToast('جاري إنشاء PDF...','info');
+  let host=null;
+  try{
+    if(!window.html2canvas) await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+    if(!window.jspdf) await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+    host=document.createElement('div'); host.className='gb-pdf'; host.style.cssText='position:fixed;left:-12000px;top:0;width:1100px;background:#fff';
+    const c=el.cloneNode(true); c.classList.add('gb-print'); host.appendChild(c); document.body.appendChild(host);
+    const canvas=await html2canvas(c,{scale:2,backgroundColor:'#ffffff',useCORS:true,windowWidth:1100});
+    const pdf=new window.jspdf.jsPDF('l','mm','a4'), M=8, iw=297-2*M, ih=210-2*M, k=Math.min(iw/canvas.width,ih/canvas.height), w=canvas.width*k, h=canvas.height*k;
+    pdf.addImage(canvas.toDataURL('image/jpeg',0.95),'JPEG',(297-w)/2,M,w,h);
+    pdf.save('دفتر-'+((getStudentById(window.__exBookSid)||{}).full_name||'طالب')+'.pdf'); showToast('تم إنشاء PDF','success');
+  }catch(e){ console.error(e); showToast(e.message||'تعذر إنشاء PDF','error'); }
+  finally{ if(host) host.remove(); setLoading(false); }
 }
 
 /* ---- الإعدادات (المدير): أيام الدوام ومواد الدفتر لكل صف ---- */
