@@ -2878,6 +2878,16 @@ button,option{overflow-wrap:normal!important;word-break:normal}
 .gb-wrap .gb-table th{background:#e3ebdd;color:#111}
 .gb-wrap,.gb-table th,.gb-table td.hl{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 body.dark .gb-wrap .gb-table th{background:var(--surface-2);color:var(--text)}
+/* ===== V8: توسيط الكتابة داخل خلايا الدفتر (شاشة، PDF) ===== */
+.gb-table th,.gb-table td{text-align:center;vertical-align:middle}
+.gb-table td.sub{text-align:center}
+.gb-table td small,.gb-table th small{text-align:center}
+/* ===== V8: البيانات والأرشفة ===== */
+.sz-bar{height:14px;border-radius:99px;background:var(--surface-2);border:1px solid var(--border);overflow:hidden;margin:8px 0}
+.sz-bar span{display:block;height:100%;background:var(--success)}.sz-bar.warn span{background:var(--warning)}.sz-bar.crit span{background:var(--danger)}
+.dt-grid{display:grid;gap:8px;grid-template-columns:1fr}@media(min-width:700px){.dt-grid{grid-template-columns:1fr 1fr}}
+.imp-box table{width:100%;border-collapse:collapse}.imp-box th,.imp-box td{border:1px solid var(--border);padding:6px;text-align:center;font-size:.78rem}
+.imp-err{color:var(--danger);font-size:.78rem}.imp-ok{color:var(--success);font-weight:800}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet"></head>
 
@@ -22347,7 +22357,7 @@ async function exRenderBook(){
 function exPrintBook(){
   const el=$('gbPrint'); if(!el) return; const w=window.open('','_blank'); if(!w){ showToast('المتصفح منع نافذة الطباعة','warning'); return; }
   const c=el.cloneNode(true); c.querySelectorAll('.gb-cards').forEach(x=>x.remove());
-  w.document.write('<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=1040"><title>دفتر الدرجات</title><style>@page{size:A4 landscape;margin:8mm}*{-webkit-print-color-adjust:exact;print-color-adjust:exact;box-sizing:border-box}html,body{margin:0;padding:0;background:#fff}body{font-family:Tahoma,Arial,sans-serif;color:#111}#pg{width:1040px;padding:6px}table{width:100%;border-collapse:collapse;table-layout:auto;margin-bottom:8px}th,td{border:1px solid #8a9a8a;padding:5px 3px;text-align:center;font-size:12px;line-height:1.35;overflow-wrap:break-word}th{background:#dfe8d9;font-weight:800}td.sub{text-align:right;font-weight:800;width:14%}td.hl{background:#e7f3e4;font-weight:900}small{display:block;font-size:9px;color:#444;font-weight:600;line-height:1.2}.gb-info{display:grid;grid-template-columns:repeat(4,1fr);gap:4px 12px;font-size:12px;margin-bottom:8px}.gb-info b{color:#555;margin-left:4px}.sign-row{display:flex;gap:20px;margin-top:14px}.sign-row div{flex:1;text-align:center;font-size:12px}.sign-row span{display:block;border-bottom:1px solid #444;height:26px;margin-top:4px}.list-item-subtitle{font-size:11px;color:#555}h4{margin:8px 0 4px;font-size:13px}.table-wrap{border:0}.gb-wrap{border:0;padding:0;background:#fff}img{max-height:46px}</style></head><body><div id="pg">'+c.innerHTML+'</div><script>window.onload=function(){var pg=document.getElementById("pg");var s=Math.min(1,700/pg.scrollHeight);if(s<1){if("zoom" in document.body.style){pg.style.zoom=s}else{pg.style.transform="scale("+s+")";pg.style.transformOrigin="top right"}}setTimeout(function(){window.print()},350)};<\/script></body></html>');
+  w.document.write('<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=1040"><title>دفتر الدرجات</title><style>@page{size:A4 landscape;margin:8mm}*{-webkit-print-color-adjust:exact;print-color-adjust:exact;box-sizing:border-box}html,body{margin:0;padding:0;background:#fff}body{font-family:Tahoma,Arial,sans-serif;color:#111}#pg{width:1040px;padding:6px}table{width:100%;border-collapse:collapse;table-layout:auto;margin-bottom:8px}th,td{border:1px solid #8a9a8a;padding:5px 3px;text-align:center;vertical-align:middle;font-size:12px;line-height:1.35;overflow-wrap:break-word}th{background:#dfe8d9;font-weight:800}td.sub{text-align:center;font-weight:800;width:14%}td.hl{background:#e7f3e4;font-weight:900}small{display:block;font-size:9px;color:#444;font-weight:600;line-height:1.2}.gb-info{display:grid;grid-template-columns:repeat(4,1fr);gap:4px 12px;font-size:12px;margin-bottom:8px}.gb-info b{color:#555;margin-left:4px}.sign-row{display:flex;gap:20px;margin-top:14px}.sign-row div{flex:1;text-align:center;font-size:12px}.sign-row span{display:block;border-bottom:1px solid #444;height:26px;margin-top:4px}.list-item-subtitle{font-size:11px;color:#555}h4{margin:8px 0 4px;font-size:13px}.table-wrap{border:0}.gb-wrap{border:0;padding:0;background:#fff}img{max-height:46px}</style></head><body><div id="pg">'+c.innerHTML+'</div><script>window.onload=function(){var pg=document.getElementById("pg");var s=Math.min(1,700/pg.scrollHeight);if(s<1){if("zoom" in document.body.style){pg.style.zoom=s}else{pg.style.transform="scale("+s+")";pg.style.transformOrigin="top right"}}setTimeout(function(){window.print()},350)};<\/script></body></html>');
   w.document.close();
 }
 async function exPdfBook(){
@@ -22413,6 +22423,277 @@ async function exAddDefaults(){
   await loadSubjects(); await exLoadCfg(); showToast('أُضيفت '+add.length+' مادة','success'); exSettings($('exBody'));
 }
 registerPage('exams',{title:'الاختبارات التحريرية',sub:'دفتر الدرجات: المذاكرات والامتحان والمحصلة',roles:['admin','teacher','parent'],render:renderExams,nav:{icon:'filecheck',label:'الاختبارات'}});
+
+/* ================= التسليم 2 (ب): البيانات، الأرشفة، التصدير والاستيراد ================= */
+Object.assign(ICONS,{database:'<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.7 4 3 9 3s9-1.3 9-3V5M3 12c0 1.7 4 3 9 3s9-1.3 9-3"/>',upload:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>'});
+const XLSX_URL='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+async function needXLSX(){ if(!window.XLSX) await loadScriptOnce(XLSX_URL); }
+const MB=1048576, DB_LIMIT_MB=500;
+const HDR={
+  classes:['الصف','الشعبة','العام الدراسي','فعّال'],
+  subjects:['الاسم','المفتاح','الترتيب','فعّال'],
+  students:['الكود','الاسم','الجنس','الصف','الشعبة','اسم ولي الأمر','هاتف ولي الأمر','بريد ولي الأمر'],
+  evaluations:['كود الطالب','مفتاح المادة','مفتاح المحور','التاريخ','الدرجة','ملاحظة','معرّف المدرس'],
+  attendance:['كود الطالب','التاريخ','الحالة','ملاحظة'],
+  notes:['كود الطالب','النص','مرئية لولي الأمر','التاريخ','معرّف المدرس']
+};
+const SHEET={classes:'الشعب',subjects:'المواد',students:'الطلاب',evaluations:'التقييمات',attendance:'الحضور',notes:'الملاحظات'};
+
+async function renderData(){
+  const box=$('dataBox'); if(!box) return;
+  box.innerHTML='<div class="card"><div class="card-title"><h2>حجم قاعدة البيانات</h2></div><div id="dtSize"><div class="loading-box"></div></div></div>'+
+   '<div class="card"><div class="card-title"><h2>الفصول والأرشفة</h2></div><div id="dtSem"></div>'+
+   '<div class="wk-head">أرشفة وحذف التقييمات</div><div class="grid-2"><div class="form-group"><label class="form-label">من</label><input id="arFrom" type="date" class="form-control"></div><div class="form-group"><label class="form-label">إلى</label><input id="arTo" type="date" class="form-control"></div></div>'+
+   '<div class="form-group"><label class="form-label">الفصل المرتبط (لحفظ الملخص والقفل)</label><select id="arSem" class="form-control"><option value="0">فترة مخصصة / العام كاملاً</option><option value="1">الفصل الأول</option><option value="2">الفصل الثاني</option></select></div>'+
+   '<div class="chip-row"><button class="btn btn-secondary btn-small" type="button" onclick="arUseSemDates()">استخدام تواريخ الفصل</button><button class="btn btn-secondary btn-small" type="button" onclick="dataExport(true)">1) تصدير هذه الفترة إلى Excel</button></div>'+
+   '<label style="display:flex;gap:8px;align-items:center;font-size:.84rem;margin:8px 0"><input id="arSaved" type="checkbox"> حفظت ملف Excel وتأكدت من فتحه</label>'+
+   '<label style="display:flex;gap:8px;align-items:center;font-size:.84rem;margin:8px 0"><input id="arLock" type="checkbox" checked> قفل الفصل بعد الحذف (لا تُضاف تقييمات بتاريخه إلا بإذن المدير)</label>'+
+   '<div class="form-group"><label class="form-label">اكتب كلمة «حذف» للتأكيد</label><input id="arWord" class="form-control" autocomplete="off"></div>'+
+   '<button class="btn btn-danger-solid btn-block" type="button" onclick="dataArchive()">2) حفظ الملخص ثم حذف التقييمات (الحضور والإنجازات لا تُحذف)</button><div id="arProg" class="list-item-subtitle" style="margin-top:8px"></div></div>'+
+   '<div class="card"><div class="card-title"><h2>تصدير شامل إلى Excel</h2></div><p class="list-item-subtitle">أوراق: الشعب، المواد، الطلاب، التقييمات، الحضور، الملاحظات. الصيغة نفسها تُستورد لاحقاً.</p><div class="grid-2"><div class="form-group"><label class="form-label">من (اختياري)</label><input id="exFrom" type="date" class="form-control"></div><div class="form-group"><label class="form-label">إلى (اختياري)</label><input id="exTo" type="date" class="form-control"></div></div><button class="btn btn-primary btn-block" type="button" onclick="dataExport(false)">تصدير</button></div>'+
+   '<div class="card"><div class="card-title"><h2>الاستيراد</h2></div><div class="dt-grid"><button class="btn btn-secondary" type="button" onclick="openImport(\'students\')">استيراد الطلاب فقط</button><button class="btn btn-secondary" type="button" onclick="openImport(\'all\')">استيراد ملف كامل (من تصدير الموقع)</button><button class="btn btn-secondary" type="button" onclick="downloadStudentsTemplate()">تنزيل قالب الطلاب</button></div></div>'+
+   '<div class="card"><div class="card-title"><h2>التنظيف</h2></div><p class="list-item-subtitle">يحذف الإشعارات الأقدم من 30 يوماً وسجل النشاط الأقدم من 12 شهراً.</p><button class="btn btn-secondary btn-block" type="button" onclick="dataCleanup()">تنظيف الآن</button></div>';
+  dataSize(); dataSemBox();
+}
+async function dataSize(){
+  const el=$('dtSize'); if(!el) return;
+  try{
+    const a=await sb.rpc('db_size_bytes'); if(a.error) throw a.error; const t=await sb.rpc('table_sizes');
+    const mb=Number(a.data)/MB, pct=Math.min(100,mb/DB_LIMIT_MB*100), cls=pct>=90?'crit':pct>=70?'warn':'';
+    el.innerHTML='<div><strong>'+formatNumber(Math.round(mb*10)/10)+' ميغا</strong> من '+DB_LIMIT_MB+' ('+formatNumber(Math.round(pct))+'%)</div><div class="sz-bar '+cls+'"><span style="width:'+pct+'%"></span></div>'+(pct>=70?'<div class="imp-err">تجاوزت 70% من المساحة: أرشف التقييمات القديمة أو فكّر بترقية الخطة.</div>':'')+
+      (t.data&&t.data.length?'<details class="tk-old"><summary>أكبر الجداول</summary>'+t.data.map(x=>'<div class="mini-row"><div class="mini-row-main"><strong>'+escapeHtml(x.tbl)+'</strong></div><span>'+formatNumber(Math.round(Number(x.bytes)/MB*100)/100)+' م</span></div>').join('')+'</details>':'');
+  }catch(e){ el.innerHTML=dbMissing(e)||/function/i.test(e.message||'')?'<div class="imp-err">شغّل ملفات SQL الخاصة بالتسليم الثاني ثم حدّث الصفحة.</div>':'<div class="imp-err">تعذر قراءة الحجم.</div>'; }
+}
+async function dataSemBox(){
+  const el=$('dtSem'); if(!el) return;
+  try{ await exLoadCfg(); }catch(e){ el.innerHTML='<div class="imp-err">شغّل ملفات SQL الخاصة بالاختبارات أولاً.</div>'; return; }
+  const c=window.__exCfg.sem;
+  el.innerHTML=[1,2].map(n=>{ const s=c[n]||{}; return '<div class="list-item"><div class="list-item-main"><div class="list-item-title">الفصل '+(n===1?'الأول':'الثاني')+(s.locked?' <span class="status-badge danger">مقفل</span>':'')+'</div><div class="list-item-subtitle">'+(s.start_date&&s.end_date?escapeHtml(formatDate(s.start_date))+' — '+escapeHtml(formatDate(s.end_date)):'التواريخ غير محددة: حدّدها من «الاختبارات ثم الإعدادات»')+'</div></div><div class="list-item-actions"><button class="btn btn-small '+(s.locked?'btn-secondary':'btn-danger')+'" type="button" onclick="dataLock('+n+','+(!s.locked)+')">'+(s.locked?'فتح الفصل':'قفل الفصل')+'</button></div></div>'; }).join('');
+}
+async function dataLock(n,on){
+  if(!requireRole(['admin'])) return;
+  const s=(window.__exCfg.sem||{})[n]; if(on&&(!s||!s.start_date||!s.end_date)){ showToast('حدّد تواريخ الفصل أولاً من الاختبارات ثم الإعدادات','warning'); return; }
+  if(!await confirmAction(on?'قفل الفصل؟ لن يستطيع المدرسون إضافة أو تعديل تقييمات بتاريخه.':'فتح الفصل للتعديل؟')) return;
+  const {error}=await sb.from('semester_settings').upsert({semester:n,locked:on,updated_by:APP.user.id},{onConflict:'semester'}); if(error){ handleSupabaseError(error,'تعذر التنفيذ'); return; }
+  showToast(on?'تم قفل الفصل':'تم فتح الفصل','success'); dataSemBox();
+}
+function arUseSemDates(){
+  const n=Number($('arSem').value); const s=(window.__exCfg&&window.__exCfg.sem||{})[n];
+  if(!n||!s||!s.start_date||!s.end_date){ showToast('اختر فصلاً له تواريخ محددة','warning'); return; }
+  $('arFrom').value=s.start_date; $('arTo').value=s.end_date;
+}
+/* ---- التصدير ---- */
+function xlsDate(v){ return v?String(v).slice(0,10):''; }
+async function dataExport(rangeMode){
+  if(!requireRole(['admin'])) return;
+  const from=rangeMode?$('arFrom').value:$('exFrom').value, to=rangeMode?$('arTo').value:$('exTo').value;
+  if(rangeMode&&(!from||!to)){ showToast('حدّد بداية الفترة ونهايتها','warning'); return; }
+  setLoading(true); showToast('جاري التصدير، قد يستغرق دقيقة...','info');
+  try{
+    await needXLSX();
+    const [cls,subs,cats,sts]=await Promise.all([fetchAllRows(()=>sb.from('classes').select('*').order('id')),fetchAllRows(()=>sb.from('subjects').select('*').order('id')),fetchAllRows(()=>sb.from('evaluation_categories').select('id,key').order('id')),fetchAllRows(()=>sb.from('students').select('*').order('id'))]);
+    const rng=(q,col)=>{ if(from) q=q.gte(col,from); if(to) q=q.lte(col,to); return q; };
+    const ev=await fetchAllRows(()=>rng(sb.from('evaluations').select('student_id,subject_id,category_id,teacher_id,score,note,evaluation_date').order('id'),'evaluation_date'));
+    const at=await fetchAllRows(()=>rng(sb.from('attendance').select('student_id,attendance_date,status,note').order('id'),'attendance_date'));
+    const nt=await fetchAllRows(()=>sb.from('teacher_notes').select('student_id,teacher_id,note,visible_to_parent,created_at').order('id'));
+    const code={}, cl={}, sk={}, ck={}; sts.forEach(s=>code[s.id]=s.student_code||''); cls.forEach(c=>cl[c.id]=c); subs.forEach(s=>sk[s.id]=s.key); cats.forEach(c=>ck[c.id]=c.key);
+    const wb=XLSX.utils.book_new(), add=(name,rows,hdr)=>XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows,{header:hdr}),name);
+    add(SHEET.classes,cls.map(c=>({'الصف':c.grade,'الشعبة':c.section,'العام الدراسي':c.academic_year,'فعّال':c.active===false?'لا':'نعم'})),HDR.classes);
+    add(SHEET.subjects,subs.map(s=>({'الاسم':s.name,'المفتاح':s.key,'الترتيب':s.sort_order,'فعّال':s.active===false?'لا':'نعم'})),HDR.subjects);
+    add(SHEET.students,sts.map(s=>{ const c=cl[s.class_id]||{}; return {'الكود':s.student_code||'','الاسم':s.full_name,'الجنس':s.gender==='male'?'ذكر':s.gender==='female'?'أنثى':'','الصف':c.grade||'','الشعبة':c.section||'','اسم ولي الأمر':s.parent_name||'','هاتف ولي الأمر':s.parent_phone||'','بريد ولي الأمر':s.parent_email||''}; }),HDR.students);
+    add(SHEET.evaluations,ev.map(e=>({'كود الطالب':code[e.student_id]||'','مفتاح المادة':sk[e.subject_id]||'','مفتاح المحور':ck[e.category_id]||'','التاريخ':xlsDate(e.evaluation_date),'الدرجة':e.score,'ملاحظة':e.note||'','معرّف المدرس':e.teacher_id||''})),HDR.evaluations);
+    add(SHEET.attendance,at.map(a=>({'كود الطالب':code[a.student_id]||'','التاريخ':xlsDate(a.attendance_date),'الحالة':a.status,'ملاحظة':a.note||''})),HDR.attendance);
+    add(SHEET.notes,nt.map(n=>({'كود الطالب':code[n.student_id]||'','النص':n.note,'مرئية لولي الأمر':n.visible_to_parent?'نعم':'لا','التاريخ':String(n.created_at||''),'معرّف المدرس':n.teacher_id||''})),HDR.notes);
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet([{'المفتاح':'najm_export','القيمة':'1'},{'المفتاح':'exported_at','القيمة':new Date().toISOString()},{'المفتاح':'range','القيمة':(from||'-')+' → '+(to||'-')}]),'_najm');
+    wb.Workbook={Views:[{RTL:true}],Sheets:wb.SheetNames.map(n=>({Hidden:n==='_najm'?1:0}))};
+    XLSX.writeFile(wb,'najm-export-'+todayISO()+'.xlsx');
+    showToast('تم التصدير: '+sts.length+' طالب، '+ev.length+' تقييم، '+at.length+' سجل حضور','success');
+  }catch(e){ handleSupabaseError(e,'تعذر التصدير'); } finally{ setLoading(false); }
+}
+async function downloadStudentsTemplate(){
+  try{ await needXLSX(); const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet([{'الكود':'','الاسم':'مثال: أحمد علي','الجنس':'ذكر','الصف':'التاسع','الشعبة':'أ','اسم ولي الأمر':'','هاتف ولي الأمر':'','بريد ولي الأمر':''}],{header:HDR.students}),'الطلاب'); XLSX.writeFile(wb,'قالب-الطلاب.xlsx'); }
+  catch(e){ showToast(e.message||'تعذر إنشاء القالب','error'); }
+}
+/* ---- الأرشفة والحذف ---- */
+async function dataArchive(){
+  if(!requireRole(['admin'])) return;
+  const from=$('arFrom').value, to=$('arTo').value, sem=Number($('arSem').value), prog=$('arProg');
+  if(!from||!to||to<from){ showToast('حدّد فترة صحيحة','warning'); return; }
+  if(!$('arSaved').checked){ showToast('أكّد أنك حفظت ملف Excel أولاً','warning'); return; }
+  if($('arWord').value.trim()!=='حذف'){ showToast('اكتب كلمة «حذف» للتأكيد','warning'); return; }
+  const c=await sb.from('evaluations').select('id',{count:'exact',head:true}).gte('evaluation_date',from).lte('evaluation_date',to);
+  if(c.error){ handleSupabaseError(c.error,'تعذر العدّ'); return; } const total=c.count||0;
+  if(!total){ showToast('لا توجد تقييمات في هذه الفترة','info'); return; }
+  if(!await confirmAction('سيُحذف '+total+' تقييماً نهائياً من '+from+' إلى '+to+'. يُحفظ ملخص لكل (طالب، مادة، محور). متابعة؟')) return;
+  setLoading(true);
+  try{
+    prog.textContent='جاري حفظ الملخص...';
+    const s=await sb.rpc('archive_semester_summary',{p_semester:sem,p_from:from,p_to:to}); if(s.error) throw s.error;
+    let done=0;
+    for(;;){ const r=await sb.rpc('delete_evaluations_batch',{p_from:from,p_to:to,p_limit:5000}); if(r.error) throw r.error; const n=Number(r.data)||0; if(!n) break; done+=n; prog.textContent='حُذف '+done+' من '+total+'...'; }
+    if($('arLock').checked&&(sem===1||sem===2)){ const l=await sb.from('semester_settings').upsert({semester:sem,locked:true,updated_by:APP.user.id},{onConflict:'semester'}); if(l.error) console.warn(l.error); }
+    prog.textContent='اكتمل: حُذف '+done+' تقييماً وحُفظ ملخص '+(s.data||0)+' سطراً.';
+    showToast('تمت الأرشفة والحذف','success');
+    try{ await loadEvaluations(); calculateDashboardStats(); }catch(e){}
+    dataSize(); dataSemBox();
+  }catch(e){ handleSupabaseError(e,'تعذرت الأرشفة'); prog.textContent='توقفت العملية: '+(e.message||''); } finally{ setLoading(false); }
+}
+async function dataCleanup(){
+  if(!requireRole(['admin'])) return;
+  const {error}=await sb.rpc('cleanup_old_data'); if(error){ handleSupabaseError(error,'تعذر التنظيف'); return; }
+  showToast('تم التنظيف','success'); dataSize();
+}
+registerPage('data',{title:'البيانات والأرشفة',sub:'الحجم، الفصول، التصدير والاستيراد',roles:['admin'],render:renderData,nav:{icon:'database',label:'البيانات'}});
+
+/* ---- الاستيراد (طلاب فقط / ملف كامل) ---- */
+const ST_FIELDS=[['name','الاسم *'],['code','الكود'],['gender','الجنس'],['grade','الصف'],['section','الشعبة'],['parent_name','اسم ولي الأمر'],['parent_phone','هاتف ولي الأمر'],['parent_email','بريد ولي الأمر']];
+const SYN={name:['الاسم','اسم الطالب','الطالب','name','full name','full_name'],code:['الكود','كود الطالب','رمز الطالب','الرمز','رقم الطالب','student_code','code'],gender:['الجنس','gender'],grade:['الصف','المرحلة','grade'],section:['الشعبة','section'],parent_name:['اسم ولي الأمر','ولي الأمر','parent_name'],parent_phone:['هاتف ولي الأمر','رقم الهاتف','الهاتف','الجوال','parent_phone','phone'],parent_email:['بريد ولي الأمر','البريد الإلكتروني','البريد','parent_email','email']};
+const nz=s=>String(s==null?'':s).trim().replace(/\s+/g,' ').toLowerCase();
+function guessCol(headers,field){ const syn=SYN[field].map(nz), hs=headers.map(nz); let i=hs.findIndex(h=>syn.includes(h)); if(i<0) i=hs.findIndex(h=>h&&syn.some(s=>h.includes(s))); return i<0?'':headers[i]; }
+function gmap(v){ const s=nz(v); if(['ذكر','male','m','ولد','م'].includes(s)) return 'male'; if(['أنثى','انثى','female','f','بنت','ف'].includes(s)) return 'female'; return null; }
+function classKey(g,s){ return nz(g)+'|'+nz(s); }
+function toISODate(v){
+  if(v instanceof Date&&!isNaN(v)) return new Date(v.getTime()+12*3600e3).toISOString().slice(0,10);
+  if(typeof v==='number'&&window.XLSX&&XLSX.SSF){ const d=XLSX.SSF.parse_date_code(v); if(d) return d.y+'-'+String(d.m).padStart(2,'0')+'-'+String(d.d).padStart(2,'0'); }
+  const s=String(v==null?'':v).trim(); let m=s.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})/); if(m) return m[1]+'-'+m[2].padStart(2,'0')+'-'+m[3].padStart(2,'0');
+  m=s.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})/); return m?m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0'):'';
+}
+async function impRefs(){
+  const [cls,subs,cats,sts]=await Promise.all([fetchAllRows(()=>sb.from('classes').select('*').order('id')),fetchAllRows(()=>sb.from('subjects').select('*').order('id')),fetchAllRows(()=>sb.from('evaluation_categories').select('id,key').order('id')),fetchAllRows(()=>sb.from('students').select('*').order('id'))]);
+  const R={cls,subs,cats,sts,clsMap:{},codeMap:{}};
+  cls.slice().sort((a,b)=>(a.active===false?0:1)-(b.active===false?0:1)).forEach(c=>R.clsMap[classKey(c.grade,c.section)]=c);
+  sts.forEach(s=>{ if(s.student_code) R.codeMap[nz(s.student_code)]=s; }); return R;
+}
+function planStudents(rows,map,opts,R){
+  const out={items:[],newClasses:new Map(),errors:[]}, seen=new Set(); let seq=0;
+  R.sts.forEach(s=>{ const m=String(s.student_code||'').match(/^S-(\d+)$/i); if(m) seq=Math.max(seq,Number(m[1])); });
+  rows.forEach((r,i)=>{
+    const row=i+2, g=f=>map[f]?String(r[map[f]]==null?'':r[map[f]]).trim():'';
+    const name=g('name'); if(!name){ out.errors.push({row,msg:'الاسم فارغ'}); return; }
+    let code=g('code'), classId=null, newClass=null; const grade=g('grade'), sec=g('section');
+    if(grade||sec){ const k=classKey(grade,sec);
+      if(R.clsMap[k]) classId=R.clsMap[k].id; else if(opts.createClasses&&grade&&sec){ newClass=k; out.newClasses.set(k,{grade,section:sec}); }
+      else{ out.errors.push({row,msg:'الشعبة غير موجودة: '+grade+' / '+sec}); return; } }
+    const base={full_name:name,gender:gmap(g('gender')),parent_name:g('parent_name')||null,parent_phone:g('parent_phone')||null,parent_email:g('parent_email')||null};
+    if(code){
+      const lc=nz(code); if(seen.has(lc)){ out.errors.push({row,msg:'رمز مكرر داخل الملف: '+code}); return; } seen.add(lc);
+      const ex=R.codeMap[lc];
+      if(ex){
+        if(!opts.updateExisting){ out.items.push({row,action:'skip',msg:'موجود مسبقاً ('+code+')',name}); return; }
+        const patch={}, diff=[]; const cmp=(k,v,label)=>{ if(v!=null&&v!==''&&v!==ex[k]){ patch[k]=v; diff.push(label+': '+(ex[k]||'—')+' ← '+v); } };
+        cmp('full_name',base.full_name,'الاسم'); cmp('gender',base.gender,'الجنس'); cmp('parent_name',base.parent_name,'ولي الأمر'); cmp('parent_phone',base.parent_phone,'الهاتف'); cmp('parent_email',base.parent_email,'البريد');
+        if(classId&&classId!==ex.class_id){ patch.class_id=classId; diff.push('الشعبة'); } else if(newClass){ patch._newClass=newClass; diff.push('الشعبة'); }
+        if(!diff.length){ out.items.push({row,action:'skip',msg:'بلا تغيير',name}); return; }
+        out.items.push({row,action:'update',id:ex.id,patch,diff,name}); return;
+      }
+    }else{ let c; do{ seq++; c='S-'+String(seq).padStart(4,'0'); }while(R.codeMap[nz(c)]||seen.has(nz(c))); code=c; seen.add(nz(code)); }
+    out.items.push({row,action:'insert',name,payload:Object.assign({},base,{student_code:code,class_id:classId,_newClass:newClass,active:true,status:'active'})});
+  });
+  return out;
+}
+function impCounts(items){ const c={insert:0,update:0,skip:0}; items.forEach(x=>c[x.action]++); return c; }
+function openImport(mode){
+  if(!requireRole(['admin'])) return; window.__imp={mode};
+  openDynamicModal('<div class="modal-header"><div class="modal-title">'+(mode==='students'?'استيراد الطلاب فقط':'استيراد ملف كامل')+'</div><button class="icon-btn" type="button" onclick="closeModal()">✕</button></div><div id="impBody" class="imp-box"><p class="list-item-subtitle">'+(mode==='students'?'اختر أي ملف Excel أو CSV يحوي بيانات الطلاب. لا يُقرأ منه غير الطلاب.':'اختر ملفاً صدّره الموقع. الشعب والمواد والطلاب تقبل ملفاً معبّأً يدوياً، أما التقييمات والحضور والملاحظات فمن ملفات الموقع فقط.')+'</p><input type="file" id="impFile" accept=".xlsx,.xls,.csv" class="form-control" onchange="impRead(this)"></div>');
+}
+async function impRead(input){
+  const f=input.files&&input.files[0]; if(!f) return; const body=$('impBody'); body.innerHTML='<div class="loading-box"></div>';
+  try{
+    await needXLSX(); const wb=XLSX.read(await f.arrayBuffer(),{type:'array',cellDates:true}); const I=window.__imp; I.wb=wb;
+    I.signed=wb.SheetNames.includes('_najm');
+    const sheets=wb.SheetNames.filter(n=>!n.startsWith('_'));
+    if(I.mode==='students'){
+      I.sheet=sheets.includes(SHEET.students)?SHEET.students:sheets[0]; impStudentsMap(); return; }
+    impPreviewAll();
+  }catch(e){ console.error(e); body.innerHTML='<div class="imp-err">تعذرت قراءة الملف: '+escapeHtml(e.message||'')+'</div>'; }
+}
+function sheetRows(name){ const ws=window.__imp.wb.Sheets[name]; return ws?XLSX.utils.sheet_to_json(ws,{defval:''}):[]; }
+function impStudentsMap(){
+  const I=window.__imp, body=$('impBody'), sheets=I.wb.SheetNames.filter(n=>!n.startsWith('_')), rows=sheetRows(I.sheet), heads=rows.length?Object.keys(rows[0]):[];
+  if(!rows.length){ body.innerHTML='<div class="imp-err">الورقة «'+escapeHtml(I.sheet)+'» فارغة.</div>'; return; }
+  I.rows=rows;
+  const sel=f=>'<select id="mp_'+f[0]+'" class="form-control"><option value="">— لا شيء —</option>'+heads.map(h=>'<option value="'+escapeAttr(h)+'"'+(guessCol(heads,f[0])===h?' selected':'')+'>'+escapeHtml(h)+'</option>').join('')+'</select>';
+  body.innerHTML=(sheets.length>1?'<div class="form-group"><label class="form-label">الورقة</label><select class="form-control" onchange="window.__imp.sheet=this.value;impStudentsMap()">'+sheets.map(s=>'<option'+(s===I.sheet?' selected':'')+'>'+escapeHtml(s)+'</option>').join('')+'</select></div>':'')+
+    '<p class="list-item-subtitle">'+rows.length+' سطراً في الملف. اربط كل حقل بعمود (الاسم وحده مطلوب):</p><div class="form-grid">'+ST_FIELDS.map(f=>'<div class="field"><label>'+f[1]+'</label>'+sel(f)+'</div>').join('')+'</div>'+impOpts()+'<button class="btn btn-primary btn-block" type="button" onclick="impPreviewStudents()">معاينة</button>';
+}
+function impOpts(){ return '<label style="display:flex;gap:8px;align-items:center;font-size:.84rem;margin:10px 0"><input id="impCreateCls" type="checkbox" checked> إنشاء الشعب غير الموجودة تلقائياً</label><details class="tk-old"><summary>خيارات متقدمة</summary><label style="display:flex;gap:8px;align-items:center;font-size:.84rem;margin:8px 0"><input id="impUpdate" type="checkbox"> تحديث الطلاب الموجودين (بالرمز) — تظهر الفروق قبل الحفظ، والخلية الفارغة لا تمسح بياناً</label></details>'; }
+async function impPreviewStudents(){
+  const I=window.__imp, map={}; ST_FIELDS.forEach(f=>{ map[f[0]]=$('mp_'+f[0]).value; });
+  if(!map.name){ showToast('اربط حقل الاسم بعمود','warning'); return; }
+  I.opts={createClasses:$('impCreateCls').checked,updateExisting:$('impUpdate').checked}; I.map=map;
+  const body=$('impBody'); body.innerHTML='<div class="loading-box"></div>';
+  try{ I.R=await impRefs(); I.plan=planStudents(I.rows,map,I.opts,I.R); impShowStudentsPlan(); }catch(e){ handleSupabaseError(e,'تعذرت المعاينة'); }
+}
+function impTable(items){
+  return '<div class="table-wrap"><table><tr><th>السطر</th><th>الاسم</th><th>الإجراء</th><th>ملاحظة</th></tr>'+items.slice(0,15).map(x=>'<tr><td>'+x.row+'</td><td>'+escapeHtml(x.name||'')+'</td><td>'+({insert:'إضافة',update:'تحديث',skip:'تخطٍّ'})[x.action]+'</td><td>'+escapeHtml(x.msg||(x.diff?x.diff.join('، '):(x.payload?x.payload.student_code:'')))+'</td></tr>').join('')+'</table></div>'+(items.length>15?'<p class="list-item-subtitle">… و'+(items.length-15)+' سطراً آخر</p>':'');
+}
+function impShowStudentsPlan(){
+  const P=window.__imp.plan, c=impCounts(P.items), body=$('impBody');
+  body.innerHTML='<div class="tk-sum"><div><b class="imp-ok">'+c.insert+'</b><span>إضافة</span></div><div><b>'+c.update+'</b><span>تحديث</span></div><div><b>'+(c.skip)+'</b><span>تخطٍّ</span></div></div>'+(P.newClasses.size?'<p class="list-item-subtitle">ستُنشأ '+P.newClasses.size+' شعبة جديدة.</p>':'')+
+    (P.errors.length?'<div class="imp-err" style="margin:8px 0"><strong>'+P.errors.length+' سطر مرفوض:</strong><br>'+P.errors.slice(0,15).map(e=>'سطر '+e.row+': '+escapeHtml(e.msg)).join('<br>')+(P.errors.length>15?'<br>…':'')+'</div>':'')+
+    impTable(P.items)+'<div style="display:flex;gap:8px;margin-top:12px"><button class="btn btn-primary" style="flex:1" type="button" onclick="impRunStudents()"'+((c.insert+c.update)?'':' disabled')+'>تأكيد الاستيراد</button><button class="btn btn-secondary" type="button" onclick="impStudentsMap()">رجوع</button></div>';
+}
+async function execStudentsPlan(P,R){
+  const year=(()=>{ const m={}; R.cls.forEach(c=>{ if(c.academic_year) m[c.academic_year]=(m[c.academic_year]||0)+1; }); const k=Object.keys(m).sort((a,b)=>m[b]-m[a]); return k[0]||DEFAULT_ACADEMIC_YEAR; })();
+  for(const [k,c] of P.newClasses){ const r=await sb.from('classes').insert({grade:c.grade,section:c.section,academic_year:year,active:true}).select('id').single(); if(r.error) throw r.error; R.clsMap[k]={id:r.data.id}; }
+  const fix=o=>{ if(o._newClass){ o.class_id=R.clsMap[o._newClass].id; } delete o._newClass; return o; };
+  const ins=P.items.filter(x=>x.action==='insert').map(x=>fix(Object.assign({},x.payload)));
+  let added=0; for(let i=0;i<ins.length;i+=200){ const r=await sb.from('students').insert(ins.slice(i,i+200)).select('id'); if(r.error) throw r.error; added+=(r.data||[]).length; }
+  let upd=0; for(const x of P.items.filter(x=>x.action==='update')){ const r=await sb.from('students').update(fix(Object.assign({},x.patch))).eq('id',x.id); if(r.error) throw r.error; upd++; }
+  return {added,upd};
+}
+async function impRefreshApp(){ try{ await loadClasses(); await loadSubjects(); await loadStudents(); fillAllSelects(); if(APP.currentPage==='students') renderStudents(); calculateDashboardStats(); }catch(e){ console.warn(e); } }
+async function impRunStudents(){
+  const I=window.__imp; if(!requireRole(['admin'])) return; setLoading(true);
+  try{ const r=await execStudentsPlan(I.plan,I.R); await impRefreshApp(); $('impBody').innerHTML='<div class="imp-ok" style="font-size:1rem">اكتمل الاستيراد: أُضيف '+r.added+' طالباً وحُدّث '+r.upd+'.</div><button class="btn btn-secondary btn-block" type="button" style="margin-top:10px" onclick="closeModal()">إغلاق</button>'; showToast('تم استيراد الطلاب','success'); }
+  catch(e){ handleSupabaseError(e,'تعذر الاستيراد'); } finally{ setLoading(false); }
+}
+/* ---- ملف كامل ---- */
+function impAllHeads(name){ const r=sheetRows(name); return r.length?Object.keys(r[0]):[]; }
+async function impPreviewAll(){
+  const I=window.__imp, body=$('impBody'); body.innerHTML='<div class="loading-box"></div>';
+  try{
+    I.R=await impRefs(); const R=I.R, has=n=>I.wb.SheetNames.includes(n);
+    const sr=sheetRows(SHEET.students), sh=impAllHeads(SHEET.students), map={}; ST_FIELDS.forEach(f=>map[f[0]]=guessCol(sh,f[0])); I.map=map;
+    I.opts={createClasses:true,updateExisting:false}; I.studentRows=sr;
+    I.cRows=sheetRows(SHEET.classes).filter(r=>String(r['الصف']||'').trim()&&String(r['الشعبة']||'').trim()&&!R.clsMap[classKey(r['الصف'],r['الشعبة'])]);
+    const subKeys=new Set(R.subs.map(s=>nz(s.key))); I.sRows=sheetRows(SHEET.subjects).filter(r=>String(r['المفتاح']||'').trim()&&!subKeys.has(nz(r['المفتاح'])));
+    I.plan=sr.length&&map.name?planStudents(sr,map,I.opts,R):{items:[],newClasses:new Map(),errors:[]};
+    const ev=sheetRows(SHEET.evaluations), at=sheetRows(SHEET.attendance), nt=sheetRows(SHEET.notes);
+    I.ev=I.signed?ev:[]; I.at=I.signed?at:[]; I.nt=I.signed?nt:[];
+    const c=impCounts(I.plan.items), line=(l,n,x)=>'<div class="mini-row"><div class="mini-row-main"><strong>'+l+'</strong>'+(x?'<span>'+x+'</span>':'')+'</div><span class="status-badge">'+n+'</span></div>';
+    body.innerHTML=line('شعب جديدة',I.cRows.length)+line('مواد جديدة',I.sRows.length)+line('طلاب جدد',c.insert,c.skip+' موجود/بلا تغيير')+
+      line('تقييمات',I.ev.length,I.signed?'تُتخطى المكررة':(ev.length?'تُتجاهل: الملف ليس من تصدير الموقع':''))+line('سجلات حضور',I.at.length,I.signed?'تُتخطى المكررة':(at.length?'تُتجاهل':''))+line('ملاحظات',I.nt.length,I.signed?'تُتخطى المكررة':(nt.length?'تُتجاهل':''))+
+      (I.plan.errors.length?'<div class="imp-err" style="margin:8px 0"><strong>'+I.plan.errors.length+' طالب مرفوض:</strong><br>'+I.plan.errors.slice(0,10).map(e=>'سطر '+e.row+': '+escapeHtml(e.msg)).join('<br>')+'</div>':'')+
+      '<div style="display:flex;gap:8px;margin-top:12px"><button class="btn btn-primary" style="flex:1" type="button" onclick="impRunAll()">تأكيد الاستيراد</button><button class="btn btn-secondary" type="button" onclick="closeModal()">إلغاء</button></div>';
+  }catch(e){ handleSupabaseError(e,'تعذرت المعاينة'); }
+}
+function impChunks(a,n){ const o=[]; for(let i=0;i<a.length;i+=n) o.push(a.slice(i,i+n)); return o; }
+async function impRunAll(){
+  const I=window.__imp; if(!requireRole(['admin'])) return; setLoading(true); const rep=[], bad=[];
+  try{
+    const R=I.R;
+    if(I.cRows.length){ const year=(R.cls[0]||{}).academic_year||DEFAULT_ACADEMIC_YEAR; const r=await sb.from('classes').insert(I.cRows.map(x=>({grade:String(x['الصف']).trim(),section:String(x['الشعبة']).trim(),academic_year:String(x['العام الدراسي']||year),active:String(x['فعّال']).trim()!=='لا'}))).select('id'); if(r.error) throw r.error; rep.push('شعب: '+(r.data||[]).length); }
+    if(I.sRows.length){ const r=await sb.from('subjects').insert(I.sRows.map(x=>({name:String(x['الاسم']||x['المفتاح']).trim(),key:String(x['المفتاح']).trim(),sort_order:Number(x['الترتيب'])||0,active:String(x['فعّال']).trim()!=='لا'}))).select('id'); if(r.error) throw r.error; rep.push('مواد: '+(r.data||[]).length); }
+    if(I.cRows.length){ const R2=await impRefs(); I.R=R2; I.plan=I.studentRows.length&&I.map.name?planStudents(I.studentRows,I.map,I.opts,R2):I.plan; }
+    if(I.plan.items.length){ const r=await execStudentsPlan(I.plan,I.R); rep.push('طلاب: '+r.added); }
+    const F=await impRefs(), code={}, sk={}, ck={}; F.sts.forEach(s=>{ if(s.student_code) code[nz(s.student_code)]=s.id; }); F.subs.forEach(s=>sk[nz(s.key)]=s.id); F.cats.forEach(c=>ck[nz(c.key)]=c.id);
+    if(I.ev.length){ const rows=[]; I.ev.forEach((r,i)=>{ const sid=code[nz(r['كود الطالب'])], su=sk[nz(r['مفتاح المادة'])], ca=ck[nz(r['مفتاح المحور'])], d=toISODate(r['التاريخ']), sc=Number(r['الدرجة']);
+        if(!sid||!su||!ca||!d||!Number.isInteger(sc)||sc<0||sc>100){ bad.push('تقييم سطر '+(i+2)); return; } rows.push({student_id:sid,subject_id:su,category_id:ca,teacher_id:String(r['معرّف المدرس']||'')||null,score:sc,note:String(r['ملاحظة']||'')||null,evaluation_date:d}); });
+      let n=0; for(const ch of impChunks(rows,1000)){ const r=await sb.rpc('import_evaluations',{p_rows:ch}); if(r.error) throw r.error; n+=Number(r.data)||0; } rep.push('تقييمات: '+n+' من '+rows.length); }
+    if(I.at.length){ const SM={present:'present',absent:'absent',late:'late',excused:'excused','حاضر':'present','غائب':'absent','متأخر':'late','معذور':'excused','بعذر':'excused'}; const rows=[];
+      I.at.forEach((r,i)=>{ const sid=code[nz(r['كود الطالب'])], d=toISODate(r['التاريخ']), st=SM[String(r['الحالة']).trim()]; if(!sid||!d||!st){ bad.push('حضور سطر '+(i+2)); return; } rows.push({student_id:sid,attendance_date:d,status:st,note:String(r['ملاحظة']||'')||null}); });
+      let n=0; for(const ch of impChunks(rows,1000)){ const r=await sb.rpc('import_attendance',{p_rows:ch}); if(r.error) throw r.error; n+=Number(r.data)||0; } rep.push('حضور: '+n+' من '+rows.length); }
+    if(I.nt.length){ const rows=[]; I.nt.forEach((r,i)=>{ const sid=code[nz(r['كود الطالب'])], tx=String(r['النص']||'').trim(); if(!sid||!tx){ bad.push('ملاحظة سطر '+(i+2)); return; } const ca=String(r['التاريخ']||''); rows.push({student_id:sid,teacher_id:String(r['معرّف المدرس']||'')||null,note:tx,visible_to_parent:['نعم','yes','true'].includes(nz(r['مرئية لولي الأمر'])),created_at:/^\d{4}-\d{2}-\d{2}/.test(ca)?ca:null}); });
+      let n=0; for(const ch of impChunks(rows,500)){ const r=await sb.rpc('import_notes',{p_rows:ch}); if(r.error) throw r.error; n+=Number(r.data)||0; } rep.push('ملاحظات: '+n+' من '+rows.length); }
+    await impRefreshApp(); try{ await loadEvaluations(); calculateDashboardStats(); }catch(e){}
+    $('impBody').innerHTML='<div class="imp-ok" style="font-size:1rem">اكتمل الاستيراد</div>'+rep.map(x=>'<div class="mini-row"><div class="mini-row-main"><strong>'+escapeHtml(x)+'</strong></div></div>').join('')+(bad.length?'<div class="imp-err" style="margin-top:8px">رُفض '+bad.length+' سطراً غير صالح (طالب أو مادة أو محور أو تاريخ غير معروف): '+escapeHtml(bad.slice(0,10).join('، '))+(bad.length>10?'…':'')+'</div>':'')+'<button class="btn btn-secondary btn-block" type="button" style="margin-top:10px" onclick="closeModal()">إغلاق</button>';
+    showToast('تم الاستيراد','success');
+  }catch(e){ handleSupabaseError(e,'تعذر الاستيراد'); if(rep.length) showToast('نُفّذ جزء من الاستيراد: '+rep.join('، '),'warning'); } finally{ setLoading(false); }
+}
+/* زر استيراد الطلاب في صفحة الطلاب (للمدير) */
+const __aruV8=applyRoleUI;
+applyRoleUI=function(){ __aruV8(); const a=$('addStudentButton'); if(APP.role==='admin'&&a&&!$('importStudentsBtn')) a.insertAdjacentHTML('beforebegin','<button id="importStudentsBtn" class="btn btn-secondary btn-sm" type="button" onclick="openImport(\'students\')">استيراد</button>'); const b=$('importStudentsBtn'); if(b) b.classList.toggle('hidden',APP.role!=='admin'); };
 </script>
 </body>
 </html>
