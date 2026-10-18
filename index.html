@@ -3077,6 +3077,45 @@ button,.btn,.chip,select{min-height:44px}
 .student-card-actions .student-action{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px}
 
 #loginScreen .login-logo svg{color:#2F4F37;width:36px;height:36px;stroke:#2F4F37}
+
+/* ===== V4: لوحة تحليلية وبطاقات إجراءات سريعة ===== */
+#pageDashboard.active{display:flex;flex-direction:column;gap:14px}
+#pageDashboard>.dashboard-hero{order:0}
+#pageDashboard>#uiQuick{order:1}
+#pageDashboard>#dashboardStats{order:2}
+#pageDashboard>*:not(.dashboard-hero):not(#uiQuick):not(#dashboardStats){order:3}
+#uiQuick{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:-6px}
+#uiQuick button{min-height:84px;border:1px solid var(--border);background:var(--surface);border-radius:20px;box-shadow:var(--shadow);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font-weight:600;font-size:12.5px;color:var(--text);
+  cursor:pointer;transition:transform .2s var(--ease),box-shadow .2s}
+#uiQuick button:active{transform:scale(.95)}
+#uiQuick .qi{width:40px;height:40px;border-radius:14px;display:grid;place-items:center;color:#fff;
+  background:linear-gradient(150deg,var(--primary-2),var(--primary));box-shadow:0 10px 18px -10px var(--primary)}
+#uiQuick button:nth-child(2) .qi{background:linear-gradient(150deg,#D9B65E,#B8892B)}
+#uiQuick button:nth-child(3) .qi{background:linear-gradient(150deg,#7FB5A0,#3F7F6B)}
+#uiQuick button:nth-child(4) .qi{background:linear-gradient(150deg,#9A8CD0,#5E4FA8)}
+#dashboardContent>.card:has(#dashSubjectChart){display:none}
+#uiInsights{background:var(--surface);border:1px solid var(--border);border-radius:24px;box-shadow:var(--shadow);padding:18px;margin-bottom:14px}
+#uiInsights h3{margin:0 0 14px;font-size:16px;font-weight:700}
+.ui-rings{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:6px}
+.ui-ring{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;background:var(--surface-2);border-radius:18px;padding:14px 8px}
+.ui-ring svg{flex:none;width:76px;height:76px}
+.ui-ring b{display:block;font-size:13px;font-weight:700}
+.ui-ring small{color:var(--muted);font-size:11.5px}
+.ui-sub{margin-top:16px;display:flex;flex-direction:column;gap:12px}
+.ui-sub-row{display:grid;grid-template-columns:78px 1fr 44px;align-items:center;gap:10px;font-size:13px}
+.ui-sub-row span:first-child{font-weight:600}
+.ui-sub-row .tr{height:12px;border-radius:99px;background:var(--surface-2);overflow:hidden}
+.ui-sub-row .fl{height:100%;border-radius:99px;transform-origin:right;animation:uiGrow .9s var(--ease) both}
+.ui-sub-row em{font-style:normal;font-weight:700;text-align:start}
+@keyframes uiGrow{from{transform:scaleX(0)}}
+/* حلقات داخل بطاقات النسب */
+.stat-card.has-ring .stat-icon{position:relative;background:conic-gradient(var(--rc,var(--primary-2)) calc(var(--p)*1%),var(--border) 0)}
+.stat-card.has-ring .stat-icon::before{content:"";position:absolute;inset:5px;border-radius:50%;background:var(--surface)}
+.stat-card.has-ring .stat-icon svg{position:relative;z-index:1;width:20px;height:20px}
+/* الرسوم القديمة: إطار أنظف */
+.report-chart-card{border:1px solid var(--border);border-radius:22px;box-shadow:var(--shadow);padding:16px}
+.report-chart-title{font-weight:700;font-size:14.5px;margin:0 0 10px}
 </style>
 </head>
 
@@ -23309,6 +23348,76 @@ renderAdminPage=async function(){
 };
 const __ladV10=loadAllData;
 loadAllData=async function(f){ await __ladV10(f); setTimeout(touchSeen,600); };
+</script>
+<script id="ui-v4">
+(function(){
+function safe(f){try{f()}catch(e){}}
+/* 1) رسوم Chart.js الحالية: ألوان وخطوط وحواف عصرية (تنسيق فقط) */
+safe(function(){
+ if(!window.Chart||!Chart.defaults||!Chart.defaults.font)return;
+ var D=Chart.defaults;
+ D.font.family='"IBM Plex Sans Arabic",Tajawal,sans-serif';D.font.size=12;D.font.weight=500;
+ D.animation={duration:800,easing:'easeOutQuart'};
+ var t=D.plugins.tooltip;t.backgroundColor='rgba(24,38,28,.94)';t.padding=12;t.cornerRadius=12;t.boxPadding=4;t.usePointStyle=true;t.rtl=true;t.titleFont={weight:'700',size:13};
+ var l=D.plugins.legend.labels;l.usePointStyle=true;l.boxWidth=8;l.boxHeight=8;l.padding=16;
+ D.elements.bar.borderRadius=10;D.elements.bar.borderSkipped=false;
+ D.elements.line.tension=.4;D.elements.line.borderWidth=3;
+ D.elements.point.radius=0;D.elements.point.hoverRadius=6;D.elements.point.hitRadius=16;
+ D.elements.arc.borderWidth=0;
+ if(D.scale&&D.scale.grid){D.scale.grid.drawTicks=false}
+ if(D.scale&&D.scale.border){D.scale.border.display=false}
+ function rgba(h,a){if(typeof h!=='string'||h[0]!=='#'||h.length!==7)return null;
+  return 'rgba('+parseInt(h.slice(1,3),16)+','+parseInt(h.slice(3,5),16)+','+parseInt(h.slice(5,7),16)+','+a+')'}
+ Chart.register({id:'najmGradient',afterLayout:function(c){safe(function(){
+  var a=c.chartArea;if(!a)return;
+  c.data.datasets.forEach(function(ds){
+   var type=ds.type||c.config.type;if(type!=='bar'&&type!=='line')return;
+   if(ds.__base===undefined)ds.__base=(type==='line'?ds.borderColor:ds.backgroundColor);
+   var base=ds.__base,top=rgba(base,type==='line'?.28:1),bot=rgba(base,type==='line'?0:.55);
+   if(!top)return;
+   var g=c.ctx.createLinearGradient(0,a.top,0,a.bottom);g.addColorStop(0,top);g.addColorStop(1,bot);
+   if(type==='bar')ds.backgroundColor=g;
+   else if(ds.fill===undefined||ds.fill===false&&c.data.datasets.length===1){ds.fill=true;ds.backgroundColor=g}
+  })})}});
+});
+/* 2) إجراءات سريعة + لوحة تحليلية في الرئيسية (عرض فقط) */
+var IC={
+ star:'<path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/>',
+ cal:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18m-11 5 2 2 4-4"/>',
+ note:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+ rep:'<path d="M3 3v18h18"/><path d="M7 15v3M12 9v9M17 5v13"/>'};
+function svg(d){return '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+d+'</svg>'}
+function lvl(p){return p>=85?'#5E8B4A':p>=70?'#C9A24B':'#D95C5C'}
+function ring(p,label,sub){var r=26,c=2*Math.PI*r,v=Math.max(0,Math.min(100,p||0)),col=lvl(v);
+ return '<div class="ui-ring"><svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="'+r+'" fill="none" stroke="var(--border)" stroke-width="8"/><circle cx="32" cy="32" r="'+r+'" fill="none" stroke="'+col+'" stroke-width="8" stroke-linecap="round" stroke-dasharray="'+(c*v/100).toFixed(1)+' '+c.toFixed(1)+'" transform="rotate(-90 32 32)"/><text x="32" y="37" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">'+(p==null?'—':Math.round(v))+'</text></svg><div><b>'+label+'</b><small>'+sub+'</small></div></div>'}
+var busy=false;
+function enhance(){ if(busy)return; busy=true; safe(function(){
+ var pg=document.getElementById('pageDashboard'); if(!pg||typeof APP==='undefined')return;
+ if(APP.role!=='parent'&&!document.getElementById('uiQuick')){
+  var hero=pg.querySelector('.dashboard-hero');
+  if(hero){var q=document.createElement('div');q.id='uiQuick';
+   [['star','تقييم','evaluation'],['cal','حضور','attendance'],['note','ملاحظة','notes'],['rep','تقارير','reports']].forEach(function(a){
+    var b=document.createElement('button');b.type='button';b.innerHTML='<span class="qi">'+svg(IC[a[0]])+'</span>'+a[1];
+    b.addEventListener('click',function(){if(typeof tab==='function')tab(a[2])});q.appendChild(b)});
+   hero.insertAdjacentElement('afterend',q)}}
+ var box=document.getElementById('dashboardContent');
+ if(box&&!document.getElementById('uiInsights')&&typeof calculateWeightedAverage==='function'){
+  var ev=APP.evaluations||[],avg=calculateWeightedAverage(ev),att=calculateAttendanceStats(APP.attendance||[]);
+  var subs=(typeof calculateSubjectReport==='function'?calculateSubjectReport(ev):[])||[];
+  var rows=subs.slice(0,6).map(function(s){var v=Math.max(0,Math.min(100,Number(s.average)||0));
+   return '<div class="ui-sub-row"><span>'+(s.subjectName||'')+'</span><div class="tr"><div class="fl" style="width:'+v+'%;background:linear-gradient(90deg,'+lvl(v)+'99,'+lvl(v)+')"></div></div><em>'+Math.round(v)+'%</em></div>'}).join('');
+  var d=document.createElement('section');d.id='uiInsights';
+  d.innerHTML='<h3>نظرة تحليلية</h3><div class="ui-rings">'+ring(avg,'المتوسط العام','من كل التقييمات')+ring(att&&att.total?att.percentage:null,'نسبة الحضور','من السجلات')+'</div>'+(rows?'<div class="ui-sub">'+rows+'</div>':'');
+  box.insertAdjacentElement('afterbegin',d)}
+ var sc=document.getElementById('dashboardStats');
+ if(sc)sc.querySelectorAll('.stat-card').forEach(function(c){
+  var v=(c.querySelector('.stat-value')||{}).textContent||'',m=v.match(/([\d.]+)\s*%/);
+  if(m&&!c.classList.contains('has-ring')){var n=parseFloat(m[1]);c.classList.add('has-ring');c.style.setProperty('--p',n);c.style.setProperty('--rc',lvl(n))}})
+ }); busy=false}
+function start(){var pg=document.getElementById('pageDashboard');if(!pg)return;
+ new MutationObserver(function(){enhance()}).observe(pg,{childList:true,subtree:true});enhance()}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
+})();
 </script>
 </body>
 </html>
