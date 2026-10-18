@@ -3027,6 +3027,56 @@ body.dark .btn-primary{color:#10200F}
 .icon-btn{border-radius:14px}
 .modal,.bottom-sheet{border-radius:24px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ===== صفحة تسجيل الدخول: هيرو زيتي + ورقة سفلية ===== */
+#loginScreen{
+  background:
+    radial-gradient(320px 320px at -8% 4%,rgba(255,255,255,.09),transparent 70%),
+    radial-gradient(220px 220px at 108% 24%,rgba(201,162,75,.24),transparent 70%),
+    linear-gradient(165deg,#213B29,#2F4F37 55%,#4B7A3F);
+  padding:0!important;align-items:stretch!important;justify-content:flex-start!important;
+}
+#loginScreen .login-card{
+  background:none!important;border:0!important;box-shadow:none!important;backdrop-filter:none;
+  max-width:none!important;width:100%;min-height:100vh;min-height:100dvh;margin:0!important;padding:0!important;
+  display:flex;flex-direction:column;border-radius:0!important;
+}
+#loginScreen .login-logo{
+  width:66px;height:66px;margin:clamp(48px,12vh,96px) 28px 0;border-radius:22px;
+  background:#fff;color:#2F4F37;display:grid;place-items:center;box-shadow:0 20px 34px -16px rgba(0,0,0,.5);
+}
+#loginScreen .login-title{color:#fff;font-size:34px;font-weight:700;margin:20px 28px 6px;text-align:start}
+#loginScreen .login-subtitle{color:rgba(255,255,255,.85);font-size:15px;margin:0 28px;text-align:start;max-width:26ch}
+#loginScreen #loginForm{
+  margin-top:auto;background:var(--surface,#fff);border-radius:34px 34px 0 0;
+  padding:30px 24px calc(24px + env(safe-area-inset-bottom,0px));
+  box-shadow:0 -24px 50px -20px rgba(0,0,0,.35);display:flex;flex-direction:column;gap:16px;
+}
+#loginScreen #loginForm::before{content:"تسجيل الدخول";font-size:22px;font-weight:700;color:var(--text);margin-bottom:2px}
+#loginScreen .form-group{margin:0}
+#loginScreen .form-control{height:54px;border-radius:16px;background:var(--bg);border:1px solid var(--border);font-size:15px;padding:0 16px}
+#loginScreen #loginButton{height:56px;border-radius:18px;font-size:16px;font-weight:700;margin-top:6px}
+#loginScreen #loginMessage{color:#fff;text-align:center;margin:0;padding:12px 24px;min-height:20px;position:absolute;inset:auto 0 auto 0;top:0}
+#loginScreen #loginMessage:empty{display:none}
+
+/* ===== شريط التنقل العائم: كبسولة نشطة ===== */
+.bottom-nav{border-radius:26px;box-shadow:0 18px 36px -18px rgba(30,50,35,.5)}
+.bottom-nav button{min-height:44px;gap:3px}
+.bottom-nav .nav-icon{width:52px;height:30px;border-radius:15px;display:grid;place-items:center;background:transparent}
+.bottom-nav button.active{color:var(--primary)}
+.bottom-nav button.active .nav-icon{background:var(--primary-soft);color:var(--primary);box-shadow:none}
+.fab,.fab-main{border-radius:20px;box-shadow:0 16px 28px -12px rgba(47,79,55,.8)}
+
+/* ===== الأيقونات والأهداف اللمسية ===== */
+.icon-btn{width:44px;height:44px;border-radius:15px;border:1px solid var(--border);background:var(--surface);box-shadow:none}
+.nav-icon svg,.icon-btn svg,.stat-icon svg,.student-action svg{stroke-width:1.8}
+button,.btn,.chip,select{min-height:44px}
+.btn-sm{min-height:40px}
+.student-card-arrow{color:var(--muted);font-size:22px}
+.student-card-actions .student-action.edit{background:var(--primary-soft);color:var(--primary);border-color:transparent}
+.student-card-actions .student-action{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+
+#loginScreen .login-logo svg{color:#2F4F37;width:36px;height:36px;stroke:#2F4F37}
 </style>
 </head>
 
