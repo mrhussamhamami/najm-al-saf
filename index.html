@@ -3001,8 +3001,8 @@ body.dark .bottom-nav button.active .nav-icon{background:linear-gradient(145deg,
 
 /* ---- الرئيسية ---- */
 #pageDashboard.active{display:flex;flex-direction:column;gap:14px}
-#pageDashboard>.dashboard-hero{order:0}#pageDashboard>#uiQuick{order:1}#pageDashboard>#uiToday{order:2}#pageDashboard>#dashboardStats{order:3}
-#pageDashboard>*:not(.dashboard-hero):not(#uiQuick):not(#uiToday):not(#dashboardStats){order:4}
+#pageDashboard>.dashboard-hero{order:0}#pageDashboard>#uiQuick{order:1}#pageDashboard>#uiToday{order:2}
+#pageDashboard>*:not(.dashboard-hero):not(#uiQuick):not(#uiToday):not(#dashboardStats):not(.card){order:4}
 .dashboard-hero,.profile-hero{position:relative;overflow:hidden;color:#fff;border-radius:30px!important;padding:26px 22px!important;border:1px solid rgba(255,255,255,.22)!important;
   background:
     radial-gradient(260px 200px at 8% 110%,rgba(217,174,69,.55),transparent 70%),
@@ -3176,6 +3176,47 @@ body.dark #loginScreen{background:radial-gradient(300px 300px at 100% 10%,rgba(1
 
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 @media print{body::before,body::after{display:none}.card,.stat-card{background:#fff!important;box-shadow:none!important}}
+
+/* ===== الرئيسية (المعلم/المدير): ترتيب وبطاقات بمستوى واحد ===== */
+/* الغلاف الخارجي «نظرة سريعة» يُلغى بصرياً، وتصبح أقسامه عناصر مباشرة في الصفحة بترتيب واضح */
+.card:has(>#dashboardContent),#dashboardContent{display:contents}
+#pageDashboard>*,#dashboardContent>*{min-width:0}
+#dashboardContent>*{order:10}
+#dashboardContent>.alert-card{order:3}
+#dashboardContent>.lessons-card{order:4}
+#pageDashboard>#dashboardStats{order:5}
+.card:has(>#dashboardContent)>.card-title{order:6;display:flex;align-items:center;justify-content:space-between;margin:8px 4px 0}
+.card:has(>#dashboardContent)>.card-title h2{font-size:18px;margin:0}
+#dashboardContent>#uiInsights{order:7;margin:0}
+#dashboardContent>.dash-two:has(canvas),#dashboardContent>.card:has(canvas){order:8}
+#dashboardContent>.dash-two:not(:has(canvas)){order:9}
+#dashboardContent>.card,#dashboardContent>.dash-two>div,#dashboardContent>.dash-two>.card{
+  background:var(--glass)!important;border:1px solid var(--stroke)!important;border-radius:var(--r-card)!important;box-shadow:var(--shadow)!important;padding:var(--pad)!important}
+#dashboardContent .dash-two{display:grid;grid-template-columns:1fr;gap:14px;margin:0!important}
+#dashboardContent .dash-two>div>h3{font-size:16px;margin:0 0 12px}
+#dashboardContent .dash-chart{height:210px;position:relative}
+#dashboardContent .card-title{margin-bottom:10px}
+/* تنبيهات المهام: صف مضغوط بدل بطاقة طويلة */
+.alert-card{display:grid!important;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;padding:12px 14px!important;
+  background:color-mix(in srgb,var(--warn) 12%,var(--glass))!important;border-right:3px solid var(--warn)!important}
+.alert-card>span:first-child{width:40px;height:40px;border-radius:14px;display:grid;place-items:center;background:color-mix(in srgb,var(--warn) 22%,transparent);color:var(--warn)}
+.alert-card>span:nth-child(2){font-size:13.5px;line-height:1.6;font-weight:500}
+.alert-card .btn{min-height:40px;padding:8px 16px;white-space:nowrap}
+/* قوائم الأفضل/المتابعة: ترقيم دائري */
+#dashboardContent .dash-two:not(:has(canvas))>div{counter-reset:rk}
+#dashboardContent .dash-two:not(:has(canvas)) .mini-row{counter-increment:rk;display:flex;align-items:center;gap:12px}
+#dashboardContent .dash-two:not(:has(canvas)) .mini-row::before{content:counter(rk);flex:none;width:30px;height:30px;border-radius:11px;display:grid;place-items:center;font-weight:700;font-size:13px;background:var(--primary-soft);color:var(--primary)}
+.mini-row-main{flex:1;min-width:0}.mini-row-main strong{display:block;font-size:14.5px}.mini-row-main span{font-size:12px;color:var(--muted)}
+/* حلقات التحليل وبطاقات المؤشرات */
+.ui-rings{gap:10px}
+.ui-ring{flex-direction:row!important;text-align:start!important;gap:12px!important;padding:12px!important}
+.ui-ring svg{width:64px!important;height:64px!important}
+.ui-ring b,.ui-ring small{display:block}.ui-ring b{font-size:13.5px;margin-bottom:2px;color:var(--text)}.ui-ring small{color:var(--muted)}
+.stat-card{padding:14px!important;column-gap:12px}
+.stat-card .stat-icon{width:44px;height:44px}
+.stat-card .stat-value{font-size:clamp(19px,5.8vw,24px)}
+.stat-card .stat-label{white-space:nowrap;font-size:12px}
+.stat-card.has-ring .stat-icon::before{inset:4px}
 </style>
 </head>
 
@@ -23429,13 +23470,15 @@ function spark(ev){
  if(typeof addDays!=='function'||typeof todayISO!=='function')return '';
  var t=todayISO(),W=300,H=70,pts=[],vals=[];
  for(var k=0;k<7;k++){var d=addDays(t,-(6-k)),l=ev.filter(function(e){return e.evaluation_date===d}),v=l.length?calculateWeightedAverage(l):null;
-  if(v!==null&&!isNaN(v)){pts.push([W*(1-k/6),H-(Math.max(0,Math.min(100,v))/100)*H+4]);vals.push(v)}}
- if(pts.length<2)return '';
+  if(v!==null&&!isNaN(v)){pts.push([W*(1-k/6),v]);vals.push(v)}}
+ if(vals.length<3)return '';
+ var lo=Math.max(0,Math.min.apply(null,vals)-8),hi=Math.min(100,Math.max.apply(null,vals)+8);if(hi-lo<20){hi=Math.min(100,lo+20)}
+ pts=pts.map(function(q){return [q[0],H-((q[1]-lo)/(hi-lo))*H+4]});
  pts.sort(function(a,b){return b[0]-a[0]});
  var p=smooth(pts),area=p+' L'+pts[pts.length-1][0].toFixed(1)+' '+(H+8)+' L'+pts[0][0].toFixed(1)+' '+(H+8)+' Z',last=vals[vals.length-1];
  return '<div class="ui-spark"><div class="sh"><span>اتجاه التقييم · آخر ٧ أيام</span><b>'+Math.round(last)+'%</b></div><svg viewBox="0 0 '+W+' '+(H+10)+'" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="najmG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--primary-2);stop-opacity:.45"/><stop offset="1" style="stop-color:var(--primary-2);stop-opacity:0"/></linearGradient></defs><path d="'+area+'" fill="url(#najmG)"/><path class="path" d="'+p+'" fill="none" style="stroke:var(--primary-2)" stroke-width="3" stroke-linecap="round" vector-effect="non-scaling-stroke"/>'+pts.map(function(q,i){return i===0?'<circle cx="'+q[0].toFixed(1)+'" cy="'+q[1].toFixed(1)+'" r="4.5" style="fill:var(--surface);stroke:var(--primary-2)" stroke-width="3"/>':''}).join('')+'</svg></div>'}
 function today(){
- var t=todayISO(),st=APP.students||[],att=(APP.attendance||[]).filter(function(a){return a.attendance_date===t}),
+ var t=todayISO(),st=(APP.students||[]).filter(function(s){return s.active!==false}),att=(APP.attendance||[]).filter(function(a){return a.attendance_date===t}),
   ids={};att.forEach(function(a){ids[a.student_id]=1});var n=Object.keys(ids).length,tot=st.length||0,
   ev=(APP.evaluations||[]).filter(function(e){return e.evaluation_date===t}).length,
   nt=(APP.notes||[]).filter(function(x){return String(x.created_at).slice(0,10)===t}).length,pc=tot?Math.round(n/tot*100):0;
@@ -23464,8 +23507,9 @@ function enhance(){ if(busy)return; busy=true; safe(function(){
     b.addEventListener('click',function(){if(typeof tab==='function')tab(a[2])});q.appendChild(b)});
    hero.insertAdjacentElement('afterend',q)}}
  var td=document.getElementById('uiToday');
- if(staff&&!td&&typeof todayISO==='function'){var q2=document.getElementById('uiQuick');
-  if(q2){td=document.createElement('section');td.id='uiToday';td.innerHTML=today();q2.insertAdjacentElement('afterend',td)}}
+ if(staff&&typeof todayISO==='function'){var q2=document.getElementById('uiQuick');
+  if(q2&&!td){td=document.createElement('section');td.id='uiToday';q2.insertAdjacentElement('afterend',td)}
+  if(td){var h=today();if(td.__h!==h){td.__h=h;td.innerHTML=h}}}
  var box=document.getElementById('dashboardContent');
  if(box&&!document.getElementById('uiInsights')&&typeof calculateWeightedAverage==='function'){
   var ev=APP.evaluations||[],avg=calculateWeightedAverage(ev),at=calculateAttendanceStats(APP.attendance||[]);
@@ -23473,7 +23517,7 @@ function enhance(){ if(busy)return; busy=true; safe(function(){
   var rows=subs.slice(0,6).map(function(s){var v=Math.max(0,Math.min(100,Number(s.average)||0));
    return '<div class="ui-sub-row"><span>'+esc(s.subjectName||'')+'</span><div class="tr"><div class="fl" style="width:'+v+'%;background:linear-gradient(90deg,color-mix(in srgb,'+lvl(v)+' 55%,transparent),'+lvl(v)+')"></div></div><em>'+Math.round(v)+'%</em></div>'}).join('');
   var d=document.createElement('section');d.id='uiInsights';
-  d.innerHTML='<h3>نظرة تحليلية</h3><div class="ui-rings">'+ring(avg,'المتوسط العام','من كل التقييمات')+ring(at&&at.total?at.percentage:null,'نسبة الحضور','من السجلات')+'</div>'+safe(function(){return spark(ev)})+(rows?'<div class="ui-sub">'+rows+'</div>':'')+(staff?safe(attention)||'':'');
+  d.innerHTML='<h3>نظرة تحليلية</h3><div class="ui-rings">'+ring(avg,'المتوسط العام','من كل التقييمات')+ring(at&&at.total?at.percentage:null,'نسبة الحضور','من السجلات')+'</div>'+safe(function(){return spark(ev)});
   d.addEventListener('click',function(e){var b=e.target.closest('.ui-att button');if(b&&typeof openStudentProfile==='function')openStudentProfile(b.dataset.sid)});
   box.insertAdjacentElement('afterbegin',d)}
  var sc=document.getElementById('dashboardStats');
