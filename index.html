@@ -3197,6 +3197,56 @@ body:not(.dark){
 .ann-card>svg{flex:none;color:var(--primary);margin-top:2px}
 /* حفظ التقييم: شريط ثابت أعلى التنقل بدل أن يضيع في آخر الصفحة */
 .evaluation-save-card{position:sticky;bottom:96px;z-index:6;box-shadow:var(--shadow-lg);background:var(--surface)}
+
+/* ===== V9: أسطح أدفأ (أقل بياضاً)، أرقام وبطاقات متناسقة ===== */
+:root{
+  --surface:#F8FAF2;--surface-2:#E9EFDB;--border:#D8E1C5;
+}
+body:not(.dark){
+  background:
+    radial-gradient(520px 360px at 105% -4%,rgba(111,162,79,.22),transparent 65%),
+    radial-gradient(460px 340px at -8% 46%,rgba(201,162,75,.14),transparent 65%),
+    linear-gradient(180deg,#DDE7C9 0%,#E9EFDA 38%,#F2F5E7 100%);
+  background-attachment:fixed;
+}
+body:not(.dark) .card,body:not(.dark) .stat-card,body:not(.dark) .student-card,body:not(.dark) .note-card,
+body:not(.dark) .award-card,body:not(.dark) .adm-tile,body:not(.dark) .evaluation-row,body:not(.dark) .report-section,
+body:not(.dark) .report-chart-card,body:not(.dark) .profile-info,body:not(.dark) #uiInsights,body:not(.dark) .tk-card,body:not(.dark) .ann-card{
+  background:linear-gradient(180deg,#FBFCF6 0%,#F4F8EA 100%);
+}
+body:not(.dark) .topbar{background:rgba(243,247,232,.88)}
+body:not(.dark) .bottom-nav{background:rgba(244,248,235,.94)}
+body:not(.dark) .form-control,body:not(.dark) select,body:not(.dark) textarea,body:not(.dark) input[type=text],
+body:not(.dark) input[type=date],body:not(.dark) input[type=number],body:not(.dark) input[type=search],body:not(.dark) input[type=password]{background:#F1F6E5}
+/* بطاقة داخل بطاقة: سطح أعمق بدل أبيض فوق أبيض */
+.card .sug-card,.card .report-section,.report-section .mini-row,.tk-card{background:var(--surface-2)!important;border-color:transparent!important;box-shadow:none!important}
+.sug-card .info-item{background:var(--surface)}
+/* أرقام: لا تنكسر ولا تتجاوز مربعاتها */
+.stat-value,.score-number,.tk-sum b,.info-item strong,.big-number{white-space:nowrap;font-variant-numeric:tabular-nums}
+.tk-sum b,.score-number{direction:ltr;unicode-bidi:isolate}
+.stat-card .stat-value{font-size:clamp(20px,6.4vw,25px)}
+.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.score-box{min-width:0;padding:14px 6px;text-align:center;border-radius:var(--r-ctl);background:var(--surface-2);border:1px solid var(--border)}
+.score-number{font-size:clamp(19px,5.6vw,24px);font-weight:700;line-height:1.2}
+.score-caption{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.4}
+.tk-sum{gap:10px}
+.tk-sum div{padding:12px 6px;border-radius:var(--r-ctl)}
+.tk-sum b{font-size:clamp(19px,5.6vw,24px)}
+/* قوائم صغيرة: صفوف منفصلة بمسافة */
+.mini-row{margin-bottom:8px;padding:12px 14px!important;border-radius:var(--r-ctl)!important}
+.mini-row:last-child{margin-bottom:0}
+/* عناوين وفقرات: سلّم خطوط واحد */
+.section-heading h3,.report-section h3,.card-title{font-size:16.5px;font-weight:700;margin:0}
+.card-subtitle,.muted,.section-heading small{font-size:12.5px;color:var(--muted)}
+.info-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.info-item{min-width:0;padding:10px 12px;border-radius:var(--r-ctl);background:var(--surface-2)}
+.info-item span{display:block;font-size:12px;color:var(--muted)}
+.info-item strong{display:block;font-size:15px;margin-top:2px}
+/* البحث: الأيقونة داخل الحقل بدون تداخل */
+.search-box{position:relative}
+.search-box .search-icon{position:absolute;inset-inline-start:14px;top:50%;transform:translateY(-50%);color:var(--muted);display:grid;place-items:center;pointer-events:none}
+.search-box input{padding-inline-start:44px!important}
+.search-clear{min-height:36px;width:36px;border-radius:12px}
 </style>
 </head>
 
@@ -23505,7 +23555,7 @@ function ico(n){var p=path(n);if(!p)return null;var s=document.createElementNS('
  s.setAttribute('class','ui-ic');s.setAttribute('viewBox','0 0 24 24');s.setAttribute('aria-hidden','true');s.innerHTML=p;return s}
 function key(e){return e.replace(/\uFE0F/g,'')}
 function nameOf(e){var k=key(e);return M[k]||M[Array.from(k)[0]]||null}
-var SEL='button,.btn,.icon-btn,.chip,h1,h2,h3,h4,.stat-icon,.category-icon,.award-icon,.sheet-item,.sheet-item-icon,.nav-icon,.student-card-meta>span,.badge,.status-badge,.modal-title,label,th,.fab-menu *,.toast,a,.vtabs button,.segmented button,.page-heading,.empty-inline,.empty-icon,.empty-state,.login-card p,.alert-card strong,.sug-card h4,.ann-tag,.act-tag,.task-kind,.note-meta,.award-card strong';
+var SEL='button,.btn,.icon-btn,.chip,h1,h2,h3,h4,.stat-icon,.category-icon,.award-icon,.sheet-item,.sheet-item-icon,.nav-icon,.student-card-meta>span,.badge,.status-badge,.modal-title,label,th,.fab-menu *,.toast,a,.vtabs button,.segmented button,.page-heading,.empty-inline,.empty-icon,.empty-state,.search-icon,.search-clear,.login-card p,.alert-card strong,.sug-card h4,.ann-tag,.act-tag,.task-kind,.note-meta,.award-card strong';
 function fix(root){
  (root||document).querySelectorAll(SEL).forEach(function(el){
   if(el.closest('textarea,script,style,select,.note-text')) return;
@@ -23522,6 +23572,39 @@ var q=false;function sched(){if(q)return;q=true;requestAnimationFrame(function()
 function start(){safe(function(){fix(document)});
  new MutationObserver(sched).observe(document.body,{childList:true,subtree:true,characterData:true})}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
+})();
+</script>
+<script id="ui-v9">
+/* حذف نقاط السلوك من تقرير الطالب للمعلم/المدير (يستخدم دالة الحذف الموجودة) */
+(function(){
+function safe(f){try{f()}catch(e){}}
+safe(function(){
+ if(typeof loadParentReport!=='function'||typeof deleteBehavior!=='function'||typeof fetchBehavior!=='function')return;
+ var prevLoad=loadParentReport;
+ loadParentReport=async function(id){
+  await prevLoad(id);
+  try{
+   if(!isStaff())return;
+   var d=APP.parentReportData,sec=document.querySelector('#parentReportBox .beh-sec');
+   if(!d||!d.student||!sec||sec.dataset.del)return; sec.dataset.del='1';
+   var b=await fetchBehavior(d.student.id); if(b.err)return;
+   sec.querySelectorAll('.mini-row').forEach(function(row,i){
+    var x=b.rows[i]; if(!x||row.querySelector('.mini-del'))return;
+    var own=APP.role==='admin'||x.teacher_id===(APP.user&&APP.user.id); if(!own)return;
+    var btn=document.createElement('button');btn.type='button';btn.className='mini-del';btn.setAttribute('aria-label','حذف');
+    btn.innerHTML='<svg class="ui-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>';
+    btn.addEventListener('click',function(){deleteBehavior(x.id)});
+    row.appendChild(btn);
+   });
+  }catch(e){}
+ };
+ var prevDel=deleteBehavior;
+ deleteBehavior=async function(id){
+  await prevDel(id);
+  try{var pr=document.getElementById('pageParentReport');
+   if(pr&&pr.classList.contains('active')&&APP.parentReportData&&APP.parentReportData.student)loadParentReport(APP.parentReportData.student.id)}catch(e){}
+ };
+});
 })();
 </script>
 </body>
