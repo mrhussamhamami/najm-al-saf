@@ -3217,6 +3217,65 @@ body.dark #loginScreen{background:radial-gradient(300px 300px at 100% 10%,rgba(1
 .stat-card .stat-value{font-size:clamp(19px,5.8vw,24px)}
 .stat-card .stat-label{white-space:nowrap;font-size:12px}
 .stat-card.has-ring .stat-icon::before{inset:4px}
+
+/* ===== صفحة الطلاب وملف الطالب ===== */
+/* بطاقة الطالب: صورة بإطار المستوى + محتوى + سهم، وأزرار بصف واحد */
+.student-card{display:grid!important;grid-template-columns:auto 1fr auto;grid-template-areas:"av main arrow" "act act act";gap:12px 14px!important;align-items:center}
+.student-card>.student-avatar{grid-area:av}
+.student-card>.student-card-main{grid-area:main;min-width:0}
+.student-card>.student-card-arrow{grid-area:arrow;color:var(--muted);font-size:24px;line-height:1}
+.student-card>.student-card-actions{grid-area:act}
+.student-card[data-lv]{box-shadow:var(--shadow)!important}
+.student-card[data-lv] .student-avatar{box-shadow:0 0 0 3px var(--surface),0 0 0 5.5px var(--lvc,var(--border))}
+.student-card-title{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.student-card-title h3{font-size:16.5px}
+.student-card-meta{display:flex;flex-wrap:wrap;gap:6px 10px;margin-top:6px}
+.student-card-meta>span:not(.sc-chip){font-size:12.5px}
+.student-card-actions{display:grid!important;grid-template-columns:1fr 1fr;gap:8px;border-top:1px dashed var(--border);padding-top:12px}
+.student-action{min-height:42px;border-radius:var(--r-ctl)!important;font-weight:600;background:var(--glass-in);border:1px solid var(--border);color:var(--text)}
+.student-action:not(.edit){background:var(--primary-soft);color:var(--primary);border-color:transparent;font-weight:700}
+/* ملف الطالب: التبويبات */
+.vtabs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px;margin:0 -2px 4px;background:none!important;border:0!important;box-shadow:none!important}
+.vtabs::-webkit-scrollbar{display:none}
+.vtabs button{flex:0 0 auto;min-height:40px;padding:0 16px;font-weight:600;font-size:13.5px;white-space:nowrap}
+/* ملف الطالب: الترويسة */
+.profile-hero{display:flex!important;align-items:center;gap:16px}
+.profile-avatar{flex:none;width:76px;height:76px;border-radius:26px;display:grid;place-items:center;overflow:hidden;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);color:#fff;font-size:26px;font-weight:700}
+.profile-avatar img{width:100%;height:100%;object-fit:cover}
+.profile-main{min-width:0}
+.profile-main h2{margin:0;font-size:22px;color:#fff}
+.profile-main p{margin:4px 0 8px;color:rgba(255,255,255,.9)!important;font-size:13.5px}
+.profile-hero .status-badge{background:rgba(255,255,255,.22)!important;color:#fff!important;border:1px solid rgba(255,255,255,.3)}
+/* ملف الطالب: شريط مؤشرات من أربع خانات */
+#studentProfileBox .stats-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+#studentProfileBox .stat-card{display:flex!important;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:0;padding:12px 4px!important}
+#studentProfileBox .stat-card .stat-icon{display:none}
+#studentProfileBox .stat-card .stat-content{align-items:center;gap:2px}
+#studentProfileBox .stat-card .stat-content strong{order:1;font-size:clamp(17px,5.2vw,21px);font-weight:700;line-height:1.1;white-space:nowrap}
+#studentProfileBox .stat-card .stat-content span{order:2;font-size:11.5px;color:var(--muted);white-space:nowrap}
+/* الأقسام */
+.profile-section,.danger-zone{background:var(--glass)!important;border:1px solid var(--stroke)!important;border-radius:var(--r-card)!important;box-shadow:var(--shadow)!important;padding:var(--pad)!important}
+.profile-section .section-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.text-btn{background:none;border:0;color:var(--primary);font-weight:600;min-height:36px;padding:0 8px;font-family:var(--font)}
+.info-item:last-child:nth-child(odd){grid-column:1/-1}
+.info-item strong{overflow-wrap:anywhere}
+.danger-zone{background:color-mix(in srgb,var(--bad) 8%,var(--glass))!important;border-color:color-mix(in srgb,var(--bad) 28%,transparent)!important}
+.danger-zone h3{margin:0 0 6px;color:var(--bad);font-size:16px}
+.danger-zone p{margin:0 0 12px;font-size:13px;line-height:1.7;color:var(--muted)}
+.danger-zone .row{display:flex;flex-wrap:wrap;gap:8px}.danger-zone .btn{flex:1 1 auto;min-height:42px}
+/* صفوف التقييم والسلوك: مضغوطة، وحذف أصغر */
+.mini-row .mini-row-main span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.6}
+.row-actions{display:flex;align-items:center;gap:8px;flex:none}
+.mini-row .mini-del{width:36px;height:36px;border-radius:12px}
+/* الملاحظات: التاريخ لا يلتف */
+.note-card-head small,.note-card-head time,.note-card-head .note-date{display:block;white-space:nowrap;font-size:12px;color:var(--muted)}
+/* السلوك: أزرار الإضافة بعرض متساوٍ */
+.beh-add,.beh-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.chart-wrap,.pf-chart,.dash-chart{position:relative}
+
+/* منطقة «إدارة الطالب» تظهر في تبويب «نظرة عامة» فقط، ولا تتكرر */
+.vtabs:has(button:first-child:not(.on))~.danger-zone{display:none}
+.danger-zone~.danger-zone{display:none}
 </style>
 </head>
 
