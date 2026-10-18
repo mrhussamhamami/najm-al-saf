@@ -3094,7 +3094,6 @@ button,.btn,.chip,select{min-height:44px}
 #uiQuick button:nth-child(2) .qi{background:linear-gradient(150deg,#D9B65E,#B8892B)}
 #uiQuick button:nth-child(3) .qi{background:linear-gradient(150deg,#7FB5A0,#3F7F6B)}
 #uiQuick button:nth-child(4) .qi{background:linear-gradient(150deg,#9A8CD0,#5E4FA8)}
-#dashboardContent>.card:has(#dashSubjectChart){display:none}
 #uiInsights{background:var(--surface);border:1px solid var(--border);border-radius:24px;box-shadow:var(--shadow);padding:18px;margin-bottom:14px}
 #uiInsights h3{margin:0 0 14px;font-size:16px;font-weight:700}
 .ui-rings{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:6px}
@@ -3113,9 +3112,6 @@ button,.btn,.chip,select{min-height:44px}
 .stat-card.has-ring .stat-icon{position:relative;background:conic-gradient(var(--rc,var(--primary-2)) calc(var(--p)*1%),var(--border) 0)}
 .stat-card.has-ring .stat-icon::before{content:"";position:absolute;inset:5px;border-radius:50%;background:var(--surface)}
 .stat-card.has-ring .stat-icon svg{position:relative;z-index:1;width:20px;height:20px}
-/* الرسوم القديمة: إطار أنظف */
-.report-chart-card{border:1px solid var(--border);border-radius:22px;box-shadow:var(--shadow);padding:16px}
-.report-chart-title{font-weight:700;font-size:14.5px;margin:0 0 10px}
 
 /* خلفية الوضع العادي: ضباب زيتي */
 body:not(.dark){
@@ -3126,6 +3122,81 @@ body:not(.dark){
     linear-gradient(180deg,#E8EFDA 0%,#F3F6EA 34%,#FAF9F2 100%);
   background-attachment:fixed;
 }
+
+/* ===== V7: نظام تصميم موحّد (أحجام، مسافات، أيقونات) ===== */
+:root{--r-card:20px;--r-ctl:14px;--pad:16px;--gap:12px}
+/* بطاقات: نفس الاستدارة والحشو والإطار والظل */
+.card,.stat-card,.student-card,.note-card,.sug-card,.award-card,.alert-card,.adm-tile,.evaluation-row,
+.report-chart-card,.qs-bar,.evaluation-save-card,.profile-info{
+  border-radius:var(--r-card)!important;padding:var(--pad)!important;
+  border:1px solid var(--border);box-shadow:var(--shadow);
+}
+.list-item,.tk-card,.ann-card,.mini-row,.pick-row{
+  border-radius:var(--r-ctl)!important;padding:12px 14px!important;
+  border:1px solid var(--border);box-shadow:none;background:var(--surface);
+}
+/* الأشرطة الملونة الجانبية: رفيعة وموحدة بدل الخطوط الثقيلة */
+.note-card,.ann-card,.tk-card,.alert-card,.sug-card{border-right-width:3px!important;border-left-width:1px!important}
+/* أحجام ثابتة لعناصر الشبكة */
+.stat-card{min-height:88px}
+.adm-tile{min-height:150px}
+.stats-grid,.adm-grid,.award-grid,.note-grid{align-items:stretch}
+/* الأزرار والحقول */
+.btn,.student-action,.chip,.qs,.segmented button,.vtabs button,.fab-menu button{border-radius:var(--r-ctl)!important}
+.btn{min-height:44px;padding:10px 16px}
+.form-control,select,textarea,input[type=text],input[type=number],input[type=date],input[type=password]{border-radius:var(--r-ctl)!important;min-height:46px}
+.modal,.bottom-sheet{border-radius:24px}
+/* الإيقاع: مسافات متسقة وتنفّس */
+.page{padding-bottom:150px}
+.page>.card+.card,.page>.card+.report-chart-card,.page>.report-chart-card+.card{margin-top:14px}
+.page-heading h1{font-size:24px}
+.card-title h3,.card-title{font-size:16px;font-weight:700}
+.student-card-meta,.mini-row span,small{font-size:12.5px}
+.fab{width:54px;height:54px;border-radius:18px}
+/* أيقونات: حجم ولون وسماكة موحّدة */
+.ic,.ui-ic{stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.ui-ic{width:1.15em;height:1.15em;vertical-align:-.2em;fill:none;stroke:currentColor;flex:none}
+.stat-icon .ui-ic,.stat-icon .ic,.category-icon .ui-ic,.award-icon .ui-ic,.sheet-item-icon .ui-ic{width:22px;height:22px}
+.category-icon{filter:none!important;color:var(--primary)}
+.student-card-meta>span:not(.sc-chip){filter:none!important;opacity:1;display:inline-flex;align-items:center;gap:4px}
+.btn .ui-ic,.student-action .ui-ic{width:17px;height:17px;vertical-align:-.25em}
+.icon-btn .ui-ic{width:20px;height:20px}
+
+/* بطاقة المؤشر: بنية موحّدة (رقم ثم عنوان ثم وصف) في كل الصفحات */
+.stat-card::after,.stat-card::before{display:none!important}
+.stat-card .stat-content{grid-row:1/3;display:flex;flex-direction:column;gap:2px;min-width:0}
+.stat-card .stat-content .stat-value{order:1;align-self:auto}
+.stat-card .stat-content .stat-label{order:2;align-self:auto}
+.stat-card .stat-content .stat-description{order:3;font-size:12px;color:var(--muted);font-weight:500;line-height:1.5}
+
+/* ===== V8: إعادة ترتيب بنية البطاقات (بدون المساس بالوظائف) ===== */
+/* اقتراحات الإنجازات: عنوان، شارات صغيرة، ثم أزرار بترتيب واضح */
+.sug-card{display:flex;flex-direction:column;gap:10px}
+.sug-card>strong{font-size:16px;font-weight:700}
+.sug-card .list-item-subtitle{color:var(--muted);font-size:12.5px;margin-top:-6px}
+.sug-card>div:not(.row):not(.list-item-subtitle){display:flex;flex-wrap:wrap;gap:6px}
+.sug-card .score-pill,.sug-card .status-badge{font-size:11.5px;padding:3px 10px}
+.sug-card .row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0}
+.sug-card .row .btn-primary{grid-column:1/-1}
+.sug-card .row .btn{width:100%;min-height:44px}
+/* بطاقة الملاحظة: رأس منظم وحذف هادئ */
+.note-card-head{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.note-card>p{margin:12px 0 0;font-size:14.5px;line-height:1.8;color:var(--text)}
+.note-card-foot{display:flex;justify-content:flex-end;margin-top:8px}
+.mini-del{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;border:0;background:rgba(217,92,92,.1);color:#C0463F;cursor:pointer}
+/* بطاقة الإنجاز: أيقونة | محتوى | إجراءات عمودية */
+.award-card{display:grid!important;grid-template-columns:auto 1fr auto;gap:12px;align-items:start}
+.award-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.award-head h3{margin:0;font-size:15px}
+.award-actions{display:flex;flex-direction:column;gap:8px}
+.award-main p{margin:6px 0;font-size:13.5px;color:var(--muted)}
+/* المهام والإعلانات */
+.tk-card{display:grid!important;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.tk-ic{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:var(--primary-soft);color:var(--primary)}
+.ann-card{display:flex!important;gap:12px;align-items:flex-start}
+.ann-card>svg{flex:none;color:var(--primary);margin-top:2px}
+/* حفظ التقييم: شريط ثابت أعلى التنقل بدل أن يضيع في آخر الصفحة */
+.evaluation-save-card{position:sticky;bottom:96px;z-index:6;box-shadow:var(--shadow-lg);background:var(--surface)}
 </style>
 </head>
 
@@ -23362,34 +23433,6 @@ loadAllData=async function(f){ await __ladV10(f); setTimeout(touchSeen,600); };
 <script id="ui-v4">
 (function(){
 function safe(f){try{f()}catch(e){}}
-/* 1) رسوم Chart.js الحالية: ألوان وخطوط وحواف عصرية (تنسيق فقط) */
-safe(function(){
- if(!window.Chart||!Chart.defaults||!Chart.defaults.font)return;
- var D=Chart.defaults;
- D.font.family='"IBM Plex Sans Arabic",Tajawal,sans-serif';D.font.size=12;D.font.weight=500;
- D.animation={duration:800,easing:'easeOutQuart'};
- var t=D.plugins.tooltip;t.backgroundColor='rgba(24,38,28,.94)';t.padding=12;t.cornerRadius=12;t.boxPadding=4;t.usePointStyle=true;t.rtl=true;t.titleFont={weight:'700',size:13};
- var l=D.plugins.legend.labels;l.usePointStyle=true;l.boxWidth=8;l.boxHeight=8;l.padding=16;
- D.elements.bar.borderRadius=10;D.elements.bar.borderSkipped=false;
- D.elements.line.tension=.4;D.elements.line.borderWidth=3;
- D.elements.point.radius=0;D.elements.point.hoverRadius=6;D.elements.point.hitRadius=16;
- D.elements.arc.borderWidth=0;
- if(D.scale&&D.scale.grid){D.scale.grid.drawTicks=false}
- if(D.scale&&D.scale.border){D.scale.border.display=false}
- function rgba(h,a){if(typeof h!=='string'||h[0]!=='#'||h.length!==7)return null;
-  return 'rgba('+parseInt(h.slice(1,3),16)+','+parseInt(h.slice(3,5),16)+','+parseInt(h.slice(5,7),16)+','+a+')'}
- Chart.register({id:'najmGradient',afterLayout:function(c){safe(function(){
-  var a=c.chartArea;if(!a)return;
-  c.data.datasets.forEach(function(ds){
-   var type=ds.type||c.config.type;if(type!=='bar'&&type!=='line')return;
-   if(ds.__base===undefined)ds.__base=(type==='line'?ds.borderColor:ds.backgroundColor);
-   var base=ds.__base,top=rgba(base,type==='line'?.28:1),bot=rgba(base,type==='line'?0:.55);
-   if(!top)return;
-   var g=c.ctx.createLinearGradient(0,a.top,0,a.bottom);g.addColorStop(0,top);g.addColorStop(1,bot);
-   if(type==='bar')ds.backgroundColor=g;
-   else if(ds.fill===undefined||ds.fill===false&&c.data.datasets.length===1){ds.fill=true;ds.backgroundColor=g}
-  })})}});
-});
 /* 2) إجراءات سريعة + لوحة تحليلية في الرئيسية (عرض فقط) */
 var IC={
  star:'<path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/>',
@@ -23426,6 +23469,58 @@ function enhance(){ if(busy)return; busy=true; safe(function(){
  }); busy=false}
 function start(){var pg=document.getElementById('pageDashboard');if(!pg)return;
  new MutationObserver(function(){enhance()}).observe(pg,{childList:true,subtree:true});enhance()}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
+})();
+</script>
+<script id="ui-v7">
+(function(){
+function safe(f){try{f()}catch(e){}}
+var X={
+ trash:'<path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/>',
+ print:'<path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>',
+ edit:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+ alert:'<path d="m21.7 18-8-14a2 2 0 0 0-3.4 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.7-3z"/><path d="M12 9v4M12 17h.01"/>',
+ save:'<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/>',
+ user:'<circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/>',
+ file:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h6"/>',
+ sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+ lock:'<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+ key:'<circle cx="7.5" cy="15.5" r="4.5"/><path d="m10.7 12.3 9.8-9.8M16 7l3 3"/>',
+ link:'<path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/>',
+ upload:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>',
+ door:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',
+ clock:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+ x:'<path d="M18 6 6 18M6 6l12 12"/>',
+ tick:'<path d="M20 6 9 17l-5-5"/>',
+ idc:'<rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="8" cy="12" r="2"/><path d="M13 10h5M13 14h4"/>',
+ trend:'<path d="m22 7-8.5 8.5-5-5L2 17M16 7h6v6"/>',
+ spark:'<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"/>'
+};
+var M={'🗑':'trash','🖨':'print','✏':'edit','⚠':'alert','💾':'save','👤':'user','📄':'file','☀':'sun','🔒':'lock','🔐':'lock','🔑':'key','🔗':'link','📤':'upload','🚪':'door','⏱':'clock','✕':'x','✓':'tick','✅':'tick','🆔':'idc','📈':'trend','✦':'spark',
+ '🎓':'school','🏫':'school','📚':'book','📊':'chart','📅':'check','📝':'clipboard','🗒':'note','🏆':'trophy','🏅':'medal','⭐':'star','🏠':'home','⌂':'home','⚙':'settings','🌓':'moon','🌙':'moon','☰':'menu','🔎':'search','↩':'door',
+ '👥':'users','👨':'users','👩':'users','🧑':'users','👦':'users','👧':'users'};
+var RE=/[\u{1F468}\u{1F469}\u{1F9D1}\u{1F466}\u{1F467}](?:\u200D[\u{1F468}\u{1F469}\u{1F466}\u{1F467}\u{1F393}\u{1F4BB}])*\uFE0F?|[\u{1F300}-\u{1FAFF}\u2600-\u27BF\u2B50\u23F1\u2302\u21A9\u2630\u2726]\uFE0F?/gu;
+function path(n){return X[n]||(window.ICONS&&ICONS[n])||''}
+function ico(n){var p=path(n);if(!p)return null;var s=document.createElementNS('http://www.w3.org/2000/svg','svg');
+ s.setAttribute('class','ui-ic');s.setAttribute('viewBox','0 0 24 24');s.setAttribute('aria-hidden','true');s.innerHTML=p;return s}
+function key(e){return e.replace(/\uFE0F/g,'')}
+function nameOf(e){var k=key(e);return M[k]||M[Array.from(k)[0]]||null}
+var SEL='button,.btn,.icon-btn,.chip,h1,h2,h3,h4,.stat-icon,.category-icon,.award-icon,.sheet-item,.sheet-item-icon,.nav-icon,.student-card-meta>span,.badge,.status-badge,.modal-title,label,th,.fab-menu *,.toast,a,.vtabs button,.segmented button,.page-heading,.empty-inline,.empty-icon,.empty-state,.login-card p,.alert-card strong,.sug-card h4,.ann-tag,.act-tag,.task-kind,.note-meta,.award-card strong';
+function fix(root){
+ (root||document).querySelectorAll(SEL).forEach(function(el){
+  if(el.closest('textarea,script,style,select,.note-text')) return;
+  var w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT,null),nodes=[],n;
+  while(n=w.nextNode()){RE.lastIndex=0;if(RE.test(n.nodeValue))nodes.push(n)}
+  nodes.forEach(function(t){
+   var txt=t.nodeValue,frag=document.createDocumentFragment(),last=0,m,changed=false;RE.lastIndex=0;
+   while((m=RE.exec(txt))){var nm=nameOf(m[0]),sv=nm?ico(nm):null;
+    if(!sv)continue;frag.appendChild(document.createTextNode(txt.slice(last,m.index)));frag.appendChild(sv);last=m.index+m[0].length;changed=true}
+   if(changed){frag.appendChild(document.createTextNode(txt.slice(last)));t.parentNode.replaceChild(frag,t)}
+  })
+ })}
+var q=false;function sched(){if(q)return;q=true;requestAnimationFrame(function(){q=false;safe(function(){fix(document)})})}
+function start(){safe(function(){fix(document)});
+ new MutationObserver(sched).observe(document.body,{childList:true,subtree:true,characterData:true})}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
 })();
 </script>
