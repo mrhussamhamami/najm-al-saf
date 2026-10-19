@@ -3311,6 +3311,39 @@ body.dark #loginScreen{background:radial-gradient(300px 300px at 100% 10%,rgba(1
 .ls-cat .qs.picked{background:linear-gradient(180deg,var(--primary-2),var(--olive));color:#fff;border-color:transparent}
 body.dark .ls-cat .qs.picked{background:linear-gradient(180deg,#A9E26F,#5FA33A);color:#0B1A0E}
 .ls-panel>.btn-primary{margin-top:14px}
+
+/* ===== صفحة «المهام» ===== */
+#tasksBox{display:flex;flex-direction:column;gap:14px}
+#tasksBox>.card .card-title{margin:0 0 14px}
+#tasksBox>.card .card-title h2{font-size:17px;margin:0}
+#tasksBox .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px 10px}
+#tasksBox .form-group{margin:0 0 12px;min-width:0}
+#tasksBox .grid-2 .form-group{margin:0}
+#tasksBox .form-label{display:block;margin:0 2px 6px}
+#tasksBox textarea.form-control{min-height:104px;padding-top:12px;resize:vertical}
+input[type=date]{text-align:start}
+input[type=date].ui-empty{direction:rtl}
+/* فلاتر الأنواع */
+#tkBar{display:flex;flex-direction:column;gap:12px}
+.chip-row{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 2px 4px;margin:0 -2px;background:none!important;border:0!important;box-shadow:none!important}
+.chip-row::-webkit-scrollbar{display:none}
+.chip-btn{flex:0 0 auto;min-height:40px;padding:0 16px;border-radius:999px!important;background:var(--glass);border:1px solid var(--stroke);color:var(--text);font:600 13.5px var(--font);white-space:nowrap;cursor:pointer}
+.chip-btn.on{background:linear-gradient(180deg,var(--primary-2),var(--olive));color:#fff;border-color:transparent;box-shadow:0 10px 18px -10px var(--primary-2)}
+body.dark .chip-btn.on{background:linear-gradient(180deg,#A9E26F,#5FA33A);color:#0B1A0E}
+.tk-filters{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+/* القائمة */
+#tkList{display:flex;flex-direction:column;gap:10px}
+.wk-head{font-weight:700;font-size:14px;color:var(--muted);margin:10px 4px 0}
+#tkList .empty-inline,#tkList .empty-state{border:1.5px dashed var(--border);border-radius:var(--r-card);padding:22px 16px;text-align:center;color:var(--muted);background:var(--glass-in)}
+.tk-card{--kc:var(--primary-2);align-items:start!important;gap:12px!important;background:var(--glass)!important;border:1px solid var(--stroke)!important;border-radius:var(--r-card)!important;padding:14px!important}
+.tk-card.tk-recitation{--kc:#2F9E87}.tk-card.tk-exam{--kc:var(--bad)}.tk-card.tk-project{--kc:#7B66D6}
+.tk-ic{width:44px;height:44px;border-radius:15px!important;background:color-mix(in srgb,var(--kc) 16%,transparent)!important;color:var(--kc)!important}
+.tk-main{min-width:0;display:flex;flex-direction:column;gap:4px}
+.tk-head{display:flex;align-items:center;gap:6px}
+.task-kind{padding:2px 10px;border-radius:99px;font-size:11.5px;font-weight:700;background:color-mix(in srgb,var(--kc) 16%,transparent)!important;color:var(--kc)!important}
+.tk-main strong{font-size:15.5px;line-height:1.5}
+.tk-meta{font-size:12.5px;color:var(--muted);line-height:1.7}
+.tk-card .btn-danger{align-self:center;min-height:38px;padding:0 14px;font-size:12.5px;background:color-mix(in srgb,var(--bad) 14%,transparent)!important;color:var(--bad)!important;border:1px solid color-mix(in srgb,var(--bad) 28%,transparent)!important;box-shadow:none}
 </style>
 </head>
 
@@ -23725,6 +23758,17 @@ document.addEventListener('click',function(e){var b=e.target.closest&&e.target.c
 document.addEventListener('input',function(e){var c=e.target.closest&&e.target.closest('.ls-cat');if(c)mark(c)},true);
 new MutationObserver(function(ms){ms.forEach(function(m){m.addedNodes.forEach(function(n){
  if(n.nodeType===1){var l=n.matches&&n.matches('.ls-cat')?[n]:(n.querySelectorAll?n.querySelectorAll('.ls-cat'):[]);Array.prototype.forEach.call(l,mark)}})})}).observe(document.body,{childList:true,subtree:true});
+})();
+</script>
+<script id="ui-dates">
+/* حقل التاريخ الفارغ: يعرض نص المتصفح الإرشادي بالاتجاه الصحيح (عرض فقط) */
+(function(){
+function sync(i){i.classList.toggle('ui-empty',!i.value)}
+function all(root){(root||document).querySelectorAll('input[type=date]').forEach(sync)}
+document.addEventListener('input',function(e){if(e.target&&e.target.type==='date')sync(e.target)},true);
+document.addEventListener('change',function(e){if(e.target&&e.target.type==='date')sync(e.target)},true);
+var q=false;new MutationObserver(function(){if(q)return;q=true;requestAnimationFrame(function(){q=false;all()})}).observe(document.body,{childList:true,subtree:true});
+all();
 })();
 </script>
 </body>
