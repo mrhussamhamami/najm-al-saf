@@ -2831,6 +2831,46 @@ details.tk-old>summary{cursor:pointer;font-weight:800;color:var(--muted);margin:
 .hon-avg{font-weight:900;color:var(--primary);font-size:.95rem}
 .hon-pend{border:1px solid var(--border);border-radius:18px;padding:13px;margin-bottom:11px;background:var(--surface)}
 .hon-pend .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+/* ===== V7.2: لوحة الشرف — تصميم احتفالي ===== */
+.hn-hero{display:flex;align-items:center;gap:12px;padding:14px 16px;margin-bottom:12px;border-radius:22px;color:#4a3000;background:linear-gradient(135deg,#fff1c2,#ffd97a 55%,#f5b73a);box-shadow:0 12px 28px -14px rgba(242,176,30,.85)}
+.hn-hero-ic{width:48px;height:48px;flex:none;border-radius:16px;display:grid;place-items:center;background:rgba(255,255,255,.55);color:#8a5a00}
+.hn-hero h2{margin:0;font-size:1.12rem;font-weight:800;line-height:1.3}
+.hn-hero small{display:block;font-weight:700;opacity:.8}
+body.dark .hn-hero{color:#ffe9a8;background:linear-gradient(135deg,rgba(242,176,30,.24),rgba(242,176,30,.07));border:1px solid rgba(242,176,30,.45);box-shadow:0 0 26px rgba(242,176,30,.28),inset 0 0 18px rgba(242,176,30,.08)}
+body.dark .hn-hero-ic{background:rgba(242,176,30,.18);color:#ffd36b;box-shadow:0 0 16px rgba(242,176,30,.45)}
+.hn-bar{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.hn-seg{display:flex;flex:none;padding:3px;border-radius:99px;background:var(--surface-2);border:1px solid var(--border)}
+.hn-seg button{min-height:34px;padding:0 14px;border-radius:99px;background:transparent;color:var(--muted);font-weight:800;font-size:.78rem}
+.hn-seg button.on{background:var(--primary);color:#fff}
+.hn-per{flex:1;min-width:0;display:flex;align-items:center;gap:5px}
+.hn-nav{width:34px;height:34px;flex:none;border-radius:50%;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--border);color:var(--text)}
+.hn-nav:disabled{opacity:.3;cursor:default}
+.hn-pill{flex:1;min-width:0;text-align:center;font-weight:800;font-size:.78rem;padding:7px 6px;border-radius:99px;background:var(--primary-soft);color:var(--primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.dark .hn-pill{color:var(--text)}
+.hn-st{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--border);overflow-wrap:break-word}
+.hn-av{position:relative;width:52px;height:52px;flex:none;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:1.05rem;color:#fff;background:linear-gradient(145deg,#588157,#344e41)}
+.hn-av.hn-c1{background:linear-gradient(145deg,#4f8fd6,#2a5aa0)}.hn-av.hn-c2{background:linear-gradient(145deg,#c77ab5,#8b3f7c)}
+.hn-av.hn-c3{background:linear-gradient(145deg,#e08a5a,#b3532a)}.hn-av.hn-c4{background:linear-gradient(145deg,#6b84d6,#3f4fa3)}
+.hn-mini{position:absolute;bottom:-4px;left:-4px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--surface)}
+.hn-mini.gold{background:linear-gradient(145deg,#ffe08a,#f2b01e);color:#7a4b00;box-shadow:0 3px 8px rgba(242,176,30,.45)}
+.hn-mini.sub{background:linear-gradient(145deg,#8fe0d7,#1a9a8f);color:#04403b}
+.hn-info{flex:1;min-width:0}
+.hn-name{display:flex;align-items:center;gap:6px;font-size:1.04rem;font-weight:800;line-height:1.35}
+.hn-stars{display:inline-flex;align-items:center;gap:2px;padding:1px 7px;border-radius:99px;font-size:.7rem;font-weight:900;background:#fff1c2;color:#8a5a00}
+.hn-badges{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}
+.hn-b{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:99px;font-size:.72rem;font-weight:800;line-height:1.5}
+.hn-b.gold{background:#fff1c2;color:#7a4b00;border:1px solid #f2d27a}
+.hn-b.sub{background:#dff4f1;color:#0b5f58;border:1px solid #a9ded8}
+body.dark .hn-b.gold,body.dark .hn-stars{background:rgba(242,176,30,.16);color:#ffd36b;border-color:rgba(242,176,30,.4);box-shadow:0 0 10px rgba(242,176,30,.18)}
+body.dark .hn-b.sub{background:rgba(26,154,143,.18);color:#7fe0d6;border-color:rgba(26,154,143,.45)}
+.hn-score{display:flex;flex-direction:column;align-items:center;flex:none}
+.hn-ring{--p:0;--c:#1a9a8f;position:relative;width:54px;height:54px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--c) calc(var(--p)*1%),var(--surface-2) 0)}
+.hn-ring.gold{--c:#f2b01e}
+.hn-ring::before{content:"";position:absolute;inset:5px;border-radius:50%;background:var(--surface)}
+.hn-ring b{position:relative;font-size:.72rem;font-weight:900;line-height:1}
+.hn-score small{margin-top:2px;font-size:.62rem;color:var(--muted);font-weight:700}
+body.dark .hn-ring.gold{filter:drop-shadow(0 0 5px rgba(242,176,30,.45))}
+.hon-pend .hn-st{border-top:0;padding:0}
 /* ===== V7: دفتر الدرجات ===== */
 .gb-wrap{background:#fff;color:#111;border-radius:16px;padding:14px;border:1px solid var(--border)}
 body.dark .gb-wrap{background:var(--surface);color:var(--text)}
@@ -22678,6 +22718,30 @@ applyRoleUI=function(){ __aruV7(); addExtraNav(); fixTopbarIcons(); if(typeof up
 /* ---------- لوحة الشرف: تبويبان وبطاقات حسب الشعبة ---------- */
 window.__honorTab='board'; window.__honorKind='week'; window.__honorPeriod='';
 function setHonor(k,v){ window['__honor'+k]=v; if(k==='Kind') window.__honorPeriod=''; renderHonor(); }
+/* ---- V7.2: مساعدات العرض الاحتفالي (تنسيق فقط) ---- */
+function hnInit(n){ const w=String(n||'').trim().split(/\s+/).filter(Boolean); if(!w.length) return '؟'; return w.length>1?(w[0][0]+'\u200c'+w[1][0]):w[0].slice(0,2); }
+function hnHash(n){ let h=0; String(n||'').split('').forEach(c=>{h+=c.charCodeAt(0);}); return h%5; }
+function hnAvatar(name,gold){ return '<div class="hn-av hn-c'+hnHash(name)+'">'+escapeHtml(hnInit(name))+'<span class="hn-mini '+(gold?'gold':'sub')+'">'+icon('medal',13)+'</span></div>'; }
+function hnLabel(isAll,sub){ return isAll?'الأول في جميع المواد':'الأول في '+(sub&&sub.name?sub.name:'مادة'); }
+function hnBadge(isAll,sub,score){ return '<span class="hn-b '+(isAll?'gold':'sub')+'">'+icon(isAll?'trophy':'medal',12)+escapeHtml(hnLabel(isAll,sub))+(score!=null?' · '+formatNumber(score)+'%':'')+'</span>'; }
+function hnRing(score,gold){ if(score==null) return ''; const p=Math.max(0,Math.min(100,Number(score)||0)); return '<div class="hn-score"><div class="hn-ring'+(gold?' gold':'')+'" style="--p:'+p+'"><b>'+escapeHtml(formatNumber(score))+'%</b></div><small>متوسط</small></div>'; }
+function hnD(v){ const m=String(v||'').match(/^(\d{4})-(\d{2})-(\d{2})/); return m?new Date(Date.UTC(+m[1],+m[2]-1,+m[3])):null; }
+function hnRange(a,b){
+  const d1=hnD(a), d2=hnD(b); if(!d1&&!d2) return '—'; if(!d1||!d2) return formatDate(a||b);
+  const f=o=>new Intl.DateTimeFormat('ar-SY',Object.assign({timeZone:'UTC'},o));
+  const day=d=>f({day:'numeric'}).format(d), mon=d=>f({month:'long'}).format(d);
+  if(+d1===+d2) return day(d1)+' '+mon(d1);
+  if(d1.getUTCMonth()===d2.getUTCMonth()&&d1.getUTCFullYear()===d2.getUTCFullYear()) return day(d1)+' – '+day(d2)+' '+mon(d2);
+  return day(d1)+' '+mon(d1)+' – '+day(d2)+' '+mon(d2);
+}
+const HN_CH_OLD='<svg class="ic" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>';
+const HN_CH_NEW='<svg class="ic" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>';
+function hnStudentCard(o){
+  const s=getStudentById(o.id), name=s?s.full_name:'طالب';
+  const gold=!!o.all, best=o.all?o.all.score:o.wins.reduce((m,w)=>w.score!=null&&(m==null||w.score>m)?w.score:m,null);
+  const wins=o.wins.slice().sort((a,b)=>(a.isAll?0:1)-(b.isAll?0:1)||String(a.sub&&a.sub.name||'').localeCompare(String(b.sub&&b.sub.name||''),'ar'));
+  return '<div class="hn-st">'+hnAvatar(name,gold)+'<div class="hn-info"><div class="hn-name"><span>'+escapeHtml(name)+'</span>'+(wins.length>1?'<span class="hn-stars">'+icon('star',12,true)+wins.length+'</span>':'')+'</div><div class="hn-badges">'+wins.map(w=>hnBadge(w.isAll,w.sub,w.score)).join('')+'</div></div>'+hnRing(best,gold)+'</div>';
+}
 function renderHonor(){
   const box=$('honorBox'); if(!box) return; const staff=isStaff(), pend=window.__sugs||[];
   if(!staff) window.__honorTab='board';
@@ -22688,22 +22752,30 @@ function renderHonor(){
     else{
       const by={}; pend.forEach(s=>{ const c=getClassById(s.class_id), k=c?c.grade+' / '+c.section:'—'; (by[k]=by[k]||[]).push(s); });
       html+=Object.keys(by).sort().map(k=>'<div class="wk-head">'+escapeHtml(k)+'</div>'+by[k].map(s=>{
-        const st=getStudentById(s.student_id), sub=getSubjectById(s.subject_id);
-        return '<div class="hon-pend"><div style="display:flex;align-items:center;gap:10px"><div class="hon-medal">'+icon('medal',22)+'</div><div style="flex:1;min-width:0"><strong>'+escapeHtml(st?st.full_name:'طالب')+'</strong><div class="list-item-subtitle">'+escapeHtml(sugTitle(s))+' · '+escapeHtml(s.kind==='subject'?(sub?sub.name:'مادة'):'جميع المواد')+'</div></div><span class="hon-avg">'+formatNumber(s.avg)+'%</span></div><div class="list-item-subtitle" style="margin-top:6px">'+escapeHtml(formatShortDate(s.period_start))+' — '+escapeHtml(formatShortDate(s.period_end))+' · '+s.full_sessions+' عملية كاملة · حضور '+formatNumber(s.attendance_pct)+'%</div><div class="row"><button class="btn btn-small btn-primary" type="button" onclick="decideSuggestion(\''+s.id+'\',\'approve\')">اعتماد</button><button class="btn btn-small btn-secondary" type="button" onclick="openSuggestionPick(\''+s.id+'\')">اختيار آخر</button><button class="btn btn-small btn-danger" type="button" onclick="decideSuggestion(\''+s.id+'\',\'reject\')">رفض</button></div></div>';
+        const st=getStudentById(s.student_id), sub=getSubjectById(s.subject_id), isAll=s.kind!=='subject', name=st?st.full_name:'طالب';
+        return '<div class="hon-pend"><div class="hn-st">'+hnAvatar(name,isAll)+'<div class="hn-info"><div class="hn-name"><span>'+escapeHtml(name)+'</span></div><div class="hn-badges">'+hnBadge(isAll,sub,null)+'</div><div class="list-item-subtitle">'+escapeHtml(sugTitle(s))+'</div></div>'+hnRing(s.avg,isAll)+'</div><div class="list-item-subtitle" style="margin-top:8px">'+escapeHtml(formatShortDate(s.period_start))+' — '+escapeHtml(formatShortDate(s.period_end))+' · '+s.full_sessions+' عملية كاملة · حضور '+formatNumber(s.attendance_pct)+'%</div><div class="row"><button class="btn btn-small btn-primary" type="button" onclick="decideSuggestion(\''+s.id+'\',\'approve\')">اعتماد</button><button class="btn btn-small btn-secondary" type="button" onclick="openSuggestionPick(\''+s.id+'\')">اختيار آخر</button><button class="btn btn-small btn-danger" type="button" onclick="decideSuggestion(\''+s.id+'\',\'reject\')">رفض</button></div></div>';
       }).join('')).join('');
     }
   }else{
     const kind=window.__honorKind, re=kind==='week'?/الأسبوع/:/الشهر/;
     const all=(APP.awards||[]).filter(a=>a.is_automatic&&/^أفضل طالب/.test(a.award_type||'')&&re.test(a.award_type));
+    const startOf={}; all.forEach(a=>{ if(!startOf[a.period_end]) startOf[a.period_end]=a.period_start; });
     const periods=[...new Set(all.map(a=>a.period_end))].sort().reverse();
     const sel=window.__honorPeriod&&periods.includes(window.__honorPeriod)?window.__honorPeriod:periods[0];
-    html+='<div class="chip-row"><button type="button" class="chip-btn '+(kind==='week'?'on':'')+'" onclick="setHonor(\'Kind\',\'week\')">الأسبوع</button><button type="button" class="chip-btn '+(kind==='month'?'on':'')+'" onclick="setHonor(\'Kind\',\'month\')">الشهر</button></div>';
-    if(!periods.length) html+=emptyInline('لم تُعتمد إنجازات '+(kind==='week'?'أسبوعية':'شهرية')+' بعد.');
-    else{
-      html+='<div class="form-group"><select class="form-control" onchange="setHonor(\'Period\',this.value)">'+periods.map(p=>'<option value="'+p+'"'+(p===sel?' selected':'')+'>حتى '+escapeHtml(formatDate(p))+'</option>').join('')+'</select></div>';
-      const by={}; all.filter(a=>a.period_end===sel).forEach(a=>{ const s=getStudentById(a.student_id), k=s?getStudentClassText(s):'—'; (by[k]=by[k]||[]).push(a); });
-      html+=Object.keys(by).sort().map(k=>'<div class="hon-class"><header><strong>'+escapeHtml(k)+'</strong><span class="status-badge">'+by[k].length+'</span></header>'+by[k].map(a=>{ const s=getStudentById(a.student_id), sub=getSubjectById(a.subject_id);
-        return '<div class="hon-row"><div class="hon-medal">'+icon('medal',22)+'</div><div style="flex:1;min-width:0"><strong>'+escapeHtml(s?s.full_name:'طالب')+'</strong><small>'+escapeHtml(sub?sub.name:'جميع المواد')+'</small></div>'+(a.score!=null?'<span class="hon-avg">'+formatNumber(a.score)+'%</span>':'')+'</div>'; }).join('')+'</div>').join('');
+    const seg='<div class="hn-seg"><button type="button" class="'+(kind==='week'?'on':'')+'" onclick="setHonor(\'Kind\',\'week\')">الأسبوع</button><button type="button" class="'+(kind==='month'?'on':'')+'" onclick="setHonor(\'Kind\',\'month\')">الشهر</button></div>';
+    if(!periods.length){
+      html+='<div class="hn-bar">'+seg+'</div>'+emptyInline('لم تُعتمد إنجازات '+(kind==='week'?'أسبوعية':'شهرية')+' بعد.');
+    }else{
+      const i=periods.indexOf(sel), older=periods[i+1], newer=periods[i-1];
+      const cur=all.filter(a=>a.period_end===sel), nWin=new Set(cur.map(a=>a.student_id)).size;
+      const title=(i===0?'أبطال هذا ':'أبطال ')+(kind==='week'?'الأسبوع':'الشهر');
+      html+='<div class="hn-hero"><div class="hn-hero-ic">'+icon('trophy',28)+'</div><div><h2>'+title+'</h2><small>'+nWin+' فائز</small></div></div>';
+      html+='<div class="hn-bar">'+seg+'<div class="hn-per"><button type="button" class="hn-nav" aria-label="الفترة السابقة"'+(older?' onclick="setHonor(\'Period\',\''+older+'\')"':' disabled')+'>'+HN_CH_OLD+'</button><div class="hn-pill">'+escapeHtml(hnRange(startOf[sel],sel))+'</div><button type="button" class="hn-nav" aria-label="الفترة التالية"'+(newer?' onclick="setHonor(\'Period\',\''+newer+'\')"':' disabled')+'>'+HN_CH_NEW+'</button></div></div>';
+      const by={}; cur.forEach(a=>{ const s=getStudentById(a.student_id), k=s?getStudentClassText(s):'—'; const g=(by[k]=by[k]||{}); const o=(g[a.student_id]=g[a.student_id]||{id:a.student_id,wins:[],all:null}); const w={isAll:!a.subject_id,sub:a.subject_id?getSubjectById(a.subject_id):null,score:a.score}; if(w.isAll) o.all=w; o.wins.push(w); });
+      html+=Object.keys(by).sort().map(k=>{
+        const list=Object.values(by[k]).sort((a,b)=>(b.all?1:0)-(a.all?1:0)||b.wins.length-a.wins.length);
+        return '<div class="hon-class"><header><strong>'+escapeHtml(k)+'</strong><span class="status-badge">'+list.length+' فائز</span></header>'+list.map(hnStudentCard).join('')+'</div>';
+      }).join('');
     }
   }
   box.innerHTML=html;
