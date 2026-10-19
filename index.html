@@ -3335,8 +3335,7 @@ body.dark .chip-btn.on{background:linear-gradient(180deg,#A9E26F,#5FA33A);color:
 #tkList{display:flex;flex-direction:column;gap:10px}
 .wk-head{font-weight:700;font-size:14px;color:var(--muted);margin:10px 4px 0}
 #tkList .empty-inline,#tkList .empty-state{border:1.5px dashed var(--border);border-radius:var(--r-card);padding:22px 16px;text-align:center;color:var(--muted);background:var(--glass-in)}
-.tk-card{--kc:var(--primary-2);align-items:start!important;gap:12px!important;background:var(--glass)!important;border:1px solid var(--stroke)!important;border-radius:var(--r-card)!important;padding:14px!important}
-.tk-card.tk-recitation{--kc:#2F9E87}.tk-card.tk-exam{--kc:var(--bad)}.tk-card.tk-project{--kc:#7B66D6}
+.tk-card{align-items:start!important;border-right:5px solid var(--kc,var(--border))!important;gap:12px!important;background:var(--glass)!important;border:1px solid var(--stroke)!important;border-radius:var(--r-card)!important;padding:14px!important}
 .tk-ic{width:44px;height:44px;border-radius:15px!important;background:color-mix(in srgb,var(--kc) 16%,transparent)!important;color:var(--kc)!important}
 .tk-main{min-width:0;display:flex;flex-direction:column;gap:4px}
 .tk-head{display:flex;align-items:center;gap:6px}
@@ -3344,6 +3343,32 @@ body.dark .chip-btn.on{background:linear-gradient(180deg,#A9E26F,#5FA33A);color:
 .tk-main strong{font-size:15.5px;line-height:1.5}
 .tk-meta{font-size:12.5px;color:var(--muted);line-height:1.7}
 .tk-card .btn-danger{align-self:center;min-height:38px;padding:0 14px;font-size:12.5px;background:color-mix(in srgb,var(--bad) 14%,transparent)!important;color:var(--bad)!important;border:1px solid color-mix(in srgb,var(--bad) 28%,transparent)!important;box-shadow:none}
+
+/* ===== صفحة «الملاحظات» ===== */
+#notesList{display:flex;flex-direction:column;gap:12px}
+.note-card{position:relative;border-right:4px solid var(--border)!important}
+.note-card.is-visible{border-right-color:var(--ok)!important}
+.note-card-head{display:grid!important;grid-template-columns:auto 1fr;grid-template-areas:"av who" "av tag";gap:2px 12px;align-items:center;padding-inline-end:48px}
+.note-card-head>.student-avatar{grid-area:av;width:46px;height:46px;border-radius:16px;font-size:15px}
+.note-card-head>div:not(.student-avatar){grid-area:who;min-width:0}
+.note-card-head strong{display:block;font-size:15.5px}
+.note-card-head small{display:block;font-size:12px;color:var(--muted);white-space:nowrap}
+.note-card-head>.status-badge{grid-area:tag;justify-self:start;margin-top:4px;font-size:11.5px}
+.note-card>p{margin:12px 0 0;font-size:15px;line-height:1.85;color:var(--text)}
+.note-card-foot{position:absolute;top:12px;inset-inline-end:12px;margin:0}
+.note-card-foot .mini-del{width:38px;height:38px}
+#uiNotesBar{display:flex;flex-direction:column;gap:10px}
+#uiNotesBar .nb-search{position:relative}
+#uiNotesBar .nb-search svg{position:absolute;inset-inline-start:14px;top:50%;transform:translateY(-50%);color:var(--muted);width:18px;height:18px;pointer-events:none}
+#uiNotesBar input{width:100%;padding-inline-start:44px}
+#uiNotesBar .nb-chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;align-items:center}
+#uiNotesBar .nb-chips::-webkit-scrollbar{display:none}
+#uiNotesBar .nb-chips button{flex:0 0 auto;min-height:40px;padding:0 16px;border-radius:999px;background:var(--glass);border:1px solid var(--stroke);color:var(--text);font:600 13.5px var(--font)}
+#uiNotesBar .nb-chips button.on{background:linear-gradient(180deg,var(--primary-2),var(--olive));color:#fff;border-color:transparent}
+body.dark #uiNotesBar .nb-chips button.on{background:linear-gradient(180deg,#A9E26F,#5FA33A);color:#0B1A0E}
+#uiNotesBar .nb-count{margin-inline-start:auto;font-size:12.5px;color:var(--muted);white-space:nowrap;flex:0 0 auto}
+#notesList .note-card.nb-hide{display:none}
+#uiNotesEmpty{text-align:center;color:var(--muted);padding:22px 16px;border:1.5px dashed var(--border);border-radius:var(--r-card);background:var(--glass-in)}
 </style>
 </head>
 
@@ -23769,6 +23794,30 @@ document.addEventListener('input',function(e){if(e.target&&e.target.type==='date
 document.addEventListener('change',function(e){if(e.target&&e.target.type==='date')sync(e.target)},true);
 var q=false;new MutationObserver(function(){if(q)return;q=true;requestAnimationFrame(function(){q=false;all()})}).observe(document.body,{childList:true,subtree:true});
 all();
+})();
+</script>
+<script id="ui-notes">
+/* شريط تصفية الملاحظات: بحث + مرئية/داخلية (إخفاء وإظهار فقط؛ لا يغيّر البيانات) */
+(function(){
+function safe(f){try{return f()}catch(e){}}
+var st={q:'',f:'all'};
+function apply(){var list=document.getElementById('notesList');if(!list)return;
+ var cards=list.querySelectorAll('.note-card'),n=0,q=st.q.trim();
+ cards.forEach(function(c){var vis=c.classList.contains('is-visible'),ok=(st.f==='all')||(st.f==='vis'&&vis)||(st.f==='int'&&!vis);
+  if(ok&&q&&c.textContent.indexOf(q)<0)ok=false;c.classList.toggle('nb-hide',!ok);if(ok)n++});
+ var cnt=document.querySelector('#uiNotesBar .nb-count');if(cnt)cnt.textContent=cards.length?n+' من '+cards.length:'';
+ var em=document.getElementById('uiNotesEmpty');
+ if(cards.length&&!n){if(!em){em=document.createElement('div');em.id='uiNotesEmpty';em.textContent='لا توجد ملاحظات مطابقة.';list.appendChild(em)}}else if(em)em.remove()}
+function build(){var list=document.getElementById('notesList');if(!list||document.getElementById('uiNotesBar'))return;
+ var bar=document.createElement('div');bar.id='uiNotesBar';
+ bar.innerHTML='<div class="nb-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input type="search" class="form-control" placeholder="ابحث باسم الطالب أو نص الملاحظة"></div><div class="nb-chips"><button type="button" data-f="all" class="on">الكل</button><button type="button" data-f="vis">مرئية لولي الأمر</button><button type="button" data-f="int">داخلية</button><span class="nb-count"></span></div>';
+ list.parentNode.insertBefore(bar,list);
+ bar.querySelector('input').addEventListener('input',function(e){st.q=e.target.value;apply()});
+ bar.querySelector('.nb-chips').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;st.f=b.dataset.f;
+  bar.querySelectorAll('.nb-chips button').forEach(function(x){x.classList.toggle('on',x===b)});apply()})}
+var q=false;
+new MutationObserver(function(){if(q)return;q=true;requestAnimationFrame(function(){q=false;safe(build);safe(apply)})}).observe(document.body,{childList:true,subtree:true});
+safe(build);safe(apply);
 })();
 </script>
 </body>
