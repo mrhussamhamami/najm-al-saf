@@ -3276,6 +3276,41 @@ body.dark #loginScreen{background:radial-gradient(300px 300px at 100% 10%,rgba(1
 /* منطقة «إدارة الطالب» تظهر في تبويب «نظرة عامة» فقط، ولا تتكرر */
 .vtabs:has(button:first-child:not(.on))~.danger-zone{display:none}
 .danger-zone~.danger-zone{display:none}
+
+/* ===== صفحة «حصة»: الحضور والتقييم السريع ===== */
+#lsList .vtabs button{flex:1}
+#lsList>.card{display:flex;flex-direction:column;gap:10px}
+#lsList .qs-bar{display:flex!important;align-items:center;gap:10px;padding:0!important;border:0!important;box-shadow:none!important;background:none!important}
+#lsList .qs-bar .qs{flex:0 0 auto;min-height:44px;padding:0 16px}
+#lsList .qs-bar .btn-primary{flex:1;margin:0!important;min-height:46px}
+.ls-row{background:var(--glass-in);border:1px solid var(--border);border-radius:var(--r-ctl);padding:12px!important}
+.ls-top{display:grid!important;grid-template-columns:1fr auto auto;gap:10px;align-items:center}
+.ls-top>strong{grid-column:1/-1;font-size:15px;font-weight:700;flex:none}
+.ls-top>.ba-opts{grid-column:1/-1}
+.ls-top>.btn-primary{min-height:44px}
+.ls-top>.btn-success,.ls-top>.btn-warning{width:46px;min-height:44px;padding:0!important;display:grid;place-items:center;box-shadow:none}
+.ls-top>.btn-success{background:color-mix(in srgb,var(--ok) 16%,transparent)!important;color:var(--ok)!important;border:1px solid color-mix(in srgb,var(--ok) 30%,transparent)}
+.ls-top>.btn-warning{background:color-mix(in srgb,var(--warn) 16%,transparent)!important;color:var(--warn)!important;border:1px solid color-mix(in srgb,var(--warn) 32%,transparent)}
+.ls-top .btn .ui-ic,.ls-top .btn svg{width:20px;height:20px}
+.ls-done{color:var(--ok);font-weight:700}
+/* أزرار حالة الحضور: أربع خانات متساوية بألوان واضحة */
+.ba-opts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.ba-opt{min-width:0;min-height:44px;border-radius:13px;border:1px solid var(--border);background:var(--glass);color:var(--muted);font:600 13px var(--font);transition:all .18s var(--ease)}
+.ba-opt:active{transform:scale(.95)}
+.ba-opt.on.present{background:color-mix(in srgb,var(--ok) 18%,transparent);color:var(--ok);border-color:var(--ok);font-weight:700}
+.ba-opt.on.absent{background:color-mix(in srgb,var(--bad) 18%,transparent);color:var(--bad);border-color:var(--bad);font-weight:700}
+.ba-opt.on.late{background:color-mix(in srgb,var(--warn) 20%,transparent);color:var(--warn);border-color:var(--warn);font-weight:700}
+.ba-opt.on.excused{background:color-mix(in srgb,#4C8DF0 18%,transparent);color:#4C8DF0;border-color:#4C8DF0;font-weight:700}
+/* لوحة التقييم: اسم المحور + حقل الدرجة، ثم خمسة أزرار بصف واحد */
+.ls-panel{background:var(--glass)!important;border:1px solid var(--border);border-radius:var(--r-ctl);padding:6px 12px 12px!important;margin-top:10px}
+.ls-cat{display:grid!important;grid-template-columns:1fr 84px;gap:8px 10px;align-items:center;padding:12px 0!important;border-bottom:1px dashed var(--border)}
+.ls-cat>span:first-child{flex:none;font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;min-width:0}
+.ls-cat input{width:100%!important;height:46px;min-height:46px;font-size:17px}
+.ls-cat .chips-row{grid-column:1/-1;display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;overflow:visible;flex:none!important}
+.ls-cat .qs{min-width:0!important;min-height:42px;padding:0;flex:none;font-size:14px}
+.ls-cat .qs.picked{background:linear-gradient(180deg,var(--primary-2),var(--olive));color:#fff;border-color:transparent}
+body.dark .ls-cat .qs.picked{background:linear-gradient(180deg,#A9E26F,#5FA33A);color:#0B1A0E}
+.ls-panel>.btn-primary{margin-top:14px}
 </style>
 </head>
 
@@ -23614,15 +23649,15 @@ var X={
  spark:'<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"/>'
 };
 var M={'🗑':'trash','🖨':'print','✏':'edit','⚠':'alert','💾':'save','👤':'user','📄':'file','☀':'sun','🔒':'lock','🔐':'lock','🔑':'key','🔗':'link','📤':'upload','🚪':'door','⏱':'clock','✕':'x','✓':'tick','✅':'tick','🆔':'idc','📈':'trend','✦':'spark',
- '🎓':'school','🏫':'school','📚':'book','📊':'chart','📅':'check','📝':'clipboard','🗒':'note','🏆':'trophy','🏅':'medal','⭐':'star','🏠':'home','⌂':'home','⚙':'settings','🌓':'moon','🌙':'moon','☰':'menu','🔎':'search','↩':'door',
+ '🎓':'school','🏫':'school','📚':'book','📊':'chart','📅':'check','📝':'clipboard','🗒':'note','🏆':'trophy','🏅':'medal','⭐':'star','🏠':'home','⌂':'home','⚙':'settings','🌓':'moon','🌙':'moon','☰':'menu','🔎':'search','📖':'book','🤝':'users','🧠':'star','↩':'door',
  '👥':'users','👨':'users','👩':'users','🧑':'users','👦':'users','👧':'users'};
 var RE=/[\u{1F468}\u{1F469}\u{1F9D1}\u{1F466}\u{1F467}](?:\u200D[\u{1F468}\u{1F469}\u{1F466}\u{1F467}\u{1F393}\u{1F4BB}])*\uFE0F?|[\u{1F300}-\u{1FAFF}\u2600-\u27BF\u2B50\u23F1\u2302\u21A9\u2630\u2726]\uFE0F?/gu;
-function path(n){return X[n]||(window.ICONS&&ICONS[n])||''}
+function path(n){return X[n]||(typeof ICONS!=='undefined'&&ICONS[n])||''}
 function ico(n){var p=path(n);if(!p)return null;var s=document.createElementNS('http://www.w3.org/2000/svg','svg');
  s.setAttribute('class','ui-ic');s.setAttribute('viewBox','0 0 24 24');s.setAttribute('aria-hidden','true');s.innerHTML=p;return s}
 function key(e){return e.replace(/\uFE0F/g,'')}
 function nameOf(e){var k=key(e);return M[k]||M[Array.from(k)[0]]||null}
-var SEL='button,.btn,.icon-btn,.chip,h1,h2,h3,h4,.stat-icon,.category-icon,.award-icon,.sheet-item,.sheet-item-icon,.nav-icon,.student-card-meta>span,.badge,.status-badge,.modal-title,label,th,.fab-menu *,.toast,a,.vtabs button,.segmented button,.page-heading,.empty-inline,.empty-icon,.empty-state,.search-icon,.search-clear,.login-card p,.alert-card strong,.sug-card h4,.ann-tag,.act-tag,.task-kind,.note-meta,.award-card strong';
+var SEL='button,.btn,.icon-btn,.chip,h1,h2,h3,h4,.stat-icon,.category-icon,.award-icon,.sheet-item,.sheet-item-icon,.nav-icon,.student-card-meta>span,.badge,.status-badge,.modal-title,label,th,.fab-menu *,.toast,a,.vtabs button,.segmented button,.page-heading,.empty-inline,.empty-icon,.empty-state,.ls-cat>span:first-child,.ls-top strong,.search-icon,.search-clear,.login-card p,.alert-card strong,.sug-card h4,.ann-tag,.act-tag,.task-kind,.note-meta,.award-card strong';
 var HAS=/[\u{1F300}-\u{1FAFF}\u2600-\u27BF\u2B50\u23F1\u2302\u21A9\u2630\u2726\u2713\u2715]/u;
 function conv(el){
  if(el.closest&&el.closest('textarea,script,style,select,.note-text'))return;
@@ -23679,6 +23714,17 @@ safe(function(){
    if(pr&&pr.classList.contains('active')&&APP.parentReportData&&APP.parentReportData.student)loadParentReport(APP.parentReportData.student.id)}catch(e){}
  };
 });
+})();
+</script>
+<script id="ui-lesson">
+/* تمييز الدرجة المختارة في لوحة التقييم (عرض فقط؛ لا يغيّر القيمة ولا الحفظ) */
+(function(){
+function mark(cat){var i=cat.querySelector('input');if(!i)return;var v=String(i.value);
+ cat.querySelectorAll('.qs').forEach(function(b){b.classList.toggle('picked',b.dataset.v===v)})}
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.ls-cat .qs');if(b)setTimeout(function(){mark(b.closest('.ls-cat'))},0)},true);
+document.addEventListener('input',function(e){var c=e.target.closest&&e.target.closest('.ls-cat');if(c)mark(c)},true);
+new MutationObserver(function(ms){ms.forEach(function(m){m.addedNodes.forEach(function(n){
+ if(n.nodeType===1){var l=n.matches&&n.matches('.ls-cat')?[n]:(n.querySelectorAll?n.querySelectorAll('.ls-cat'):[]);Array.prototype.forEach.call(l,mark)}})})}).observe(document.body,{childList:true,subtree:true});
 })();
 </script>
 </body>
