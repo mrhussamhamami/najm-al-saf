@@ -3391,6 +3391,46 @@ body.dark #uiNotesBar .nb-chips button.on{background:linear-gradient(180deg,#A9E
 .note-card.nb-open .note-card-foot{display:flex!important;position:static;justify-content:flex-end;margin-top:12px;padding-top:12px;border-top:1px dashed var(--border)}
 .note-card.nb-open::after{transform:rotate(-135deg);bottom:auto;top:46px}
 .note-card.nb-open{box-shadow:var(--shadow-lg)!important}
+
+/* ===== صفحة «الإنجازات» ===== */
+#awardsList{display:flex;flex-direction:column;gap:10px}
+.award-card{padding:14px!important;gap:12px!important;align-items:start!important;border-right:4px solid var(--border)!important}
+.award-card[data-type=auto]{border-right-color:var(--gold,#D9AE45)!important}
+.award-card[data-type=manual]{border-right-color:#7B66D6!important}
+.award-icon{width:46px;height:46px;border-radius:16px;display:grid;place-items:center;flex:none}
+.award-card[data-type=auto] .award-icon{background:linear-gradient(150deg,#F2D27A,#D9AE45);color:#6B4A00;box-shadow:0 10px 18px -10px #D9AE45}
+.award-card[data-type=manual] .award-icon{background:color-mix(in srgb,#7B66D6 18%,transparent);color:#7B66D6}
+.award-main{display:flex;flex-direction:column;gap:6px;min-width:0}
+.award-main>strong{order:0;font-size:17px;font-weight:700;line-height:1.4}
+.award-head{order:1;display:flex!important;align-items:center;flex-wrap:wrap;gap:6px 8px;justify-content:flex-start!important}
+.award-head h3{margin:0;font-size:14px;font-weight:700;color:var(--primary)}
+.award-card[data-type=manual] .award-head h3{color:#7B66D6}
+.aw-sub{font-size:12px;font-weight:700;padding:2px 10px;border-radius:99px;background:color-mix(in srgb,var(--gold,#D9AE45) 22%,transparent);color:var(--text)}
+.award-head .status-badge{font-size:11px!important;padding:2px 9px!important;background:var(--primary-soft)!important;color:var(--primary)!important;border:0}
+.award-head .aw-manual{background:color-mix(in srgb,#7B66D6 16%,transparent)!important;color:#7B66D6!important}
+.aw-meta{order:2;display:flex;flex-wrap:wrap;gap:6px}
+.aw-chip{font-size:12px;padding:3px 10px;border-radius:99px;background:var(--glass-in);border:1px solid var(--border);color:var(--muted)}
+.award-main>p{order:3;margin:0;font-size:13.5px;line-height:1.7;color:var(--muted)}
+.award-main>small{order:4;font-size:12px;color:var(--muted)}
+.award-card.aw-grouped .award-main>small{display:none}
+.award-card .aw-hide,.aw-hide{display:none!important}
+.aw-group{display:flex;align-items:center;gap:10px;margin:12px 4px 2px;font-weight:700;font-size:13.5px;color:var(--muted)}
+.aw-group::after{content:"";flex:1;height:1px;background:var(--border)}
+#uiAwSum{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+#uiAwSum div{background:var(--glass)!important;border:1px solid var(--stroke);border-radius:var(--r-ctl);padding:12px 8px;text-align:center;min-width:0;box-shadow:var(--shadow)}
+#uiAwSum strong{display:block;font-size:20px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#uiAwSum span{display:block;font-size:11.5px;color:var(--muted);margin-top:3px}
+#uiAwBar{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+#uiAwBar .nb-search{position:relative}
+#uiAwBar .nb-search svg{position:absolute;inset-inline-start:14px;top:50%;transform:translateY(-50%);color:var(--muted);width:18px;height:18px;pointer-events:none}
+#uiAwBar input{width:100%;padding-inline-start:46px!important}
+#uiAwBar .nb-chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;align-items:center;padding:2px}
+#uiAwBar .nb-chips::-webkit-scrollbar{display:none}
+#uiAwBar .nb-chips button{flex:0 0 auto;min-height:40px;padding:0 16px;border-radius:999px;background:var(--glass);border:1px solid var(--stroke);color:var(--text);font:600 13.5px var(--font)}
+#uiAwBar .nb-chips button.on{background:linear-gradient(180deg,var(--primary-2),var(--olive));color:#fff;border-color:transparent}
+body.dark #uiAwBar .nb-chips button.on{background:linear-gradient(180deg,#A9E26F,#5FA33A);color:#0B1A0E}
+#uiAwBar .nb-count{margin-inline-start:auto;font-size:12.5px;color:var(--muted);white-space:nowrap}
+#uiAwEmpty{text-align:center;color:var(--muted);padding:22px 16px;border:1.5px dashed var(--border);border-radius:var(--r-card);background:var(--glass-in)}
 </style>
 </head>
 
@@ -23842,6 +23882,68 @@ document.addEventListener('click',function(e){var c=e.target.closest&&e.target.c
 var q=false;
 new MutationObserver(function(){if(q)return;q=true;requestAnimationFrame(function(){q=false;safe(build);safe(apply)})}).observe(document.body,{childList:true,subtree:true});
 safe(build);safe(apply);
+})();
+</script>
+<script id="ui-awards">
+/* تحسين عرض الإنجازات: المادة في العنوان، شارات واضحة، تجميع بالفترة، تصفية وملخص (عرض فقط) */
+(function(){
+function safe(f){try{return f()}catch(e){}}
+var st={q:'',f:'all'},mo;
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function mk(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
+function enhance(c){
+ if(c.dataset.ui)return;
+ var head=c.querySelector('.award-head'),main=c.querySelector('.award-main');if(!head||!main)return;
+ var badge=head.querySelector('.status-badge'),auto=!!badge&&/تلقائي/.test(badge.textContent);
+ c.dataset.type=auto?'auto':'manual';
+ if(auto)badge.textContent='تلقائي · معتمد';else head.appendChild(mk('span','status-badge aw-manual','يدوي'));
+ var p=main.querySelector(':scope>p'),r=p?p.textContent.trim():'';
+ var m1=r.match(/^الأول في مادة (.+?) ضمن شعبة (.+)$/),m2=r.match(/^الأول في جميع المواد ضمن شعبة (.+)$/);
+ if(m1||m2){var sub=m1?m1[1]:'جميع المواد',cls=m1?m1[2]:m2[1];
+  head.appendChild(mk('span','aw-sub',sub));
+  var meta=mk('div','aw-meta');meta.appendChild(mk('span','aw-chip','شعبة '+cls));main.appendChild(meta);p.classList.add('aw-hide')}
+ c.dataset.ui='1'}
+function summary(list){
+ if(typeof APP==='undefined'||!APP.awards||!APP.awards.length){var o=document.getElementById('uiAwSum');if(o)o.remove();return}
+ var aw=APP.awards,now=Date.now(),wk=aw.filter(function(a){return now-new Date(a.created_at||a.period_end||0)<7*864e5}).length,cnt={},best=null;
+ aw.forEach(function(a){cnt[a.student_id]=(cnt[a.student_id]||0)+1});
+ Object.keys(cnt).forEach(function(k){if(!best||cnt[k]>cnt[best])best=k});
+ var s=safe(function(){return getStudentById(best)}),nm=s?String(s.full_name).split(' ')[0]:'—';
+ var html='<div><strong>'+aw.length+'</strong><span>إجمالي الإنجازات</span></div><div><strong>'+wk+'</strong><span>آخر ٧ أيام</span></div><div><strong>'+esc(nm)+'</strong><span>الأكثر إنجازاً'+(best?' ('+cnt[best]+')':'')+'</span></div>';
+ var el=document.getElementById('uiAwSum');if(!el){el=mk('div');el.id='uiAwSum';list.parentNode.insertBefore(el,list)}
+ if(el.__h!==html){el.__h=html;el.innerHTML=html}}
+function bar(list){
+ if(document.getElementById('uiAwBar'))return;
+ var b=mk('div');b.id='uiAwBar';
+ b.innerHTML='<div class="nb-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input type="search" class="form-control" placeholder="ابحث باسم الطالب أو المادة"></div><div class="nb-chips"><button type="button" data-f="all" class="on">الكل</button><button type="button" data-f="auto">تلقائي</button><button type="button" data-f="manual">يدوي</button><span class="nb-count"></span></div>';
+ list.parentNode.insertBefore(b,list);
+ b.querySelector('input').addEventListener('input',function(e){st.q=e.target.value;run()});
+ b.querySelector('.nb-chips').addEventListener('click',function(e){var x=e.target.closest('button');if(!x)return;st.f=x.dataset.f;
+  b.querySelectorAll('.nb-chips button').forEach(function(y){y.classList.toggle('on',y===x)});run()})}
+function apply(list){
+ var cards=list.querySelectorAll(':scope>.award-card'),n=0,q=st.q.trim(),lastGroup=null,groupShown={};
+ cards.forEach(function(c){var ok=(st.f==='all')||c.dataset.type===st.f;if(ok&&q&&c.textContent.indexOf(q)<0)ok=false;
+  c.classList.toggle('aw-hide',!ok);if(ok){n++;if(c.__g)groupShown[c.__g]=1}});
+ list.querySelectorAll(':scope>.aw-group').forEach(function(g){g.classList.toggle('aw-hide',!groupShown[g.__g])});
+ var cnt=document.querySelector('#uiAwBar .nb-count');if(cnt)cnt.textContent=cards.length?n+' من '+cards.length:'';
+ var em=document.getElementById('uiAwEmpty');
+ if(cards.length&&!n){if(!em){em=mk('div',null,'لا توجد إنجازات مطابقة.');em.id='uiAwEmpty';list.appendChild(em)}}else if(em)em.remove()}
+function pass(){
+ var list=document.getElementById('awardsList');if(!list)return;
+ var cards=[].slice.call(list.querySelectorAll(':scope>.award-card'));
+ list.querySelectorAll(':scope>.aw-group').forEach(function(g){g.remove()});
+ var prev=null;
+ cards.forEach(function(c){enhance(c);
+  var sm=c.querySelector('.award-main>small'),key=sm?sm.textContent.trim().replace(/\s+/g,' '):'';
+  c.__g=key;
+  if(key&&key!==prev){var g=mk('div','aw-group',key.replace(/\s*—\s*/,' ← '));g.__g=key;list.insertBefore(g,c);prev=key}
+  c.classList.toggle('aw-grouped',!!key)});
+ bar(list);summary(list);apply(list)}
+function run(){var list=document.getElementById('awardsList');if(list)safe(function(){apply(list)})}
+function guarded(){if(!mo)return;mo.disconnect();safe(pass);mo.takeRecords();mo.observe(document.body,{childList:true,subtree:true})}
+var q=false;
+mo=new MutationObserver(function(){if(q)return;q=true;requestAnimationFrame(function(){q=false;guarded()})});
+mo.observe(document.body,{childList:true,subtree:true});guarded();
 })();
 </script>
 </body>
