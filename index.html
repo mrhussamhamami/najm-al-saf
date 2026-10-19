@@ -3369,6 +3369,28 @@ body.dark #uiNotesBar .nb-chips button.on{background:linear-gradient(180deg,#A9E
 #uiNotesBar .nb-count{margin-inline-start:auto;font-size:12.5px;color:var(--muted);white-space:nowrap;flex:0 0 auto}
 #notesList .note-card.nb-hide{display:none}
 #uiNotesEmpty{text-align:center;color:var(--muted);padding:22px 16px;border:1.5px dashed var(--border);border-radius:var(--r-card);background:var(--glass-in)}
+
+/* ===== الملاحظات v2: بطاقات مطويّة، والمحتوى يظهر عند الضغط ===== */
+#uiNotesBar{margin-bottom:14px}
+#uiNotesBar input{padding-inline-start:46px!important}
+#uiNotesBar .nb-chips{padding:2px 2px 4px}
+#notesList{gap:10px}
+.note-card{cursor:pointer;padding:14px 16px!important;border-right:4px solid var(--border)!important;transition:box-shadow .2s var(--ease)}
+.note-card.is-visible{border-right-color:var(--ok)!important}
+.note-card-head{grid-template-columns:auto 1fr!important;grid-template-areas:"av who"!important;gap:12px!important;padding-inline-end:0!important;align-items:center}
+.note-card-head>.student-avatar{width:42px!important;height:42px!important;border-radius:14px!important;font-size:14px!important}
+.note-card-head>.status-badge{position:absolute;top:14px;inset-inline-end:14px;margin:0!important;font-size:11px!important;padding:2px 9px!important}
+.note-card:not(.is-visible) .note-card-head>.status-badge{background:var(--primary-soft)!important;color:var(--muted)!important}
+.note-card-head>div:not(.student-avatar){padding-inline-end:104px}
+.note-card-head strong{font-size:15.5px}
+.note-card>p{margin:10px 0 0!important;font-size:14px!important;line-height:1.7!important;color:var(--muted)!important;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;white-space:normal}
+.note-card::after{content:"";position:absolute;inset-inline-end:18px;bottom:20px;width:8px;height:8px;border-inline-end:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);transition:transform .2s var(--ease)}
+.note-card>p{padding-inline-end:28px}
+.note-card-foot{display:none!important}
+.note-card.nb-open>p{display:block;-webkit-line-clamp:unset;overflow:visible;color:var(--text)!important;font-size:15px!important;line-height:1.9!important;margin-top:12px!important;padding-inline-end:0}
+.note-card.nb-open .note-card-foot{display:flex!important;position:static;justify-content:flex-end;margin-top:12px;padding-top:12px;border-top:1px dashed var(--border)}
+.note-card.nb-open::after{transform:rotate(-135deg);bottom:auto;top:46px}
+.note-card.nb-open{box-shadow:var(--shadow-lg)!important}
 </style>
 </head>
 
@@ -23815,6 +23837,8 @@ function build(){var list=document.getElementById('notesList');if(!list||documen
  bar.querySelector('input').addEventListener('input',function(e){st.q=e.target.value;apply()});
  bar.querySelector('.nb-chips').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;st.f=b.dataset.f;
   bar.querySelectorAll('.nb-chips button').forEach(function(x){x.classList.toggle('on',x===b)});apply()})}
+document.addEventListener('click',function(e){var c=e.target.closest&&e.target.closest('#notesList .note-card');
+ if(!c||e.target.closest('.mini-del,button,a,input,textarea,select'))return;c.classList.toggle('nb-open')});
 var q=false;
 new MutationObserver(function(){if(q)return;q=true;requestAnimationFrame(function(){q=false;safe(build);safe(apply)})}).observe(document.body,{childList:true,subtree:true});
 safe(build);safe(apply);
