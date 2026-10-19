@@ -2871,6 +2871,50 @@ body.dark .hn-b.sub{background:rgba(26,154,143,.18);color:#7fe0d6;border-color:r
 .hn-score small{margin-top:2px;font-size:.62rem;color:var(--muted);font-weight:700}
 body.dark .hn-ring.gold{filter:drop-shadow(0 0 5px rgba(242,176,30,.45))}
 .hon-pend .hn-st{border-top:0;padding:0}
+/* ===== V7.3: تقرير الطالب — إزالة التكرار وتقصير الصفحة ===== */
+.rp-lv{display:grid;gap:13px}
+.rp-lv-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 10px;align-items:center}
+.rp-lv-name{font-weight:800;font-size:.92rem;min-width:0;overflow-wrap:anywhere}
+.rp-lv-val{font-weight:900;font-size:.92rem}
+.rp-lv-bar{grid-column:1/-1;height:10px;border-radius:99px;background:var(--surface-2);overflow:hidden}
+.rp-lv-bar i{display:block;height:100%;border-radius:99px;background:#16855b}
+.rp-lv-bar i.excellent{background:linear-gradient(90deg,#34b27b,#16855b)}
+.rp-lv-bar i.very-good{background:linear-gradient(90deg,#8cc152,#5c9a2a)}
+.rp-lv-bar i.good{background:linear-gradient(90deg,#f6c453,#d28a13)}
+.rp-lv-bar i.acceptable{background:linear-gradient(90deg,#f59f5b,#d9680f)}
+.rp-lv-bar i.needs-work{background:linear-gradient(90deg,#ef7b7b,#d64545)}
+.rp-lv-meta{grid-column:1/-1;font-size:.72rem;color:var(--muted);margin-top:-2px}
+.rp-days{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.rp-day{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:.74rem;font-weight:800}
+.rp-day.success{background:#e3f6ec;color:#12714d}.rp-day.warning{background:#fff5dc;color:#b07508}
+.rp-day.info{background:#e3edfb;color:#2a5fb0}.rp-day.danger{background:#fde8e8;color:#c13838}
+body.dark .rp-day.success{background:rgba(74,222,128,.16);color:#86efac}body.dark .rp-day.warning{background:rgba(251,191,36,.16);color:#fcd34d}
+body.dark .rp-day.info{background:rgba(96,165,250,.18);color:#93c5fd}body.dark .rp-day.danger{background:rgba(248,113,113,.18);color:#fca5a5}
+.rp-legend{display:flex;flex-wrap:wrap;gap:12px;font-size:.72rem;color:var(--muted);margin-bottom:8px}
+.rp-legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-left:4px;vertical-align:middle}
+.rp-legend i.success{background:#2e9e6b}.rp-legend i.warning{background:#d9962e}.rp-legend i.info{background:#3478d4}.rp-legend i.danger{background:#d64545}
+.rp-sub-title{font-size:.78rem;font-weight:800;color:var(--muted);margin:12px 0 2px}
+.rp-ex{display:flex;align-items:center;gap:10px;padding:9px 2px;border-top:1px solid var(--border)}
+.rp-ex-main{flex:1;min-width:0}.rp-ex-main strong{display:block;font-size:.86rem}.rp-ex-main span{display:block;font-size:.74rem;color:var(--muted)}
+.rp-chips{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px}
+.rp-chip{text-align:center;padding:9px 4px;border:1px solid var(--border);border-radius:12px;background:var(--surface-2)}
+.rp-chip strong{display:block;font-size:1.05rem}.rp-chip span{display:block;font-size:.72rem;font-weight:800}.rp-chip small{color:var(--muted);font-size:.68rem}
+.rp-aw-group{display:flex;justify-content:space-between;gap:8px;font-size:.78rem;font-weight:800;color:var(--muted);margin:12px 0 4px}
+.rp-aw{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--border)}
+.rp-medal{width:36px;height:36px;flex:none;border-radius:50%;display:grid;place-items:center}
+.rp-medal.gold{background:linear-gradient(145deg,#ffe08a,#f2b01e);color:#7a4b00}
+.rp-medal.sub{background:linear-gradient(145deg,#8fe0d7,#1a9a8f);color:#04403b}
+.rp-aw-sc{font-weight:900;font-size:.9rem;flex:none}
+.rp-note{border-right:4px solid var(--primary-2);border-radius:12px;background:var(--surface-2);padding:10px 12px;margin-bottom:9px}
+.rp-note.private{border-right-color:var(--border)}
+.rp-note p{margin:0;font-size:.9rem;line-height:1.8;white-space:pre-wrap;font-weight:700;overflow-wrap:break-word}
+.rp-note-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:4px}
+.rp-note-foot small{color:var(--muted);font-size:.72rem}
+.rp-hint{margin:0 0 8px;font-size:.74rem;color:var(--muted)}
+#pageReports .grid-2>.form-group:nth-child(-n+2){grid-column:1/-1}
+#pageReports .heading-actions{display:grid!important;grid-template-columns:repeat(3,1fr);gap:8px}
+#pageReports .heading-actions .btn-primary{grid-column:1/-1}
+#pageReports .heading-actions .btn{width:100%;min-width:0;padding-inline:6px}
 /* ===== V7: دفتر الدرجات ===== */
 .gb-wrap{background:#fff;color:#111;border-radius:16px;padding:14px;border:1px solid var(--border)}
 body.dark .gb-wrap{background:var(--surface);color:var(--text)}
@@ -13538,11 +13582,11 @@ function buildSmartAnalysis(
     ) {
 
       messages.push(
-        `أقوى جانب: ${strongest.categoryName} (${formatNumber(strongest.average)}%).`
+        `أقوى جانب: ${strongest.categoryName} — ${formatNumber(strongest.average)}%.`
       );
 
       messages.push(
-        `الجانب الذي يحتاج دعماً أكبر: ${weakest.categoryName} (${formatNumber(weakest.average)}%).`
+        `الجانب الذي يحتاج دعماً أكبر: ${weakest.categoryName} — ${formatNumber(weakest.average)}%.`
       );
     }
   }
@@ -13591,7 +13635,7 @@ function renderReportCharts(data) {
   window.__najmReportCharts = {};
   const make = (id, config) => {
     const canvas = document.getElementById(id);
-    if (canvas) window.__najmReportCharts[id] = new Chart(canvas, config);
+    if (canvas) { const ch = new Chart(canvas, config); window.__najmReportCharts[id] = ch; canvas.addEventListener('click', () => setTimeout(() => { try { ch.tooltip.setActiveElements([], {x:0,y:0}); ch.update('none'); } catch (_) {} }, 2500)); }
   };
   const commonOptions = {
     responsive: true, maintainAspectRatio: false,
@@ -13603,7 +13647,7 @@ function renderReportCharts(data) {
   const trend = calculateEvaluationTrend(data.evaluations || []);
   make('reportSubjectChart', { type:'bar', data:{ labels:subjects.map(x=>x.subjectName), datasets:[{label:'المتوسط',data:subjects.map(x=>Number(x.average)||0),borderRadius:8,backgroundColor:'#588157',maxBarThickness:48}] }, options:{...commonOptions} });
   make('reportCategoryChart', { type:'bar', data:{ labels:categories.map(x=>x.categoryName), datasets:[{label:'المتوسط',data:categories.map(x=>Number(x.average)||0),borderRadius:8,backgroundColor:'#0f9b8e',maxBarThickness:48}] }, options:{...commonOptions,indexAxis:categories.length>4?'y':'x',scales:categories.length>4?{x:{beginAtZero:true,min:0,max:100,ticks:{callback:value=>value+'%'},grid:{color:'#e7ece5'}},y:{grid:{display:false}}}:commonOptions.scales} });
-  make('reportTrendChart', { type:'line', data:{ labels:trend.map(x=>formatDate(x.date)), datasets:[{label:'المتوسط',data:trend.map(x=>Number(x.average)||0),borderColor:'#344e41',backgroundColor:'rgba(88,129,87,.15)',fill:true,tension:.3,pointRadius:3}] }, options:{...commonOptions,scales:{...commonOptions.scales,x:{...commonOptions.scales.x,ticks:{maxRotation:0,autoSkip:true,maxTicksLimit:8}}}} });
+  make('reportTrendChart', { type:'line', data:{ labels:trend.map(x=>rpDay(x.date)), datasets:[{label:'المتوسط',data:trend.map(x=>Number(x.average)||0),borderColor:'#344e41',backgroundColor:'rgba(88,129,87,.15)',fill:true,cubicInterpolationMode:'monotone',pointRadius:3}] }, options:{...commonOptions,scales:{...commonOptions.scales,x:{...commonOptions.scales.x,ticks:{maxRotation:0,autoSkip:true,maxTicksLimit:8}}}} });
 }
 
 function buildDetailedReportHTML(
@@ -13746,7 +13790,7 @@ function buildDetailedReportHTML(
                 <div class="analysis-item">
                   <span>✦</span>
                   <p>
-                    ${escapeHtml(item)}
+                    ${escapeHtml(item).replace(/(\d+(?:\.\d+)?%)/g,'<bdi dir="ltr">$1</bdi>')}
                   </p>
                 </div>
               `
@@ -13758,249 +13802,17 @@ function buildDetailedReportHTML(
 
     </section>
 
-    <section class="report-section">
+    ${rpSec('الأداء حسب المادة', rpLevelBars(subjects.map(x=>({label:x.subjectName,value:x.average,count:x.count})), 'لا توجد تقييمات حسب المادة.'))}
 
-      <div class="section-heading">
-        <h3>
-          الأداء حسب المادة
-        </h3>
-      </div>
+    ${rpSec('الأداء حسب مجال التقييم', rpLevelBars(categories.map(x=>({label:x.categoryName,value:x.average,count:x.count})), 'لا توجد بيانات كافية.'))}
 
-      ${
-        subjects.length
-          ? `
-            ${buildReportBarChart(subjects.map(item=>({label:item.subjectName,value:Number(item.average)||0})), 'المتوسط حسب المادة')}
-            <div class="report-table">
+    ${rpSec('الحضور والغياب', buildAttendanceSummary(attendanceStats) + rpAttendance(attendance))}
 
-              ${subjects
-                .map(item => {
+    ${rpSec('الاتجاه الزمني', trend.length ? buildReportTrendChart(trend) + rpTrendChips(trend) : emptyInline('لا يوجد اتجاه زمني كافٍ.'))}
 
-                  const level =
-                    getScoreLevel(
-                      item.average
-                    );
+    ${rpSec('الملاحظات', notes.length ? rpNotes(notes) : emptyInline('لا توجد ملاحظات.'))}
 
-                  return `
-                    <div class="report-table-row">
-
-                      <strong>
-                        ${escapeHtml(
-                          item.subjectName
-                        )}
-                      </strong>
-
-                      <span>
-                        ${item.count}
-                        تقييم
-                      </span>
-
-                      <span
-                        class="score-pill ${level.className}"
-                      >
-                        ${formatNumber(
-                          item.average
-                        )}%
-                      </span>
-
-                    </div>
-                  `;
-                })
-                .join('')}
-
-            </div>
-          `
-          : emptyInline(
-              'لا توجد تقييمات حسب المادة.'
-            )
-      }
-
-    </section>
-
-    <section class="report-section">
-
-      <div class="section-heading">
-        <h3>
-          الأداء حسب مجال التقييم
-        </h3>
-      </div>
-
-      ${
-        categories.length
-          ? `
-            ${buildReportBarChart(categories.map(item=>({label:item.categoryName,value:Number(item.average)||0})), 'المتوسط حسب مجال التقييم')}
-            <div class="report-table">
-
-              ${categories
-                .map(item => {
-
-                  const level =
-                    getScoreLevel(
-                      item.average
-                    );
-
-                  return `
-                    <div class="report-table-row">
-
-                      <strong>
-                        ${escapeHtml(
-                          item.categoryName
-                        )}
-                      </strong>
-
-                      <span>
-                        ${item.count}
-                        تقييم
-                      </span>
-
-                      <span
-                        class="score-pill ${level.className}"
-                      >
-                        ${formatNumber(
-                          item.average
-                        )}%
-                      </span>
-
-                    </div>
-                  `;
-                })
-                .join('')}
-
-            </div>
-          `
-          : emptyInline(
-              'لا توجد بيانات كافية.'
-            )
-      }
-
-    </section>
-
-    <section class="report-section">
-
-      <div class="section-heading">
-        <h3>
-          الحضور والغياب
-        </h3>
-      </div>
-
-      ${buildAttendanceSummary(
-        attendanceStats
-      )}
-
-      ${
-        attendance.length
-          ? `
-            <div class="mini-list">
-
-              ${buildAttendanceMiniList(
-                attendance
-              )}
-
-            </div>
-          `
-          : ''
-      }
-
-    </section>
-
-    <section class="report-section">
-
-      <div class="section-heading">
-        <h3>
-          الاتجاه الزمني
-        </h3>
-      </div>
-
-      ${
-        trend.length
-          ? `
-            ${buildReportTrendChart(trend)}
-            <div class="trend-list">
-
-              ${trend
-                .map(
-                  item => `
-                    <div class="trend-row">
-
-                      <span>
-                        ${formatDate(
-                          item.date
-                        )}
-                      </span>
-
-                      <div class="trend-bar">
-                        <span
-                          style="width:${Math.min(
-                            100,
-                            Math.max(
-                              0,
-                              Number(
-                                item.average ||
-                                0
-                              )
-                            )
-                          )}%"
-                        ></span>
-                      </div>
-
-                      <strong>
-                        ${formatNumber(
-                          item.average
-                        )}%
-                      </strong>
-
-                    </div>
-                  `
-                )
-                .join('')}
-
-            </div>
-          `
-          : emptyInline(
-              'لا يوجد اتجاه زمني كافٍ.'
-            )
-      }
-
-    </section>
-
-    <section class="report-section">
-
-      <div class="section-heading">
-        <h3>
-          الملاحظات
-        </h3>
-      </div>
-
-      ${
-        notes.length
-          ? buildNotesMiniList(
-              notes
-            )
-          : emptyInline(
-              'لا توجد ملاحظات.'
-            )
-      }
-
-    </section>
-
-    <section class="report-section">
-
-      <div class="section-heading">
-        <h3>
-          الإنجازات
-        </h3>
-      </div>
-
-      ${
-        awards.length
-          ? buildAwardsMiniList(
-              awards
-            )
-          : emptyInline(
-              'لا توجد إنجازات.'
-            )
-      }
-
-    </section>
+    ${rpSec('الإنجازات', awards.length ? rpAwards(awards) : emptyInline('لا توجد إنجازات.'))}
 
   `;
 }
@@ -21805,7 +21617,7 @@ function weekCmpHTML(evals,end){
   const cur=calculateWeightedAverage(evals.filter(e=>e.evaluation_date>=a1&&e.evaluation_date<=end));
   const prv=calculateWeightedAverage(evals.filter(e=>e.evaluation_date>=a0&&e.evaluation_date<=b1));
   const diff=(cur!==null&&prv!==null)?cur-prv:null;
-  return '<section class="report-section weekCmpA"><div class="section-heading"><h3>مقارنة بالأسبوع الماضي</h3><small class="muted">حتى '+escapeHtml(formatDate(end))+'</small></div>'+(diff===null?emptyInline('لا توجد تقييمات كافية في الأسبوعين للمقارنة.'):'<div class="grid-3"><div class="score-box"><div class="score-number">'+formatNumber(cur)+'%</div><div class="score-caption">هذا الأسبوع</div></div><div class="score-box"><div class="score-number">'+formatNumber(prv)+'%</div><div class="score-caption">الأسبوع الماضي</div></div><div class="score-box"><div class="score-number" style="color:var(--'+(diff>=0?'success':'danger')+')">'+(diff>=0?'▲ ':'▼ ')+formatNumber(Math.abs(diff))+'</div><div class="score-caption">الفرق</div></div></div>')+'</section>';
+  return '<section class="report-section weekCmpA"><div class="section-heading"><h3>مقارنة بالأسبوع الماضي</h3><small class="muted">حتى '+escapeHtml(formatDate(end))+'</small></div>'+(diff===null?emptyInline('لا توجد تقييمات كافية في الأسبوعين للمقارنة.'):'<div class="grid-3"><div class="score-box"><div class="score-number">'+formatNumber(cur)+'%</div><div class="score-caption">هذا الأسبوع</div></div><div class="score-box"><div class="score-number">'+formatNumber(prv)+'%</div><div class="score-caption">الأسبوع الماضي</div></div><div class="score-box"><div class="score-number" style="color:var(--'+(diff>=0?'success':'danger')+')">'+(diff>=0?'▲ ':'▼ ')+formatNumber(Math.abs(diff))+'</div><div class="score-caption">الفرق بالنقاط</div></div></div>')+'</section>';
 }
 const __lrBase=loadReport;
 loadReport=async function(){
@@ -21848,7 +21660,7 @@ loadParentReport=async function(id){
   const cur=calculateWeightedAverage(d.evaluations.filter(e=>e.evaluation_date>=a1&&e.evaluation_date<=t));
   const prv=calculateWeightedAverage(d.evaluations.filter(e=>e.evaluation_date>=a0&&e.evaluation_date<=b1));
   const diff=(cur!==null&&prv!==null)?cur-prv:null;
-  const html='<section class="report-section" id="weekCmp"><div class="section-heading"><h3>مقارنة بالأسبوع الماضي</h3></div>'+(diff===null?emptyInline('لا توجد تقييمات كافية في الأسبوعين للمقارنة.'):'<div class="grid-3"><div class="score-box"><div class="score-number">'+formatNumber(cur)+'%</div><div class="score-caption">هذا الأسبوع</div></div><div class="score-box"><div class="score-number">'+formatNumber(prv)+'%</div><div class="score-caption">الأسبوع الماضي</div></div><div class="score-box"><div class="score-number" style="color:var(--'+(diff>=0?'success':'danger')+')">'+(diff>=0?'▲ ':'▼ ')+formatNumber(Math.abs(diff))+'</div><div class="score-caption">الفرق</div></div></div>')+'</section>';
+  const html='<section class="report-section" id="weekCmp"><div class="section-heading"><h3>مقارنة بالأسبوع الماضي</h3></div>'+(diff===null?emptyInline('لا توجد تقييمات كافية في الأسبوعين للمقارنة.'):'<div class="grid-3"><div class="score-box"><div class="score-number">'+formatNumber(cur)+'%</div><div class="score-caption">هذا الأسبوع</div></div><div class="score-box"><div class="score-number">'+formatNumber(prv)+'%</div><div class="score-caption">الأسبوع الماضي</div></div><div class="score-box"><div class="score-number" style="color:var(--'+(diff>=0?'success':'danger')+')">'+(diff>=0?'▲ ':'▼ ')+formatNumber(Math.abs(diff))+'</div><div class="score-caption">الفرق بالنقاط</div></div></div>')+'</section>';
   const sg=box.querySelector('.stats-grid'); if(sg) sg.insertAdjacentHTML('afterend',html);
   decorateReport(box);
 };
@@ -21971,7 +21783,7 @@ function addRadarTo(box,evals,id){
   anchor.insertAdjacentHTML('afterend',radarCard(id)); requestAnimationFrame(()=>drawRadar(id,evals));
 }
 const __lrBase5=loadReport;
-loadReport=async function(){ await __lrBase5(); addRadarTo($('reportBox'),APP.reportData&&APP.reportData.evaluations,'rdAdmin'); };
+loadReport=async function(){ await __lrBase5(); };
 const __lprBase5=loadParentReport;
 loadParentReport=async function(id){ await __lprBase5(id); addRadarTo($('parentReportBox'),APP.parentReportData&&APP.parentReportData.evaluations,'rdParent'); };
 const __lspBase3=loadStudentProfile;
@@ -22782,6 +22594,57 @@ function renderHonor(){
 }
 const __dsgV7=decideSuggestion; decideSuggestion=async function(){ await __dsgV7.apply(null,arguments); if(APP.currentPage==='honor') renderHonor(); };
 const __lpsV7=loadPendingSuggestions; loadPendingSuggestions=async function(){ await __lpsV7(); if(APP.currentPage==='honor') renderHonor(); };
+
+/* ---- V7.3: مساعدات تقرير الطالب (عرض فقط) ---- */
+function rpDay(v){ const d=hnD(v); if(!d) return '—'; const f=o=>new Intl.DateTimeFormat('ar-SY',Object.assign({timeZone:'UTC'},o)); return f({day:'numeric'}).format(d)+' '+f({month:'long'}).format(d); }
+function rpSec(t,b){ return '<section class="report-section"><div class="section-heading"><h3>'+t+'</h3></div>'+b+'</section>'; }
+function rpLevelBars(items,emptyText){
+  const rows=(items||[]).filter(x=>x.value!=null&&Number.isFinite(Number(x.value))).sort((a,b)=>Number(b.value)-Number(a.value));
+  if(!rows.length) return emptyInline(emptyText);
+  return '<div class="rp-lv">'+rows.map(x=>{ const v=Math.max(0,Math.min(100,Number(x.value))), lv=getScoreLevel(v);
+    return '<div class="rp-lv-row"><span class="rp-lv-name">'+escapeHtml(x.label)+'</span><span class="rp-lv-val">'+escapeHtml(formatNumber(x.value))+'%</span><div class="rp-lv-bar"><i class="'+lv.className+'" style="width:'+v+'%"></i></div>'+(x.count!=null?'<span class="rp-lv-meta">'+escapeHtml(lv.label)+' · '+x.count+' تقييم</span>':'')+'</div>'; }).join('')+'</div>';
+}
+function rpAttendance(records){
+  const list=(records||[]).slice().sort((a,b)=>String(a.attendance_date).localeCompare(String(b.attendance_date)));
+  if(!list.length) return '';
+  const dd=r=>{ const d=hnD(r.attendance_date); return d?new Intl.DateTimeFormat('ar-SY',{day:'numeric',timeZone:'UTC'}).format(d):'·'; };
+  let h='<div class="rp-days">'+list.map(r=>'<span class="rp-day '+attendanceStatusClass(r.status)+'" title="'+escapeAttr(rpDay(r.attendance_date)+' — '+attendanceStatusText(r.status))+'">'+escapeHtml(dd(r))+'</span>').join('')+'</div>';
+  h+='<div class="rp-legend"><span><i class="success"></i>حاضر</span><span><i class="warning"></i>متأخر</span><span><i class="info"></i>بعذر</span><span><i class="danger"></i>غائب</span></div>';
+  const ex=list.filter(r=>String(r.status||'').toLowerCase()!=='present');
+  if(ex.length) h+='<div class="rp-sub-title">الأيام الاستثنائية</div>'+ex.map(r=>'<div class="rp-ex"><span class="status-badge '+attendanceStatusClass(r.status)+'">'+escapeHtml(attendanceStatusText(r.status))+'</span><div class="rp-ex-main"><strong>'+escapeHtml(rpDay(r.attendance_date))+'</strong>'+(r.note?'<span>'+escapeHtml(r.note)+'</span>':'')+'</div></div>').join('');
+  return h;
+}
+function rpTrendChips(trend){
+  const r=(trend||[]).filter(x=>x.average!=null&&Number.isFinite(Number(x.average))).sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+  if(!r.length) return '';
+  const hi=r.reduce((a,b)=>Number(b.average)>Number(a.average)?b:a), lo=r.reduce((a,b)=>Number(b.average)<Number(a.average)?b:a), last=r[r.length-1];
+  const chip=(t,x)=>'<div class="rp-chip"><strong>'+escapeHtml(formatNumber(x.average))+'%</strong><span>'+t+'</span><small>'+escapeHtml(rpDay(x.date))+'</small></div>';
+  return '<div class="rp-chips">'+chip('الأعلى',hi)+chip('الأدنى',lo)+chip('الأحدث',last)+'</div>';
+}
+function rpNotes(notes){
+  const staff=isStaff();
+  return (staff?'<p class="rp-hint">الملاحظات بلا وسم مرئية لولي الأمر، والموسومة «خاصة» للمعلمين فقط.</p>':'')+notes.map(n=>{
+    const del=staff?'<button type="button" class="mini-del" aria-label="حذف" onclick="deleteNote(\''+escapeAttr(n.id)+'\')">🗑️</button>':'';
+    return '<article class="rp-note'+(n.visible_to_parent?'':' private')+'"><p>'+escapeHtml(n.note||'')+'</p><div class="rp-note-foot"><small>'+escapeHtml(formatDateTime(n.created_at))+'</small><span>'+(n.visible_to_parent?'':'<span class="status-badge">خاصة</span>')+del+'</span></div></article>';
+  }).join('');
+}
+function rpAwardParts(a){
+  const sub=a.subject_id?getSubjectById(a.subject_id):null, label=String(a.reason||'').split(/\s+ضمن شعبة\s+/)[0].trim()||(sub&&sub.name)||'تكريم الطالب';
+  return {label:label,isSubject:/^الأول في مادة/.test(label)};
+}
+function rpAwards(awards){
+  const groups={}, order=[];
+  awards.forEach(a=>{ const k=(a.award_type||'إنجاز')+'|'+(a.period_start||'')+'|'+(a.period_end||''); if(!groups[k]){ groups[k]={a:a,list:[]}; order.push(k); } groups[k].list.push(a); });
+  order.sort((x,y)=>String(groups[y].a.period_end||'').localeCompare(String(groups[x].a.period_end||'')));
+  return order.map(k=>{
+    const g=groups[k], a=g.a, range=(a.period_start||a.period_end)?hnRange(a.period_start,a.period_end):'';
+    const items=g.list.map(x=>({x:x,p:rpAwardParts(x)})).sort((u,v)=>(u.p.isSubject?1:0)-(v.p.isSubject?1:0));
+    return '<div class="rp-aw-group"><span>'+escapeHtml(a.award_type||'إنجاز')+'</span><span>'+escapeHtml(range)+'</span></div>'+items.map(o=>{ const gold=!o.p.isSubject;
+      return '<div class="rp-aw"><div class="rp-medal '+(gold?'gold':'sub')+'">'+icon(gold?'trophy':'medal',18)+'</div><span class="hn-b '+(gold?'gold':'sub')+'" style="flex:1;min-width:0;white-space:normal">'+escapeHtml(o.p.label)+'</span>'+(o.x.score!=null?'<b class="rp-aw-sc">'+escapeHtml(formatNumber(o.x.score))+'%</b>':'')+'</div>'; }).join('');
+  }).join('');
+}
+/* الزر العائم يغطي شارات الحضور في صفحة التقارير */
+const __apsV73=afterPageShown; afterPageShown=function(p){ const f=document.getElementById('fab'); if(f) f.style.display=(p==='reports')?'none':''; return __apsV73(p); };
 
 /* ---------- تقرير ولي الأمر: يوم أو عام ---------- */
 window.__prMode='year'; window.__prDate=todayISO();
