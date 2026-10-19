@@ -2915,6 +2915,26 @@ body.dark .rp-day.info{background:rgba(96,165,250,.18);color:#93c5fd}body.dark .
 #pageReports .heading-actions{display:grid!important;grid-template-columns:repeat(3,1fr);gap:8px}
 #pageReports .heading-actions .btn-primary{grid-column:1/-1}
 #pageReports .heading-actions .btn{width:100%;min-width:0;padding-inline:6px}
+/* ===== V7.4: صفحة التقارير — تبويبان وتقرير شعبة مُعاد تنسيقه ===== */
+.rp-tabs{display:flex;gap:4px;padding:4px;margin:0 0 14px;border-radius:99px;background:var(--surface-2);border:1px solid var(--border)}
+.rp-tabs button{flex:1;min-height:42px;border-radius:99px;background:transparent;color:var(--muted);font-weight:800;font-size:.88rem}
+.rp-tabs button.on{background:var(--primary);color:#fff;box-shadow:0 4px 12px rgba(52,78,65,.25)}
+body.dark .rp-tabs button.on{background:linear-gradient(180deg,#A9E26F,#5FA33A);color:#0B1A0E}
+#pageReports[data-rmode="student"] .rp-g-class,#pageReports[data-rmode="class"] .rp-g-student{display:none!important}
+#classReportCard>.card-title{display:none}
+#classReportCard .grid-2>.form-group:nth-child(-n+2){grid-column:1/-1}
+#classReportCard .heading-actions{grid-template-columns:repeat(2,1fr)}
+.cr-list{display:grid}
+.cr-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:6px 10px;align-items:center;padding:11px 0;border-top:1px solid var(--border)}
+.cr-row:first-child{border-top:0}
+.cr-rank{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:.8rem;background:var(--surface-2);color:var(--muted)}
+.cr-rank.r1{background:linear-gradient(145deg,#ffe08a,#f2b01e);color:#7a4b00}
+.cr-rank.r2{background:linear-gradient(145deg,#eceff1,#b0bec5);color:#37474f}
+.cr-rank.r3{background:linear-gradient(145deg,#f5c9a0,#cd7f32);color:#5a3300}
+.cr-name{font-weight:800;font-size:.92rem;overflow-wrap:anywhere}
+.cr-meta{font-size:.72rem;color:var(--muted)}
+.cr-val{font-weight:900;font-size:.95rem}
+.cr-row .rp-lv-bar{grid-column:1/-1;height:8px}
 /* ===== V7: دفتر الدرجات ===== */
 .gb-wrap{background:#fff;color:#111;border-radius:16px;padding:14px;border:1px solid var(--border)}
 body.dark .gb-wrap{background:var(--surface);color:var(--text)}
@@ -21156,8 +21176,8 @@ renderReportsPage = function(){
   card.innerHTML='<div class="card-title"><h2>تقرير شعبة / مادة</h2></div><div class="grid-2">'+
     '<div class="form-group"><label class="form-label">الشعبة</label><select id="crClass" class="form-control"></select></div>'+
     '<div class="form-group"><label class="form-label">المادة</label><select id="crSubject" class="form-control"></select></div>'+
-    '<div class="form-group"><label class="form-label">من</label><input id="crFrom" type="date" class="form-control"></div>'+
-    '<div class="form-group"><label class="form-label">إلى</label><input id="crTo" type="date" class="form-control"></div></div>'+
+    '<div class="form-group"><label class="form-label">من تاريخ</label><input id="crFrom" type="date" class="form-control"></div>'+
+    '<div class="form-group"><label class="form-label">إلى تاريخ</label><input id="crTo" type="date" class="form-control"></div></div>'+
     '<div class="heading-actions"><button class="btn btn-primary btn-sm" type="button" onclick="generateClassReport()">📊 إنشاء تقرير الشعبة</button><button class="btn btn-secondary btn-sm" type="button" onclick="printClassReport()">🖨️ طباعة</button><button class="btn btn-secondary btn-sm" type="button" onclick="exportElementPDF($(\'classReportBox\'),\'تقرير-الشعبة.pdf\')">📄 PDF</button><button class="btn btn-secondary btn-sm" type="button" onclick="printBlankSheet(\'att\')">كشف حضور فارغ</button><button class="btn btn-secondary btn-sm" type="button" onclick="printBlankSheet(\'grade\')">كشف درجات فارغ</button></div><div id="classReportBox" style="margin-top:14px"></div>';
   const rb=$('reportBox'); rb.parentNode.insertBefore(card,rb.nextSibling);
 };
@@ -21190,7 +21210,7 @@ async function generateClassReport(){
     window.__classReportHTML='<h2>تقرير الشعبة: '+escapeHtml(cls?(cls.grade+' / '+cls.section):'')+(sub?' — '+escapeHtml(sub.name):'')+'</h2><p>الفترة: '+escapeHtml(from||'البداية')+' — '+escapeHtml(to||'اليوم')+'</p><div class="stats"><div>الطلاب: '+students.length+'</div><div>التقييمات: '+evals.length+'</div><div>متوسط الشعبة: '+(cAvg===null?'—':formatNumber(cAvg)+'%')+'</div></div>'+
       (subs.length?'<h3>حسب المادة</h3><table><tr><th>المادة</th><th>التقييمات</th><th>المتوسط</th></tr>'+subs.map(x=>'<tr><td>'+escapeHtml(x.subjectName)+'</td><td>'+x.count+'</td><td>'+formatNumber(x.average)+'%</td></tr>').join('')+'</table>':'')+
       '<h3>ترتيب الطلاب</h3><table><tr><th>#</th><th>الطالب</th><th>التقييمات</th><th>المتوسط</th><th>الحضور</th></tr>'+rows.map((r,i)=>'<tr><td>'+(i+1)+'</td><td>'+escapeHtml(r.s.full_name)+'</td><td>'+r.n+'</td><td>'+(r.avg===null?'—':formatNumber(r.avg)+'%')+'</td><td>'+(r.att===null?'—':formatNumber(r.att)+'%')+'</td></tr>').join('')+'</table>';
-    box.innerHTML='<div class="table-wrap" style="padding:12px">'+window.__classReportHTML+'</div>';
+    box.innerHTML=crScreenHTML(students,evals,att,rows,cAvg,cls,sub,subs,from,to);
   }catch(e){ handleSupabaseError(e,'تعذر إنشاء تقرير الشعبة'); box.innerHTML=''; }
 }
 function printClassReport(){
@@ -21291,7 +21311,7 @@ async function exportElementPDF(el,name,landscape){
     if(!window.html2canvas) await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
     if(!window.jspdf) await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
     Object.values(window.__najmReportCharts||{}).concat(Object.values(window.__v2Charts)).forEach(c=>{ try{c.update('none');}catch(e){} });
-    const canvas=await html2canvas(el,{scale:2,backgroundColor:'#ffffff',useCORS:true,windowWidth:900,onclone:d=>{ d.body.classList.remove('dark'); d.documentElement.classList.remove('dark'); }});
+    const canvas=await html2canvas(el,{scale:2,backgroundColor:'#ffffff',useCORS:true,windowWidth:900,onclone:d=>{ d.body.classList.remove('dark'); d.documentElement.classList.remove('dark'); d.querySelectorAll('.mini-del').forEach(x=>x.remove()); try{ najmSanitizeColors(d); }catch(e){ console.warn(e); } }});
     const L=!!landscape; const pdf=new window.jspdf.jsPDF(L?'l':'p','mm','a4'), W=L?297:210, H=L?210:297, M=8, iw=W-2*M, pageHpx=Math.floor((H-2*M)*canvas.width/iw);
     for(let y=0,i=0; y<canvas.height; y+=pageHpx,i++){
       const part=document.createElement('canvas'); part.width=canvas.width; part.height=Math.min(pageHpx,canvas.height-y);
@@ -21326,7 +21346,8 @@ loadParentReport=async function(id){
 const __gcrBase=generateClassReport;
 generateClassReport=async function(){
   await __gcrBase();
-  const box=$('classReportBox'), d=window.__classChart; if(!box||!d||!box.querySelector('.table-wrap')) return;
+  return; /* V7.4: استُبدلت الرسوم بأشرطة المستوى */
+  const box=$('classReportBox'), d=window.__classChart;
   const rows=d.rows.filter(r=>r.a!==null);
   const wrap=box.querySelector('.table-wrap');
   wrap.insertAdjacentHTML('afterbegin',(rows.length?chartCard('متوسط كل طالب','ccStudents',Math.max(240,rows.length*26)):'')+(d.subs.length?chartCard('المتوسط حسب المادة','ccSubjects'):''));
@@ -21335,12 +21356,6 @@ generateClassReport=async function(){
     if(d.subs.length) mkChart('ccSubjects',{type:'bar',data:{labels:d.subs.map(x=>x.subjectName),datasets:[{data:d.subs.map(x=>Number(x.average)||0),backgroundColor:'#0f9b8e',borderRadius:8,maxBarThickness:46}]},options:barOpts(false)});
   });
 };
-function printClassReport(){
-  const box=$('classReportBox'); if(!box||!box.querySelector('.table-wrap')){showToast('أنشئ التقرير أولاً','warning');return;}
-  const c=box.cloneNode(true);
-  c.querySelectorAll('canvas').forEach(cv=>{ try{ const src=$(cv.id); const im=document.createElement('img'); im.src=src.toDataURL('image/png',1); im.style.cssText='display:block;width:100%;max-height:340px;object-fit:contain'; cv.replaceWith(im);}catch(e){} });
-  printHTML('تقرير الشعبة',c.innerHTML);
-}
 
 /* ---------- شريط جانبي (سطح المكتب) ---------- */
 const __aruBase=applyRoleUI;
@@ -22645,6 +22660,50 @@ function rpAwards(awards){
 }
 /* الزر العائم يغطي شارات الحضور في صفحة التقارير */
 const __apsV73=afterPageShown; afterPageShown=function(p){ const f=document.getElementById('fab'); if(f) f.style.display=(p==='reports')?'none':''; return __apsV73(p); };
+
+/* ---- V7.4: تقرير الشعبة (عرض بطاقات) + تبويبا صفحة التقارير + إصلاح ألوان PDF ---- */
+function crScreenHTML(students,evals,att,rows,cAvg,cls,sub,subs,from,to){
+  const attS=calculateAttendanceStats(att), clsName=cls?(cls.grade+' / '+cls.section):'';
+  const period='الفترة: '+(from?formatDate(from):'البداية')+' — '+(to?formatDate(to):'اليوم');
+  let h='<div class="report-header"><div><span class="eyebrow">تقرير شعبة</span><h2>'+escapeHtml(clsName)+(sub?' — '+escapeHtml(sub.name):'')+'</h2><p class="report-period-label">'+escapeHtml(period)+'</p></div></div>';
+  h+='<div class="stats-grid">'+profileStatCard('👥','الطلاب',students.length)+profileStatCard('📝','التقييمات',evals.length)+profileStatCard('📊','متوسط الشعبة',cAvg===null?'—':formatNumber(cAvg)+'%')+profileStatCard('📅','الحضور',attS.total?formatNumber(attS.percentage)+'%':'—')+'</div>';
+  if(subs&&subs.length) h+=rpSec('حسب المادة',rpLevelBars(subs.map(x=>({label:x.subjectName,value:x.average,count:x.count})),'لا توجد تقييمات.'));
+  if(rows.length){
+    const list=rows.map((r,i)=>{ const has=r.avg!==null&&r.avg!==undefined, v=has?Math.max(0,Math.min(100,Number(r.avg))):0, lv=has?getScoreLevel(r.avg).className:'';
+      return '<div class="cr-row"><span class="cr-rank r'+(has&&i<3?i+1:0)+'">'+(i+1)+'</span><div><div class="cr-name">'+escapeHtml(r.s.full_name)+'</div><div class="cr-meta">'+r.n+' تقييم · الحضور '+(r.att===null?'—':escapeHtml(formatNumber(r.att))+'%')+'</div></div><b class="cr-val">'+(has?escapeHtml(formatNumber(r.avg))+'%':'—')+'</b><div class="rp-lv-bar"><i class="'+lv+'" style="width:'+v+'%"></i></div></div>'; }).join('');
+    h+=rpSec('ترتيب الطلاب','<div class="cr-list">'+list+'</div>');
+  }
+  return h;
+}
+function printClassReport(){
+  const box=$('classReportBox'); if(!box||!box.querySelector('.report-header')){ showToast('أنشئ التقرير أولاً','warning'); return; }
+  const w=window.open('','_blank'); if(!w){ showToast('المتصفح منع نافذة الطباعة','warning'); return; }
+  const styles=Array.from(document.querySelectorAll('link[rel="stylesheet"], style')).map(e=>e.outerHTML).join('\n');
+  w.document.write('<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>تقرير الشعبة</title>'+styles+'<style>body{background:#fff!important;padding:24px!important}.bottom-nav,.topbar,button,.icon-btn{display:none!important}.report-header{print-color-adjust:exact;-webkit-print-color-adjust:exact}.report-section,.cr-row{break-inside:avoid}</style></head><body><main class="report-box">'+box.innerHTML+'</main><script>window.onload=function(){setTimeout(function(){window.print();},400);};<\/script></body></html>');
+  w.document.close();
+}
+window.__rpMode=window.__rpMode||'student';
+function setReportsMode(m){ window.__rpMode=m; const pg=$('pageReports'); if(pg) pg.dataset.rmode=m; document.querySelectorAll('#rpTabs button').forEach(b=>b.classList.toggle('on',b.dataset.m===m)); }
+const __rrpV74=renderReportsPage;
+renderReportsPage=function(){
+  __rrpV74(); const pg=$('pageReports'); if(!pg) return;
+  const sc=$('reportStudent')&&$('reportStudent').closest('.card'), cc=$('classReportCard'), rb=$('reportBox');
+  if(sc) sc.classList.add('rp-g-student'); if(rb) rb.classList.add('rp-g-student'); if(cc) cc.classList.add('rp-g-class');
+  if(!$('rpTabs')&&sc) sc.insertAdjacentHTML('beforebegin','<div class="rp-tabs" id="rpTabs"><button type="button" data-m="student" onclick="setReportsMode(\'student\')">تقرير طالب</button><button type="button" data-m="class" onclick="setReportsMode(\'class\')">تقرير شعبة / مادة</button></div>');
+  setReportsMode(window.__rpMode);
+};
+/* html2canvas لا يفهم color() الناتجة عن color-mix(): نحوّلها إلى rgba في النسخة المستنسخة فقط */
+function najmSanitizeColors(doc){
+  const cv=document.createElement('canvas'); cv.width=cv.height=1; const cx=cv.getContext('2d',{willReadFrequently:true});
+  const conv=c=>{ cx.clearRect(0,0,1,1); cx.fillStyle='#000'; cx.fillStyle=c; cx.fillRect(0,0,1,1); const p=cx.getImageData(0,0,1,1).data; return 'rgba('+p[0]+','+p[1]+','+p[2]+','+(Math.round(p[3]/255*1000)/1000)+')'; };
+  const test=/(color-mix|color|lab|lch|oklab|oklch)\(/, re=/(?:color-mix|color|lab|lch|oklab|oklch)\((?:[^()]|\((?:[^()]|\([^()]*\))*\))*\)/g;
+  const props=['color','backgroundColor','borderTopColor','borderRightColor','borderBottomColor','borderLeftColor','outlineColor','textDecorationColor','columnRuleColor','caretColor','boxShadow','textShadow','backgroundImage','fill','stroke'];
+  const win=doc.defaultView||window;
+  doc.querySelectorAll('*').forEach(el=>{
+    let cs; try{ cs=win.getComputedStyle(el); }catch(e){ return; }
+    props.forEach(p=>{ const v=cs[p]; if(v&&test.test(v)){ try{ el.style.setProperty(p.replace(/[A-Z]/g,m=>'-'+m.toLowerCase()),v.replace(re,conv),'important'); }catch(e){} } });
+  });
+}
 
 /* ---------- تقرير ولي الأمر: يوم أو عام ---------- */
 window.__prMode='year'; window.__prDate=todayISO();
