@@ -2942,6 +2942,43 @@ body.dark .rp-tabs button.on{background:linear-gradient(180deg,#A9E26F,#5FA33A);
 .cr-meta{font-size:.72rem;color:var(--muted)}
 .cr-val{font-weight:900;font-size:.95rem}
 .cr-row .rp-lv-bar{grid-column:1/-1;height:8px}
+/* ===== V7.5: صفحة الحضور — تبويبان وصفوف مضغوطة وألوان للحالات ===== */
+#pageAttendance[data-amode="class"] .at-g-student,#pageAttendance[data-amode="student"] .at-g-class{display:none!important}
+#attendanceDateLabel:empty{display:none}
+#bulkAttCard>.card-title h2{display:none}
+#bulkAttCard>.card-title{margin-bottom:10px}
+#bulkAttCard>.card-title small{font-size:.76rem;line-height:1.6;color:var(--muted)}
+.ba-sum{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;position:sticky;top:78px;z-index:6;padding:8px 0;background:var(--surface)}
+.ba-sum div{text-align:center;padding:6px 2px;border-radius:12px;font-size:.7rem;font-weight:800;line-height:1.3}
+.ba-sum b{display:block;font-size:1.15rem}
+.ba-sum .present{background:#e3f6ec;color:#12714d}.ba-sum .late{background:#fff5dc;color:#b07508}
+.ba-sum .excused{background:#e8f0fc;color:#3478d4}.ba-sum .absent{background:#fde8e8;color:#c13838}
+body.dark .ba-sum{background:var(--surface)}
+body.dark .ba-sum .present{background:rgba(74,222,128,.16);color:#86efac}body.dark .ba-sum .late{background:rgba(251,191,36,.16);color:#fcd34d}
+body.dark .ba-sum .excused{background:rgba(96,165,250,.18);color:#93c5fd}body.dark .ba-sum .absent{background:rgba(248,113,113,.18);color:#fca5a5}
+#baList .ba-row{flex-wrap:nowrap;gap:10px;padding:8px 10px;margin-bottom:6px;border-radius:14px}
+#baList .ba-row strong{flex:1;min-width:0;font-size:.9rem;overflow-wrap:anywhere}
+#baList .ba-opts{display:flex;gap:4px;flex:none}
+#baList .ba-opt{min-width:46px;min-height:36px;padding:0 6px;border-radius:10px;font-size:.72rem}
+#baList .ba-opt.present{color:#12714d;border-color:rgba(18,113,77,.35)}
+#baList .ba-opt.late{color:#b07508;border-color:rgba(176,117,8,.38)}
+#baList .ba-opt.excused{color:#3478d4;border-color:rgba(52,120,212,.38)}
+#baList .ba-opt.absent{color:#c13838;border-color:rgba(193,56,56,.38)}
+#baList .ba-opt.on{font-weight:900;box-shadow:inset 0 0 0 1px currentColor}
+body.dark #baList .ba-opt.present{color:#86efac}body.dark #baList .ba-opt.late{color:#fcd34d}
+body.dark #baList .ba-opt.excused{color:#93c5fd}body.dark #baList .ba-opt.absent{color:#fca5a5}
+.ba-savebar{position:sticky;bottom:92px;z-index:6;padding:10px 0 2px;background:linear-gradient(180deg,transparent,var(--surface) 38%)}
+.attendance-option label.at-present{color:#12714d}.attendance-option label.at-late{color:#b07508}
+.attendance-option label.at-excused{color:#3478d4}.attendance-option label.at-absent{color:#c13838}
+.attendance-option input:checked+label.at-present{background:#e3f6ec;border-color:#12714d}
+.attendance-option input:checked+label.at-late{background:#fff5dc;border-color:#b07508}
+.attendance-option input:checked+label.at-excused{background:#e8f0fc;border-color:#3478d4}
+.attendance-option input:checked+label.at-absent{background:#fde8e8;border-color:#c13838}
+body.dark .attendance-option label.at-present{color:#86efac}body.dark .attendance-option label.at-late{color:#fcd34d}
+body.dark .attendance-option label.at-excused{color:#93c5fd}body.dark .attendance-option label.at-absent{color:#fca5a5}
+body.dark .attendance-option input:checked+label.at-present{background:rgba(74,222,128,.16)}body.dark .attendance-option input:checked+label.at-late{background:rgba(251,191,36,.16)}
+body.dark .attendance-option input:checked+label.at-excused{background:rgba(96,165,250,.18)}body.dark .attendance-option input:checked+label.at-absent{background:rgba(248,113,113,.18)}
+#attendanceNote{min-height:64px!important;height:64px}
 /* ===== V7: دفتر الدرجات ===== */
 .gb-wrap{background:#fff;color:#111;border-radius:16px;padding:14px;border:1px solid var(--border)}
 body.dark .gb-wrap{background:var(--surface);color:var(--text)}
@@ -5453,15 +5490,10 @@ const ATTENDANCE = {
 
 
 const ATTENDANCE_LABELS = {
-
   present:'حاضر',
-
-  absent:'غائب بلا عذر',
-
   late:'متأخر',
-
-  excused:'غائب بعذر'
-
+  excused:'غائب بعذر',
+  absent:'غائب بلا عذر'
 };
 
 
@@ -9247,12 +9279,12 @@ async function loadAttendance(){
             ${Object.entries(ATTENDANCE_LABELS).map(([key,label])=>`
               <div class="attendance-option">
                 <input id="attendance_${key}" type="radio" name="attendanceStatus" value="${key}" ${current?.status===key?'checked':''}>
-                <label for="attendance_${key}">${ATTENDANCE_ICONS[key] || ''} ${escapeHtml(label)}</label>
+                <label for="attendance_${key}" class="at-${key}">${escapeHtml(label)}</label>
               </div>`).join('')}
           </div>
           <div class="form-group" style="margin-top:12px">
             <label class="form-label">ملاحظة</label>
-            <textarea id="attendanceNote" class="form-control" placeholder="ملاحظة اختيارية">${escapeHtml(current?.note || '')}</textarea>
+            <textarea id="attendanceNote" class="form-control" rows="2" placeholder="ملاحظة اختيارية">${escapeHtml(current?.note || '')}</textarea>
           </div>
           <button class="btn btn-primary btn-block" onclick="saveAttendance()">حفظ الحضور</button>
         </div>
@@ -21431,7 +21463,7 @@ renderEvaluationRows=function(){
 
 /* ---------- حضور جماعي ---------- */
 window.__ba={};
-const BA_LABELS={present:'حاضر',absent:'غائب',late:'متأخر',excused:'بعذر'};
+const BA_LABELS={present:'حاضر',late:'متأخر',excused:'بعذر',absent:'غائب'};
 function renderBulkAttendance(){
   const ab=$('attendanceBox'); if(!ab) return;
   let c=$('bulkAttCard');
@@ -21451,9 +21483,9 @@ function bulkAttList(){
   if(!sts.length){ box.innerHTML=emptyInline('لا يوجد طلاب في هذه الشعبة.'); return; }
   window.__ba={};
   sts.forEach(s=>{ const r=(APP.attendance||[]).find(a=>a.student_id===s.id&&a.attendance_date===date); window.__ba[s.id]=r?r.status:'present'; });
-  box.innerHTML='<div class="qs-bar"><button type="button" class="qs" onclick="bulkAttAll(\'present\')">الكل حاضر</button><button type="button" class="qs" onclick="bulkAttAll(\'absent\')">الكل غائب</button></div>'+
+  box.innerHTML='<div class="ba-sum" id="baSum"><div class="present" data-k="present"><b>0</b>حاضر</div><div class="late" data-k="late"><b>0</b>متأخر</div><div class="excused" data-k="excused"><b>0</b>بعذر</div><div class="absent" data-k="absent"><b>0</b>غائب</div></div><div class="qs-bar"><button type="button" class="qs" onclick="bulkAttAll(\'present\')">الكل حاضر</button><button type="button" class="qs" onclick="bulkAttAll(\'absent\')">الكل غائب</button></div>'+
     sts.map(s=>'<div class="ba-row" data-id="'+escapeAttr(s.id)+'"><strong>'+escapeHtml(s.full_name)+'</strong><div class="ba-opts">'+Object.keys(BA_LABELS).map(k=>'<button type="button" class="ba-opt '+k+'" data-k="'+k+'" onclick="bulkAttSet(\''+escapeAttr(s.id)+'\',\''+k+'\')">'+BA_LABELS[k]+'</button>').join('')+'</div></div>').join('')+
-    '<button class="btn btn-primary btn-block" type="button" onclick="bulkAttSave()" style="margin-top:8px">💾 حفظ حضور الشعبة ('+sts.length+')</button>';
+    '<div class="ba-savebar"><button class="btn btn-primary btn-block" type="button" onclick="bulkAttSave()">💾 حفظ حضور الشعبة ('+sts.length+')</button></div>';
   bulkAttPaint();
 }
 function bulkAttPaint(){ document.querySelectorAll('#baList .ba-row').forEach(r=>{ const st=window.__ba[r.dataset.id]; r.querySelectorAll('.ba-opt').forEach(b=>b.classList.toggle('on',b.dataset.k===st)); }); }
@@ -22697,7 +22729,7 @@ function rpAwards(awards){
   }).join('');
 }
 /* الزر العائم يغطي شارات الحضور في صفحة التقارير */
-const __apsV73=afterPageShown; afterPageShown=function(p){ const f=document.getElementById('fab'); if(f) f.style.display=(p==='reports')?'none':''; return __apsV73(p); };
+const __apsV73=afterPageShown; afterPageShown=function(p){ const f=document.getElementById('fab'); if(f) f.style.display=(p==='reports'||p==='attendance')?'none':''; return __apsV73(p); };
 
 /* ---- V7.4: تقرير الشعبة (عرض بطاقات) + تبويبا صفحة التقارير + إصلاح ألوان PDF ---- */
 function crScreenHTML(students,evals,att,rows,cAvg,cls,sub,subs,from,to){
@@ -22742,6 +22774,24 @@ function najmSanitizeColors(doc){
     props.forEach(p=>{ const v=cs[p]; if(v&&test.test(v)){ try{ el.style.setProperty(p.replace(/[A-Z]/g,m=>'-'+m.toLowerCase()),v.replace(re,conv),'important'); }catch(e){} } });
   });
 }
+
+/* ---- V7.5: تبويبا صفحة الحضور + عدّادات الشعبة ---- */
+window.__atMode=window.__atMode||'class';
+function setAttMode(m){ window.__atMode=m; const pg=$('pageAttendance'); if(pg) pg.dataset.amode=m; document.querySelectorAll('#atTabs button').forEach(b=>b.classList.toggle('on',b.dataset.m===m)); }
+const __rapgV75=renderAttendancePage;
+renderAttendancePage=function(){
+  __rapgV75(); const pg=$('pageAttendance'); if(!pg) return;
+  const sc=$('attendanceStudent')&&$('attendanceStudent').closest('.card'), bc=$('bulkAttCard'), ab=$('attendanceBox');
+  if(sc) sc.classList.add('at-g-student'); if(ab) ab.classList.add('at-g-student'); if(bc) bc.classList.add('at-g-class');
+  if(!$('atTabs')&&sc&&bc) sc.insertAdjacentHTML('beforebegin','<div class="rp-tabs" id="atTabs"><button type="button" data-m="class" onclick="setAttMode(\'class\')">تسجيل الشعبة</button><button type="button" data-m="student" onclick="setAttMode(\'student\')">سجل طالب</button></div>');
+  setAttMode(bc?window.__atMode:'student');
+};
+const __bapV75=bulkAttPaint;
+bulkAttPaint=function(){
+  __bapV75();
+  const c={present:0,late:0,excused:0,absent:0}; Object.values(window.__ba||{}).forEach(k=>{ if(c[k]!==undefined) c[k]++; });
+  document.querySelectorAll('#baSum [data-k]').forEach(e=>{ const b=e.querySelector('b'); if(b) b.textContent=c[e.dataset.k]; });
+};
 
 /* ---------- تقرير ولي الأمر: يوم أو عام ---------- */
 window.__prMode='year'; window.__prDate=todayISO();
