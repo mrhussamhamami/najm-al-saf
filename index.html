@@ -2873,17 +2873,19 @@ body.dark .hn-ring.gold{filter:drop-shadow(0 0 5px rgba(242,176,30,.45))}
 .hon-pend .hn-st{border-top:0;padding:0}
 /* ===== V7.3: تقرير الطالب — إزالة التكرار وتقصير الصفحة ===== */
 .rp-lv{display:grid;gap:13px}
-.rp-lv-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 10px;align-items:center}
+.rp-lv-row{display:block}
+.rp-lv-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:6px}
 .rp-lv-name{font-weight:800;font-size:.92rem;min-width:0;overflow-wrap:anywhere}
 .rp-lv-val{font-weight:900;font-size:.92rem}
-.rp-lv-bar{grid-column:1/-1;height:10px;border-radius:99px;background:var(--surface-2);overflow:hidden}
-.rp-lv-bar i{display:block;height:100%;border-radius:99px;background:#16855b}
+.rp-lv-bar{height:10px;border-radius:99px;background:var(--surface-2)}
+.rp-lv-bar i{display:block;height:10px;border-radius:99px;background:#16855b}
+.cr-row .rp-lv-bar i{height:8px}
 .rp-lv-bar i.excellent{background:linear-gradient(90deg,#34b27b,#16855b)}
 .rp-lv-bar i.very-good{background:linear-gradient(90deg,#8cc152,#5c9a2a)}
 .rp-lv-bar i.good{background:linear-gradient(90deg,#f6c453,#d28a13)}
 .rp-lv-bar i.acceptable{background:linear-gradient(90deg,#f59f5b,#d9680f)}
 .rp-lv-bar i.needs-work{background:linear-gradient(90deg,#ef7b7b,#d64545)}
-.rp-lv-meta{grid-column:1/-1;font-size:.72rem;color:var(--muted);margin-top:-2px}
+.rp-lv-meta{display:block;font-size:.72rem;color:var(--muted);margin-top:5px;line-height:1.4}
 .rp-days{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
 .rp-day{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:.74rem;font-weight:800}
 .rp-day.success{background:#e3f6ec;color:#12714d}.rp-day.warning{background:#fff5dc;color:#b07508}
@@ -2905,6 +2907,11 @@ body.dark .rp-day.info{background:rgba(96,165,250,.18);color:#93c5fd}body.dark .
 .rp-medal.gold{background:linear-gradient(145deg,#ffe08a,#f2b01e);color:#7a4b00}
 .rp-medal.sub{background:linear-gradient(145deg,#8fe0d7,#1a9a8f);color:#04403b}
 .rp-aw-sc{font-weight:900;font-size:.9rem;flex:none}
+.rp-aw-label{flex:1;min-width:0;display:block;padding:6px 12px;border-radius:99px;font-size:.8rem;font-weight:800;line-height:1.5}
+.rp-aw-label.gold{background:#fff1c2;color:#7a4b00;border:1px solid #f2d27a}
+.rp-aw-label.sub{background:#dff4f1;color:#0b5f58;border:1px solid #a9ded8}
+body.dark .rp-aw-label.gold{background:rgba(242,176,30,.16);color:#ffd36b;border-color:rgba(242,176,30,.4)}
+body.dark .rp-aw-label.sub{background:rgba(26,154,143,.18);color:#7fe0d6;border-color:rgba(26,154,143,.45)}
 .rp-note{border-right:4px solid var(--primary-2);border-radius:12px;background:var(--surface-2);padding:10px 12px;margin-bottom:9px}
 .rp-note.private{border-right-color:var(--border)}
 .rp-note p{margin:0;font-size:.9rem;line-height:1.8;white-space:pre-wrap;font-weight:700;overflow-wrap:break-word}
@@ -21304,24 +21311,50 @@ const chartCard=(title,id,h)=>'<div class="report-chart-card"><h4 class="report-
 
 /* ---------- PDF مع الرسوم البيانية ---------- */
 function loadScriptOnce(src){ return new Promise((res,rej)=>{ const s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=()=>rej(new Error('تعذر تحميل مكتبة PDF، تحقق من الاتصال')); document.head.appendChild(s); }); }
+const NAJM_PDF_CSS='.najm-pdf .report-header{display:block!important;overflow:visible!important;height:auto!important;padding:22px 22px 34px!important}.najm-pdf .report-header .report-score{display:inline-block!important;margin-top:16px!important}.najm-pdf .rp-lv-bar,.najm-pdf .rp-lv-bar i{height:10px!important}.najm-pdf canvas{width:100%!important;max-width:680px!important;height:auto!important;display:block!important;margin:0 auto!important}.najm-pdf .report-chart-canvas-wrap{height:auto!important}.najm-pdf *{animation:none!important;transition:none!important}.najm-pdf .report-section,.najm-pdf .card{box-shadow:none!important;backdrop-filter:none!important}';
+function najmCollectAtoms(d,out){
+  const root=d.querySelector('[data-pdf-root]'); if(!root) return;
+  const rr=root.getBoundingClientRect(); out.rootH=rr.height;
+  const sel='.report-header,.stats-grid,.rp-lv-row,.rp-ex,.rp-note,.rp-aw,.rp-aw-group,.rp-days,.rp-legend,.rp-chips,.cr-row,.analysis-item,.report-chart-card,.school-head,.sign-row,.attendance-summary,.grid-3';
+  root.querySelectorAll(sel).forEach(a=>{ const r=a.getBoundingClientRect(); if(r.height>1) out.push([r.top-rr.top,r.bottom-rr.top]); });
+  root.querySelectorAll('.section-heading').forEach(h=>{ const r=h.getBoundingClientRect(); out.push([r.top-rr.top,r.bottom-rr.top+70]); });
+}
 async function exportElementPDF(el,name,landscape){
   if(!el || !el.innerHTML.trim()){ showToast('أنشئ التقرير أولاً','warning'); return; }
   setLoading(true); showToast('جاري إنشاء PDF...','info');
+  const atoms=[];
   try{
     if(!window.html2canvas) await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
     if(!window.jspdf) await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+    try{ if(document.fonts&&document.fonts.ready) await document.fonts.ready; }catch(_){}
     Object.values(window.__najmReportCharts||{}).concat(Object.values(window.__v2Charts)).forEach(c=>{ try{c.update('none');}catch(e){} });
-    const canvas=await html2canvas(el,{scale:2,backgroundColor:'#ffffff',useCORS:true,windowWidth:900,onclone:d=>{ d.body.classList.remove('dark'); d.documentElement.classList.remove('dark'); d.querySelectorAll('.mini-del').forEach(x=>x.remove()); try{ najmSanitizeColors(d); }catch(e){ console.warn(e); } }});
+    el.setAttribute('data-pdf-root','1');
+    const canvas=await html2canvas(el,{scale:2,backgroundColor:'#ffffff',useCORS:true,windowWidth:900,onclone:d=>{
+      d.body.classList.remove('dark'); d.documentElement.classList.remove('dark'); d.body.classList.add('najm-pdf');
+      const st=d.createElement('style'); st.textContent=NAJM_PDF_CSS; d.head.appendChild(st);
+      d.querySelectorAll('.mini-del').forEach(x=>x.remove());
+      try{ najmSanitizeColors(d); }catch(e){ console.warn(e); }
+      try{ najmCollectAtoms(d,atoms); }catch(e){ console.warn(e); }
+    }});
     const L=!!landscape; const pdf=new window.jspdf.jsPDF(L?'l':'p','mm','a4'), W=L?297:210, H=L?210:297, M=8, iw=W-2*M, pageHpx=Math.floor((H-2*M)*canvas.width/iw);
-    for(let y=0,i=0; y<canvas.height; y+=pageHpx,i++){
-      const part=document.createElement('canvas'); part.width=canvas.width; part.height=Math.min(pageHpx,canvas.height-y);
+    const k=atoms.rootH?canvas.height/atoms.rootH:2, cuts=atoms.map(a=>[a[0]*k,a[1]*k]);
+    const valid=c=>!cuts.some(a=>c>a[0]+2&&c<a[1]-2);
+    const cand=[]; cuts.forEach(a=>{ cand.push(a[0],a[1]); });
+    for(let y=0,i=0; y<canvas.height; i++){
+      let end=Math.min(y+pageHpx,canvas.height);
+      if(end<canvas.height){
+        const min=y+pageHpx*0.45, ok=cand.filter(c=>c<=end&&c>=min&&valid(c)).sort((p,q)=>q-p);
+        if(ok.length) end=Math.floor(ok[0]);
+      }
+      const part=document.createElement('canvas'); part.width=canvas.width; part.height=end-y;
       part.getContext('2d').drawImage(canvas,0,y,canvas.width,part.height,0,0,canvas.width,part.height);
       if(i) pdf.addPage();
       pdf.addImage(part.toDataURL('image/jpeg',0.92),'JPEG',M,M,iw,part.height*iw/canvas.width);
+      y=end;
     }
     pdf.save(name||'تقرير.pdf'); showToast('تم إنشاء PDF','success');
   }catch(e){ console.error(e); showToast(e.message||'تعذر إنشاء PDF','error'); }
-  finally{ setLoading(false); }
+  finally{ el.removeAttribute('data-pdf-root'); setLoading(false); }
 }
 function addBtnAfter(sel,html){
   const b=document.querySelector(sel); if(!b||b.parentNode.querySelector('[data-pdf]')) return;
@@ -22617,7 +22650,7 @@ function rpLevelBars(items,emptyText){
   const rows=(items||[]).filter(x=>x.value!=null&&Number.isFinite(Number(x.value))).sort((a,b)=>Number(b.value)-Number(a.value));
   if(!rows.length) return emptyInline(emptyText);
   return '<div class="rp-lv">'+rows.map(x=>{ const v=Math.max(0,Math.min(100,Number(x.value))), lv=getScoreLevel(v);
-    return '<div class="rp-lv-row"><span class="rp-lv-name">'+escapeHtml(x.label)+'</span><span class="rp-lv-val">'+escapeHtml(formatNumber(x.value))+'%</span><div class="rp-lv-bar"><i class="'+lv.className+'" style="width:'+v+'%"></i></div>'+(x.count!=null?'<span class="rp-lv-meta">'+escapeHtml(lv.label)+' · '+x.count+' تقييم</span>':'')+'</div>'; }).join('')+'</div>';
+    return '<div class="rp-lv-row"><div class="rp-lv-top"><span class="rp-lv-name">'+escapeHtml(x.label)+'</span><span class="rp-lv-val">'+escapeHtml(formatNumber(x.value))+'%</span></div><div class="rp-lv-bar"><i class="'+lv.className+'" style="width:'+v+'%"></i></div>'+(x.count!=null?'<span class="rp-lv-meta">'+escapeHtml(lv.label)+' · '+x.count+' تقييم</span>':'')+'</div>'; }).join('')+'</div>';
 }
 function rpAttendance(records){
   const list=(records||[]).slice().sort((a,b)=>String(a.attendance_date).localeCompare(String(b.attendance_date)));
@@ -22655,7 +22688,7 @@ function rpAwards(awards){
     const g=groups[k], a=g.a, range=(a.period_start||a.period_end)?hnRange(a.period_start,a.period_end):'';
     const items=g.list.map(x=>({x:x,p:rpAwardParts(x)})).sort((u,v)=>(u.p.isSubject?1:0)-(v.p.isSubject?1:0));
     return '<div class="rp-aw-group"><span>'+escapeHtml(a.award_type||'إنجاز')+'</span><span>'+escapeHtml(range)+'</span></div>'+items.map(o=>{ const gold=!o.p.isSubject;
-      return '<div class="rp-aw"><div class="rp-medal '+(gold?'gold':'sub')+'">'+icon(gold?'trophy':'medal',18)+'</div><span class="hn-b '+(gold?'gold':'sub')+'" style="flex:1;min-width:0;white-space:normal">'+escapeHtml(o.p.label)+'</span>'+(o.x.score!=null?'<b class="rp-aw-sc">'+escapeHtml(formatNumber(o.x.score))+'%</b>':'')+'</div>'; }).join('');
+      return '<div class="rp-aw"><div class="rp-medal '+(gold?'gold':'sub')+'">'+icon(gold?'trophy':'medal',18)+'</div><span class="rp-aw-label '+(gold?'gold':'sub')+'">'+escapeHtml(o.p.label)+'</span>'+(o.x.score!=null?'<b class="rp-aw-sc">'+escapeHtml(formatNumber(o.x.score))+'%</b>':'')+'</div>'; }).join('');
   }).join('');
 }
 /* الزر العائم يغطي شارات الحضور في صفحة التقارير */
