@@ -2979,6 +2979,14 @@ body.dark .attendance-option label.at-excused{color:#93c5fd}body.dark .attendanc
 body.dark .attendance-option input:checked+label.at-present{background:rgba(74,222,128,.16)}body.dark .attendance-option input:checked+label.at-late{background:rgba(251,191,36,.16)}
 body.dark .attendance-option input:checked+label.at-excused{background:rgba(96,165,250,.18)}body.dark .attendance-option input:checked+label.at-absent{background:rgba(248,113,113,.18)}
 #attendanceNote{min-height:64px!important;height:64px}
+/* V7.5b: ضبط بعد المعاينة */
+.ba-sum{background:var(--glass,var(--surface));-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+#baList .qs-bar{background:none!important;border:0!important;box-shadow:none!important;padding:0!important;margin:2px 0 10px;gap:8px}
+#baList .qs-bar .qs{flex:1;min-height:42px}
+#bulkAttCard .grid-2 .form-group{margin-bottom:0}
+#bulkAttCard .grid-2{margin-bottom:10px}
+#pageAttendance .card.at-g-student .grid-2{grid-template-columns:1fr;gap:12px}
+#pageAttendance .card.at-g-student .form-group{margin-bottom:0}
 /* ===== V7: دفتر الدرجات ===== */
 .gb-wrap{background:#fff;color:#111;border-radius:16px;padding:14px;border:1px solid var(--border)}
 body.dark .gb-wrap{background:var(--surface);color:var(--text)}
@@ -21469,7 +21477,7 @@ function renderBulkAttendance(){
   let c=$('bulkAttCard');
   if(!c){
     c=document.createElement('div'); c.className='card'; c.id='bulkAttCard';
-    c.innerHTML='<div class="card-title"><h2>تسجيل حضور الشعبة</h2><small>كل الطلاب في شاشة واحدة · المتأخر يُحتسب حاضراً، و«بعذر» غياب مبرر</small></div><div class="grid-2"><div class="form-group"><label class="form-label">الشعبة</label><select id="baClass" class="form-control" onchange="bulkAttList()"></select></div><div class="form-group"><label class="form-label">التاريخ</label><input id="baDate" type="date" class="form-control" onchange="bulkAttList()"></div></div><div id="baList"></div>';
+    c.innerHTML='<div class="card-title"><h2>تسجيل حضور الشعبة</h2><small>المتأخر يُحتسب حاضراً · «بعذر» غياب مبرر</small></div><div class="grid-2"><div class="form-group"><label class="form-label">الشعبة</label><select id="baClass" class="form-control" onchange="bulkAttList()"></select></div><div class="form-group"><label class="form-label">التاريخ</label><input id="baDate" type="date" class="form-control" onchange="bulkAttList()"></div></div><div id="baList"></div>';
     ab.parentNode.insertBefore(c,ab);
   }
   const sel=$('baClass'), v=sel.value;
