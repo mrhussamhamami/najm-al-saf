@@ -5456,11 +5456,11 @@ const ATTENDANCE_LABELS = {
 
   present:'حاضر',
 
-  absent:'غائب',
+  absent:'غائب بلا عذر',
 
   late:'متأخر',
 
-  excused:'معذور'
+  excused:'غائب بعذر'
 
 };
 
@@ -10851,12 +10851,15 @@ function calculateAttendanceStats(
 
   /*
     نسبة الحضور المعتمدة:
-    حاضر + بعذر.
-    المتأخر يسجل حالة مستقلة ولا يرفع نسبة الحضور.
+    حاضر + متأخر (المتأخر حضر فعلاً فيُحتسب حاضراً).
+    الغائب بعذر (غياب مبرر) والغائب بلا عذر (غير مبرر) كلاهما غياب.
   */
 
   stats.attended =
     stats.present +
+    stats.late;
+  stats.absentTotal =
+    stats.absent +
     stats.excused;
 
   if (stats.total > 0) {
@@ -10881,13 +10884,13 @@ function attendanceStatusText(
       'حاضر',
 
     absent:
-      'غائب',
+      'غائب بلا عذر',
 
     late:
       'متأخر',
 
     excused:
-      'بعذر'
+      'غائب بعذر'
   };
 
   return (
@@ -10961,6 +10964,8 @@ function buildAttendanceSummary(
 
       </div>
 
+      <small class="rp-hint" style="display:block;margin:2px 0 10px">نسبة الحضور = حاضر + متأخر من إجمالي الأيام</small>
+
       <div class="attendance-grid">
 
         <div>
@@ -10981,14 +10986,14 @@ function buildAttendanceSummary(
           <strong>
             ${stats.excused}
           </strong>
-          <span>بعذر</span>
+          <span>غائب بعذر</span>
         </div>
 
         <div>
           <strong>
             ${stats.absent}
           </strong>
-          <span>غائب</span>
+          <span>غائب بلا عذر</span>
         </div>
 
       </div>
@@ -21432,7 +21437,7 @@ function renderBulkAttendance(){
   let c=$('bulkAttCard');
   if(!c){
     c=document.createElement('div'); c.className='card'; c.id='bulkAttCard';
-    c.innerHTML='<div class="card-title"><h2>تسجيل حضور الشعبة</h2><small>كل الطلاب في شاشة واحدة</small></div><div class="grid-2"><div class="form-group"><label class="form-label">الشعبة</label><select id="baClass" class="form-control" onchange="bulkAttList()"></select></div><div class="form-group"><label class="form-label">التاريخ</label><input id="baDate" type="date" class="form-control" onchange="bulkAttList()"></div></div><div id="baList"></div>';
+    c.innerHTML='<div class="card-title"><h2>تسجيل حضور الشعبة</h2><small>كل الطلاب في شاشة واحدة · المتأخر يُحتسب حاضراً، و«بعذر» غياب مبرر</small></div><div class="grid-2"><div class="form-group"><label class="form-label">الشعبة</label><select id="baClass" class="form-control" onchange="bulkAttList()"></select></div><div class="form-group"><label class="form-label">التاريخ</label><input id="baDate" type="date" class="form-control" onchange="bulkAttList()"></div></div><div id="baList"></div>';
     ab.parentNode.insertBefore(c,ab);
   }
   const sel=$('baClass'), v=sel.value;
@@ -21524,7 +21529,7 @@ loadStudentProfile=async function(id){
     const tr=calculateEvaluationTrend(d.evaluations||[]), st=calculateAttendanceStats(d.attendance||[]);
     requestAnimationFrame(()=>{
       if($('pfTrend')) mkChart('pfTrend',{type:'line',data:{labels:tr.map(x=>formatDate(x.date)),datasets:[{data:tr.map(x=>Number(x.average)||0),borderColor:'#344e41',backgroundColor:'rgba(88,129,87,.15)',fill:true,tension:.3}]},options:barOpts(false)});
-      if($('pfAtt')) mkChart('pfAtt',{type:'doughnut',data:{labels:['حاضر','متأخر','بعذر','غائب'],datasets:[{data:[st.present,st.late,st.excused,st.absent],backgroundColor:['#16855b','#d28a13','#3478d4','#d64545']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
+      if($('pfAtt')) mkChart('pfAtt',{type:'doughnut',data:{labels:['حاضر','متأخر','غائب بعذر','غائب بلا عذر'],datasets:[{data:[st.present,st.late,st.excused,st.absent],backgroundColor:['#16855b','#d28a13','#3478d4','#d64545']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
     });
   }
 };
@@ -21541,7 +21546,7 @@ renderDashboard=async function(){
   content.insertAdjacentHTML('beforeend','<div class="dash-two" style="margin-top:14px">'+(tr.length>1?chartCard('تطور المتوسط عبر الزمن','dTrend'):'')+(st.total?chartCard('توزيع الحضور','dAtt'):'')+'</div>');
   requestAnimationFrame(()=>{
     if($('dTrend')) mkChart('dTrend',{type:'line',data:{labels:tr.slice(-20).map(x=>formatDate(x.date)),datasets:[{data:tr.slice(-20).map(x=>Number(x.average)||0),borderColor:'#344e41',backgroundColor:'rgba(88,129,87,.15)',fill:true,tension:.3,pointRadius:2}]},options:barOpts(false)});
-    if($('dAtt')) mkChart('dAtt',{type:'doughnut',data:{labels:['حاضر','متأخر','بعذر','غائب'],datasets:[{data:[st.present,st.late,st.excused,st.absent],backgroundColor:['#16855b','#d28a13','#3478d4','#d64545']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
+    if($('dAtt')) mkChart('dAtt',{type:'doughnut',data:{labels:['حاضر','متأخر','غائب بعذر','غائب بلا عذر'],datasets:[{data:[st.present,st.late,st.excused,st.absent],backgroundColor:['#16855b','#d28a13','#3478d4','#d64545']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
   });
 };
 
@@ -22657,7 +22662,7 @@ function rpAttendance(records){
   if(!list.length) return '';
   const dd=r=>{ const d=hnD(r.attendance_date); return d?new Intl.DateTimeFormat('ar-SY',{day:'numeric',timeZone:'UTC'}).format(d):'·'; };
   let h='<div class="rp-days">'+list.map(r=>'<span class="rp-day '+attendanceStatusClass(r.status)+'" title="'+escapeAttr(rpDay(r.attendance_date)+' — '+attendanceStatusText(r.status))+'">'+escapeHtml(dd(r))+'</span>').join('')+'</div>';
-  h+='<div class="rp-legend"><span><i class="success"></i>حاضر</span><span><i class="warning"></i>متأخر</span><span><i class="info"></i>بعذر</span><span><i class="danger"></i>غائب</span></div>';
+  h+='<div class="rp-legend"><span><i class="success"></i>حاضر</span><span><i class="warning"></i>متأخر (يُحتسب حاضراً)</span><span><i class="info"></i>غائب بعذر</span><span><i class="danger"></i>غائب بلا عذر</span></div>';
   const ex=list.filter(r=>String(r.status||'').toLowerCase()!=='present');
   if(ex.length) h+='<div class="rp-sub-title">الأيام الاستثنائية</div>'+ex.map(r=>'<div class="rp-ex"><span class="status-badge '+attendanceStatusClass(r.status)+'">'+escapeHtml(attendanceStatusText(r.status))+'</span><div class="rp-ex-main"><strong>'+escapeHtml(rpDay(r.attendance_date))+'</strong>'+(r.note?'<span>'+escapeHtml(r.note)+'</span>':'')+'</div></div>').join('');
   return h;
