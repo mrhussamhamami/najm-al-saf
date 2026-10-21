@@ -3030,9 +3030,21 @@ input[type=date].ui-empty{direction:ltr!important}
 /* ===== المرحلة الثانية ===== */
 .ex-tools{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;flex-wrap:wrap}.ex-tools span{font-weight:800;font-size:.85rem}
 .ex-folded>*:not(.ex-fold-bar){display:none}.ex-fold-bar{display:flex;align-items:center;justify-content:space-between;gap:8px}.ex-fold-bar span{font-weight:800;font-size:.9rem}
-#exRes table th:nth-child(1),#exRes table td:nth-child(1){position:sticky;right:0;min-width:34px;z-index:2;background:var(--surface)}
-#exRes table th:nth-child(2),#exRes table td:nth-child(2){position:sticky;right:34px;z-index:2;background:var(--surface);box-shadow:-2px 0 4px -3px rgba(0,0,0,.25)}
-#exRes table th:nth-child(-n+2){background:var(--surface-2);z-index:3}
+.ex-rcards{display:none;gap:10px;grid-template-columns:1fr;margin-top:10px}
+@media(max-width:699px){.ex-rtable{display:none}.ex-rcards{display:grid}}
+.ex-rc{padding:12px;border:1px solid var(--border);border-radius:16px;background:var(--surface-2)}
+.ex-rc-top{display:flex;align-items:center;gap:10px}
+.ex-rc .rk{flex:none;width:28px;height:28px;border-radius:50%;display:inline-grid;place-items:center;background:var(--surface);font-size:.78rem;color:var(--muted)}
+.ex-rc .nm{flex:1;font-weight:800;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ex-rc .big{font-size:1.5rem;font-weight:900;color:var(--primary);display:flex;flex-direction:column;align-items:center;line-height:1.1}
+.ex-rc .big small{font-size:.66rem;font-weight:700;color:var(--muted)}
+.ex-rc-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.ex-rc-chips span{display:inline-flex;gap:6px;align-items:center;padding:5px 10px;border-radius:999px;background:var(--surface);font-weight:800;font-size:.85rem}
+.ex-rc-chips em{font-style:normal;font-weight:700;font-size:.72rem;color:var(--muted)}
+.ex-rc-w{margin-top:8px;font-size:.78rem;color:var(--muted)}
+.ex-sum{font-weight:800;cursor:pointer}details.card>summary{list-style:none}details.card>summary::-webkit-details-marker{display:none}details.card>summary::after{content:' ▾';opacity:.6}details.card[open]>summary::after{content:' ▴'}
+
+
 td.ex-low,.ex-low{color:#c0392b!important;font-weight:900}td.ex-top{color:#2e7d32;font-weight:900}.gb-sem>div.ex-low{color:#c0392b}.ex-row input.ex-low{color:#c0392b;font-weight:900}
 .gb-card h4{cursor:pointer}.gb-card h4::after{content:' ▾';font-size:.8em;opacity:.6}.gb-card.gb-collapsed h4::after{content:' ◂'}.gb-card.gb-collapsed>*:not(h4){display:none}
 .gb-wrap.hide-empty .gb-card.gb-empty{display:none}
@@ -23074,7 +23086,7 @@ async function exSave(){
 
 /* ---- النتائج والنشر (للمدرس والمدير) ---- */
 function exResults(b){
-  b.innerHTML='<div class="card"><div class="grid-2"><div class="form-group"><label class="form-label">الشعبة</label><select id="exClass" class="form-control" onchange="exFillSubj()"><option value="">اختر الشعبة</option>'+exOpt(taskClasses(),c=>c.id,c=>c.grade+' / '+c.section)+'</select></div><div class="form-group"><label class="form-label">المادة</label><select id="exSubject" class="form-control"><option value="">اختر المادة</option></select></div><div class="form-group"><label class="form-label">العرض</label><select id="exSem" class="form-control"><option value="1">الفصل الأول</option><option value="2">الفصل الثاني</option><option value="y">النتيجة السنوية</option></select></div></div><button class="btn btn-primary btn-block" type="button" onclick="exShowResults()">عرض النتائج</button></div><div class="card" id="exBulkCard"><div class="card-title"><h2>نشر النتائج لكل المواد</h2></div><div class="list-item-subtitle">يشمل مواد الصف المحدد في الأعلى دفعة واحدة دون اختيار كل مادة.</div><div class="form-group" style="margin-top:10px"><label class="form-label">الفصل</label><select id="exBulkSem" class="form-control"><option value="1">الفصل الأول</option><option value="2">الفصل الثاني</option></select></div><div id="exBulkInfo" class="list-item-subtitle" style="margin-bottom:10px"></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-primary btn-small" type="button" onclick="exBulkPublish(true)">نشر كل المواد</button><button class="btn btn-secondary btn-small" type="button" onclick="exBulkPublish(false)">إلغاء نشر كل المواد</button></div></div><div id="exRes"></div>';
+  b.innerHTML='<div class="card"><div class="grid-2"><div class="form-group"><label class="form-label">الشعبة</label><select id="exClass" class="form-control" onchange="exFillSubj()"><option value="">اختر الشعبة</option>'+exOpt(taskClasses(),c=>c.id,c=>c.grade+' / '+c.section)+'</select></div><div class="form-group"><label class="form-label">المادة</label><select id="exSubject" class="form-control" onchange="exAutoResults()"><option value="">اختر المادة</option></select></div><div class="form-group"><label class="form-label">العرض</label><select id="exSem" class="form-control" onchange="exAutoResults()"><option value="1">الفصل الأول</option><option value="2">الفصل الثاني</option><option value="y">النتيجة السنوية</option></select></div></div></div><details class="card" id="exBulkCard" ontoggle="exBulkStatus()"><summary class="ex-sum">نشر النتائج لكل المواد</summary><div class="list-item-subtitle" style="margin-top:8px">يشمل مواد الصف المحدد في الأعلى دفعة واحدة.</div><div class="form-group" style="margin-top:10px"><label class="form-label">الفصل</label><select id="exBulkSem" class="form-control"><option value="1">الفصل الأول</option><option value="2">الفصل الثاني</option></select></div><div id="exBulkInfo" class="list-item-subtitle" style="margin-bottom:10px"></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-primary btn-small" type="button" onclick="exBulkPublish(true)">نشر كل المواد</button><button class="btn btn-secondary btn-small" type="button" onclick="exBulkPublish(false)">إلغاء نشر كل المواد</button></div></details><div id="exRes"></div>';
 }
 async function exShowResults(){
   const c=$('exClass').value, s=$('exSubject').value, mode=$('exSem').value, el=$('exRes'); if(!c||!s){ showToast('اختر الشعبة والمادة','warning'); return; }
@@ -23184,7 +23196,7 @@ window.addEventListener('beforeunload',function(ev){ if(window.__exDirty){ ev.pr
 function exDecorateResults(el){
   if(!el||!el.querySelector('table')) return;
   el.querySelectorAll('td.hl').forEach(td=>{ const t=td.textContent.trim(); if(t===''||isNaN(Number(t))) return; const n=Number(t); if(n<=EX_FAIL) td.classList.add('ex-low'); else if(n>=90) td.classList.add('ex-top'); });
-  const cls=$('exClass'), sbj=$('exSubject'), fc=cls&&cls.closest('.card'); if(!fc||fc.querySelector('.ex-fold-bar')) return;
+  exBuildCards(el); const cls=$('exClass'), sbj=$('exSubject'), fc=cls&&cls.closest('.card'); return; /* لا طيّ للفلاتر: العرض تلقائي */
   const txt=(cls.selectedOptions[0]?cls.selectedOptions[0].text:'')+' — '+(sbj&&sbj.selectedOptions[0]?sbj.selectedOptions[0].text:'');
   fc.classList.add('ex-folded'); fc.insertAdjacentHTML('afterbegin','<div class="ex-fold-bar"><span>'+escapeHtml(txt)+'</span><button class="btn btn-secondary btn-small" type="button" onclick="var c=this.closest(\'.card\');c.classList.remove(\'ex-folded\');this.parentElement.remove()">تعديل الاختيار</button></div>');
 }
@@ -23292,6 +23304,39 @@ function exMarkAllRows(){ document.querySelectorAll('#exRows .ex-row[data-sid]')
 document.addEventListener('input',function(ev){ const t=ev.target; if(t&&t.closest&&t.closest('#exRows')) exMarkRow(t.closest('.ex-row')); });
 const __exLR2=exLoadRows; exLoadRows=async function(){ await __exLR2.apply(this,arguments); exMarkAllRows(); };
 const __exSR2=exShowResults; exShowResults=async function(){ await __exSR2.apply(this,arguments); if(typeof window.__exResHTML==='string') window.__exResHTML='<style>.ex-low{color:#c0392b;font-weight:bold}</style>'+exMarkLowHTML(window.__exResHTML); };
+/* ===== صفحة النتائج: بطاقات للجوال + عرض كل المواد ===== */
+function exAutoResults(){ if($('exClass')&&$('exSubject')&&$('exClass').value&&$('exSubject').value) exShowResults(); }
+function exResCard(o){
+  const low=v=>{ const n=Number(v); return (v!==''&&v!=null&&!isNaN(n)&&n<=EX_FAIL)?'ex-low':''; };
+  return '<div class="ex-rc"><div class="ex-rc-top"><b class="rk">'+escapeHtml(String(o.rk))+'</b><span class="nm">'+escapeHtml(String(o.nm))+'</span><div class="big '+low(o.big)+'">'+escapeHtml(String(o.big))+(o.tag?'<small>'+escapeHtml(String(o.tag))+'</small>':'')+'</div></div>'+(o.chips&&o.chips.length?'<div class="ex-rc-chips">'+o.chips.map(c=>'<span class="'+low(c[1])+'"><em>'+escapeHtml(String(c[0]))+'</em>'+escapeHtml(String(c[1]))+'</span>').join('')+'</div>':'')+(o.words?'<div class="ex-rc-w">'+escapeHtml(String(o.words))+'</div>':'')+'</div>';
+}
+function exBuildCards(el){
+  const wrap=el&&el.querySelector('.table-wrap'), tb=wrap&&wrap.querySelector('table'); if(!tb||el.querySelector('.ex-rcards')) return;
+  const trs=Array.from(tb.querySelectorAll('tr')); if(trs.length<2) return;
+  const ths=Array.from(trs[0].cells).map(c=>c.textContent.trim()), iHl=Array.from(trs[1].cells).findIndex(c=>c.classList.contains('hl')), iRate=ths.indexOf('التقدير'), iW=ths.indexOf('كتابة');
+  const cards=trs.slice(1).map(tr=>{ const c=Array.from(tr.cells).map(x=>x.textContent.trim()), chips=[]; ths.forEach((t,i)=>{ if(i<2||i===iHl||i===iRate||i===iW) return; chips.push([t,c[i]]); }); return exResCard({rk:c[0],nm:c[1],big:iHl>-1?c[iHl]:'—',tag:iRate>-1?c[iRate]:'',chips:chips,words:iW>-1?c[iW]:''}); }).join('');
+  wrap.classList.add('ex-rtable'); wrap.insertAdjacentHTML('afterend','<div class="ex-rcards">'+cards+'</div>');
+}
+const __exFS=exFillSubj; exFillSubj=function(){ __exFS.apply(this,arguments); const s=$('exSubject'), c=$('exClass'); if($('exBulkCard')&&s&&c&&c.value&&s.options.length>1) s.insertAdjacentHTML('beforeend','<option value="all">كل المواد</option>'); };
+async function exShowResultsAll(){
+  const c=$('exClass').value, mode=$('exSem').value, el=$('exRes'); if(!c||!el) return;
+  const cl=getClassById(c), subs=gbSubjects(cl?cl.grade:''); if(!subs.length){ el.innerHTML=emptyInline('لم تُحدَّد مواد دفتر الدرجات لهذا الصف.'); return; }
+  const sts=(APP.students||[]).filter(x=>x.class_id===c&&x.active!==false); if(!sts.length){ el.innerHTML=emptyInline('لا يوجد طلاب.'); return; }
+  el.innerHTML='<div class="loading-box"></div>';
+  let rows; try{ rows=await fetchAllRows(()=>sb.from('exam_scores').select('*').in('student_id',sts.map(x=>x.id)).order('student_id').order('subject_id').order('semester').order('stage')); }catch(e){ handleSupabaseError(e,'تعذر تحميل النتائج'); el.innerHTML=''; return; }
+  const nm=exIsNewClass(c), SEM=nm?exSemN:exSem, idx=exIndex(rows);
+  const data=sts.map(st=>{ const vals=subs.map(su=>{ const s1=SEM(idx[st.id+'|'+su.id+'|1']), s2=SEM(idx[st.id+'|'+su.id+'|2']); return mode==='1'?s1.res:mode==='2'?s2.res:exYear(s1,s2).fin; }); const v=vals.filter(x=>x!=null); return {st,vals,avg:v.length?v.reduce((a,b)=>a+b,0)/v.length:null,n:v.length}; });
+  data.sort((a,b)=>(b.avg??-1)-(a.avg??-1)||String(a.st.full_name).localeCompare(String(b.st.full_name),'ar'));
+  let rank=0,prev=null; data.forEach((x,i)=>{ if(x.avg==null){ x.rank='—'; return; } const r1=Math.round(x.avg*10)/10; if(r1!==prev){ rank=i+1; prev=r1; } x.rank=rank; });
+  const avgs=data.filter(x=>x.avg!=null).map(x=>x.avg), r1=v=>v==null?'—':Math.round(v*10)/10, lowC=v=>(v!=null&&v<=EX_FAIL)?' class="ex-low"':'';
+  const head='<th>#</th><th>الطالب</th>'+subs.map(s=>'<th>'+escapeHtml(s.name)+'</th>').join('')+'<th>المعدل</th><th>التقدير</th>';
+  const body=data.map(x=>'<tr><td>'+x.rank+'</td><td class="sub">'+escapeHtml(x.st.full_name)+'</td>'+x.vals.map(v=>'<td'+lowC(v)+'>'+(v==null?'—':v)+'</td>').join('')+'<td class="hl'+((x.avg!=null&&x.avg<=EX_FAIL)?' ex-low':'')+'">'+r1(x.avg)+'</td><td>'+(x.avg!=null?exRating(Math.floor(x.avg)):'—')+'</td></tr>').join('');
+  const cards=data.map(x=>exResCard({rk:x.rank,nm:x.st.full_name,big:r1(x.avg),tag:x.avg!=null?exRating(Math.floor(x.avg)):'',chips:subs.map((s,i)=>[s.name,x.vals[i]==null?'—':x.vals[i]])})).join('');
+  const label=mode==='y'?'النتيجة السنوية':'الفصل '+(mode==='1'?'الأول':'الثاني');
+  window.__exResHTML='<style>.ex-low{color:#c0392b;font-weight:bold}</style><h2>نتائج جميع المواد — شعبة '+escapeHtml(cl?cl.grade+' / '+cl.section:'')+'</h2><p>'+label+'</p><table><tr>'+head+'</tr>'+body+'</table>';
+  el.innerHTML='<div class="card"><div class="tk-sum"><div><b>'+sts.length+'</b><span>طالب</span></div><div><b>'+(avgs.length?r1(Math.max.apply(null,avgs)):'—')+'</b><span>أعلى معدل</span></div><div><b>'+(avgs.length?r1(Math.min.apply(null,avgs)):'—')+'</b><span>أدنى معدل</span></div></div>'+(avgs.length?'<p class="list-item-subtitle">متوسط الشعبة: '+r1(avgs.reduce((a,b)=>a+b,0)/avgs.length)+' — '+label+'</p>':'')+'<div class="table-wrap ex-rtable"><table class="gb-table" style="display:table"><tr>'+head+'</tr>'+body+'</table></div><div class="ex-rcards">'+cards+'</div><button class="btn btn-secondary btn-sm" type="button" style="margin-top:10px" onclick="printHTML(\'نتائج جميع المواد\',window.__exResHTML)">طباعة</button></div>';
+}
+const __exSR3=exShowResults; exShowResults=async function(){ if(($('exSubject')||{}).value==='all') return exShowResultsAll(); return __exSR3.apply(this,arguments); };
 function exJalaaPick(id){ window.__exBookSid=id; exJalaa($('exBody')); }
 async function exRenderJalaa(){
   const box=$('exBookBox'); if(!box) return; const st=getStudentById(window.__exBookSid); if(!st){ box.innerHTML=''; return; }
