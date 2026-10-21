@@ -3047,14 +3047,37 @@ td.ex-low,.ex-low{color:#c0392b!important;font-weight:900}td.ex-top{color:#2e7d3
 .gb-wrap[data-new="1"]:not(.gb-print) .gb-tail{order:2}
 .gb-wrap[data-new="1"] .gb-info>div:nth-child(3){grid-column:1/-1}
 }
-.ex-row{display:grid;grid-template-columns:minmax(0,1fr) repeat(3,64px) 54px 52px;gap:6px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:.84rem}
-.ex-row.final{grid-template-columns:minmax(0,1fr) 80px 52px}
-.ex-row input[type=number]{width:100%;min-height:40px;text-align:center;border:1px solid var(--border);border-radius:10px;background:var(--surface-2);color:var(--text);font-weight:800}
+.ex-list{display:grid;grid-template-columns:1fr;gap:10px}
+@media(min-width:760px){.ex-list{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1180px){.ex-list{grid-template-columns:repeat(3,1fr)}}
+.ex-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 12px;align-items:center;padding:12px;border:1px solid var(--border);border-radius:16px;background:var(--surface-2);transition:border-color .2s,opacity .2s}
+.ex-row.done{border-color:color-mix(in srgb,var(--primary) 50%,var(--border))}
+.ex-name{display:flex;align-items:center;gap:10px;min-width:0;font-weight:800;font-size:1rem}
+.ex-name b{flex:none;width:28px;height:28px;border-radius:50%;display:inline-grid;place-items:center;background:var(--surface);font-size:.78rem;color:var(--muted)}
+.ex-name span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ex-side{display:flex;align-items:center;gap:8px}
+.ex-fields{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.ex-row.final .ex-fields{grid-template-columns:1fr}
+.ex-f{display:flex;flex-direction:column;gap:4px;min-width:0}
+.ex-f small{font-size:.76rem;color:var(--muted);font-weight:700;text-align:center;line-height:1.2}
+.ex-f small em{font-style:normal;opacity:.75}
+.ex-totbox{display:flex;flex-direction:column;align-items:center;min-width:58px;padding:4px 10px;border-radius:12px;background:var(--surface)}
+.ex-totbox small{font-size:.66rem;color:var(--muted)}
+.ex-abs{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:999px;border:1px solid var(--border);background:var(--surface);font-size:.82rem;font-weight:700;cursor:pointer}
+.ex-abs input{width:18px;height:18px;margin:0}
+.ex-row:has([data-f="absent"]:checked){opacity:.7}
+.ex-row:has([data-f="absent"]:checked) .ex-abs{border-color:var(--danger);color:var(--danger)}
+.ex-prog{height:6px;border-radius:99px;background:var(--surface-2);overflow:hidden;margin:6px 0 12px}
+.ex-prog i{display:block;height:100%;width:0;background:var(--primary);transition:width .25s}
+.ex-hint{text-align:center;padding:36px 16px;color:var(--muted);border:2px dashed var(--border);border-radius:18px;font-weight:700;line-height:1.7}
+.ex-filter .form-group{margin-bottom:4px}.ex-filter .form-label{font-size:.82rem}
+
+.ex-row input[type=number]{width:100%;min-height:50px;text-align:center;font-size:1.2rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);font-weight:800}.ex-row input[type=number]:focus{outline:2px solid var(--primary);outline-offset:1px}
 .ex-row input.bad{border-color:var(--danger);background:color-mix(in srgb,var(--danger) 12%,var(--surface-2))}
 .ex-head{display:grid;gap:6px;font-size:.7rem;color:var(--muted);font-weight:800;text-align:center;padding:4px 0}
-.ex-tot{font-weight:900;text-align:center;color:var(--primary)}
+.ex-tot{font-weight:900;font-size:1.2rem;min-height:1.4em;text-align:center;color:var(--primary)}
 .ex-abs{display:flex;align-items:center;justify-content:center;gap:3px;font-size:.7rem}
-@media(max-width:520px){.ex-row{grid-template-columns:minmax(0,1fr) repeat(3,52px) 44px 40px;gap:4px;font-size:.78rem}}
+
 /* ===== V7.1: إصلاح كسر الكلمات والأزرار + دفتر الدرجات ===== */
 button,option{overflow-wrap:normal!important;word-break:normal}
 .chip-btn,.chip-row button,.vtabs button,.qs,.ba-opt{flex:0 0 auto;white-space:nowrap}
@@ -23002,25 +23025,27 @@ function exTab(t){ window.__exTab=t; renderExams(); }
 
 /* ---- إدخال الدرجات ---- */
 function exEntry(b){
-  b.innerHTML='<div class="card"><div class="grid-2"><div class="form-group"><label class="form-label">الشعبة</label><select id="exClass" class="form-control" onchange="exOnCls()"><option value="">اختر الشعبة</option>'+exOpt(taskClasses(),c=>c.id,c=>c.grade+' / '+c.section)+'</select></div><div class="form-group"><label class="form-label">المادة</label><select id="exSubject" class="form-control" onchange="exLoadRows()"><option value="">اختر المادة</option></select></div><div class="form-group"><label class="form-label">الفصل</label><select id="exSem" class="form-control" onchange="exRefreshStages();exLoadRows()"><option value="1">الأول</option><option value="2">الثاني</option></select></div><div class="form-group"><label class="form-label">نوع الإدخال</label><select id="exStage" class="form-control" onchange="exLoadRows()">'+exOpt(EX_STAGES,s=>s[0],s=>s[1])+'</select></div></div></div><div id="exRows"></div>';
+  b.innerHTML='<div class="card ex-filter"><div class="grid-2"><div class="form-group"><label class="form-label">الشعبة</label><select id="exClass" class="form-control" onchange="exOnCls()"><option value="">اختر الشعبة</option>'+exOpt(taskClasses(),c=>c.id,c=>c.grade+' / '+c.section)+'</select></div><div class="form-group"><label class="form-label">المادة</label><select id="exSubject" class="form-control" onchange="exLoadRows()"><option value="">اختر المادة</option></select></div><div class="form-group"><label class="form-label">الفصل</label><select id="exSem" class="form-control" onchange="exRefreshStages();exLoadRows()"><option value="1">الأول</option><option value="2">الثاني</option></select></div><div class="form-group"><label class="form-label">نوع الإدخال</label><select id="exStage" class="form-control" onchange="exLoadRows()">'+exOpt(EX_STAGES,s=>s[0],s=>s[1])+'</select></div></div></div><div id="exRows"><div class="ex-hint">اختر الشعبة والمادة لعرض الطلاب وإدخال الدرجات</div></div>';
 }
 function exFillSubj(){ const c=$('exClass').value; $('exSubject').innerHTML='<option value="">اختر المادة</option>'+(c?exOpt(exSubjectsFor(c),s=>s.id,s=>s.name):''); }
-function exRowHTML(st,x,fin,nm,stg){
+function exRowHTML(st,x,fin,nm,stg,i){
   const a=x&&x.absent, v=f=>(x&&x[f]!=null?x[f]:''), dis=a?' disabled':'';
-  const inp=(f,max)=>'<input type="number" inputmode="numeric" step="1" min="0" max="'+max+'" data-f="'+f+'" value="'+v(f)+'" oninput="exCalc(this)"'+dis+'>';
-  const uf=fin&&!nm, third=fin&&nm?'exam':'quiz', tv=nm?exTotalN(x,stg):exTotal(x), tot=uf?'':'<span class="ex-tot">'+(tv!=null?tv:'')+'</span>';
-  return '<div class="ex-row'+(uf?' final':'')+'" data-sid="'+escapeAttr(st.id)+'"><span>'+escapeHtml(st.full_name)+'</span>'+(uf?inp('exam',100):inp('oral',25)+inp('homework',25)+inp(third,50))+tot+'<label class="ex-abs"><input type="checkbox" data-f="absent" onchange="exAbs(this)"'+(a?' checked':'')+'></label></div>';
+  const fld=(f,max,lab)=>'<label class="ex-f"><small>'+lab+' <em>من '+max+'</em></small><input type="number" inputmode="numeric" enterkeyhint="next" step="1" min="0" max="'+max+'" data-f="'+f+'" value="'+v(f)+'" oninput="exCalc(this)"'+dis+'></label>';
+  const uf=fin&&!nm, third=fin&&nm?'exam':'quiz', tv=nm?exTotalN(x,stg):exTotal(x);
+  const tot=uf?'':'<div class="ex-totbox"><small>المجموع</small><span class="ex-tot">'+(tv!=null?tv:'')+'</span></div>';
+  const fields=uf?fld('exam',100,'الامتحان'):fld('oral',25,'شفوي')+fld('homework',25,'وظائف')+fld(third,50,fin&&nm?'امتحان':'مذاكرة');
+  return '<div class="ex-row'+(uf?' final':'')+'" data-sid="'+escapeAttr(st.id)+'"><div class="ex-name"><b>'+((i||0)+1)+'</b><span>'+escapeHtml(st.full_name)+'</span></div><div class="ex-side">'+tot+'<label class="ex-abs"><input type="checkbox" data-f="absent" onchange="exAbs(this)"'+(a?' checked':'')+'><span>غائب</span></label></div><div class="ex-fields">'+fields+'</div></div>';
 }
 async function exLoadRows(){
   const c=$('exClass').value, s=$('exSubject').value, sem=Number($('exSem').value), stg=$('exStage').value, el=$('exRows'); if(!el) return;
-  if(!c||!s){ el.innerHTML=''; return; }
+  if(!c||!s){ el.innerHTML='<div class="ex-hint">'+(c?'اختر المادة لعرض الطلاب':'اختر الشعبة والمادة لعرض الطلاب وإدخال الدرجات')+'</div>'; return; }
   const sts=sortByName((APP.students||[]).filter(x=>x.class_id===c&&x.active!==false),'full_name');
   if(!sts.length){ el.innerHTML=emptyInline('لا يوجد طلاب في هذه الشعبة.'); return; }
   el.innerHTML='<div class="loading-box"></div>';
   const r=await sb.from('exam_scores').select('*').eq('subject_id',s).eq('semester',sem).eq('stage',stg).in('student_id',sts.map(x=>x.id));
   if(r.error){ handleSupabaseError(r.error,'تعذر تحميل الدرجات'); el.innerHTML=''; return; }
   const by={}; (r.data||[]).forEach(x=>{ by[x.student_id]=x; }); const fin=stg==='final', nm=exIsNewClass(c), uf=fin&&!nm;
-  el.innerHTML='<div class="card"><div class="ex-tools"><span id="exCount"></span><button class="btn btn-secondary btn-small" type="button" onclick="exAllAbs()">تعيين الجميع غائبين</button></div><div class="ex-row ex-head'+(uf?' final':'')+'"><span>الطالب</span>'+(uf?'<span>الامتحان /100</span>':'<span>شفوي /25</span><span>وظائف /25</span><span>'+(fin&&nm?'امتحان /50':'مذاكرة /50')+'</span><span>المجموع</span>')+'<span>غائب</span></div>'+sts.map(st=>exRowHTML(st,by[st.id],fin,nm,stg)).join('')+'<div class="ex-savebar"><button class="btn btn-primary btn-block" type="button" onclick="exSave()">حفظ الدرجات</button></div><p class="list-item-subtitle" style="margin-top:8px">أعداد صحيحة فقط. الحقل الفارغ لا يحذف درجة محفوظة. «غائب» يُبقي النتيجة غير مكتملة حتى تعديلها.</p></div>';
+  el.innerHTML='<div class="card"><div class="ex-tools"><span id="exCount"></span><button class="btn btn-secondary btn-small" type="button" onclick="exAllAbs()">تعيين الجميع غائبين</button></div><div class="ex-prog"><i id="exProg"></i></div><div class="ex-list">'+sts.map((st,i)=>exRowHTML(st,by[st.id],fin,nm,stg,i)).join('')+'</div><div class="ex-savebar"><button class="btn btn-primary btn-block" type="button" onclick="exSave()">حفظ الدرجات</button></div><p class="list-item-subtitle" style="margin-top:8px">أعداد صحيحة فقط. الحقل الفارغ لا يحذف درجة محفوظة. «غائب» يُبقي النتيجة غير مكتملة حتى تعديلها.</p></div>';
 }
 function exCalc(inp){
   const row=inp.closest('.ex-row'), v=inp.value; const n=Number(v);
@@ -23140,7 +23165,7 @@ function exDecorateCards(box){
   const tools=holder.querySelector('.gb-cardtools'); if(!tools) return;
   tools.addEventListener('click',ev=>{ const a=ev.target&&ev.target.getAttribute('data-act'); if(a==='fold'){ const all=cards.every(c=>c.classList.contains('gb-collapsed')); cards.forEach(c=>c.classList.toggle('gb-collapsed',!all)); ev.target.textContent=all?'طي الكل':'فتح الكل'; } else if(a==='empty'){ const h=wrap.classList.toggle('hide-empty'); ev.target.textContent=(h?'إظهار':'إخفاء')+' المواد الفارغة ('+empty+')'; } });
 }
-function exUpdateCount(){ const rows=Array.from(document.querySelectorAll('#exRows .ex-row[data-sid]')); const el=$('exCount'); if(!el) return; let done=0; rows.forEach(r=>{ const ab=r.querySelector('[data-f="absent"]'); const ins=Array.from(r.querySelectorAll('input[type=number]')); if((ab&&ab.checked)||(ins.length&&ins.every(i=>i.value!==''&&!i.classList.contains('bad')))) done++; }); el.textContent='تم إدخال '+done+' من '+rows.length; }
+function exUpdateCount(){ const rows=Array.from(document.querySelectorAll('#exRows .ex-row[data-sid]')); const el=$('exCount'); if(!el) return; let done=0; rows.forEach(r=>{ const ab=r.querySelector('[data-f="absent"]'); const ins=Array.from(r.querySelectorAll('input[type=number]')); if((ab&&ab.checked)||(ins.length&&ins.every(i=>i.value!==''&&!i.classList.contains('bad')))) done++; }); el.textContent='تم إدخال '+done+' من '+rows.length; const pr=$('exProg'); if(pr) pr.style.width=(rows.length?Math.round(done*100/rows.length):0)+'%'; rows.forEach(r=>{ const ab=r.querySelector('[data-f="absent"]'), ins=Array.from(r.querySelectorAll('input[type=number]')); r.classList.toggle('done',!!((ab&&ab.checked)||(ins.length&&ins.every(i=>i.value!==''&&!i.classList.contains('bad'))))); }); }
 function exAllAbs(){ const rows=Array.from(document.querySelectorAll('#exRows .ex-row[data-sid]')); if(!rows.length) return; const cbs=rows.map(r=>r.querySelector('[data-f="absent"]')).filter(Boolean); const all=cbs.every(c=>c.checked); cbs.forEach(c=>{ c.checked=!all; exAbs(c); }); window.__exDirty=true; exUpdateCount(); }
 document.addEventListener('input',function(ev){ const t=ev.target; if(!t||!t.closest||!t.closest('#exRows')) return; if(t.type==='number'&&t.value!==''&&t.value.length>=String(t.max||'').length&&!t.classList.contains('bad')){ const all=Array.from(document.querySelectorAll('#exRows input[type=number]:not(:disabled)')), i=all.indexOf(t); if(i>-1&&all[i+1]){ all[i+1].focus(); try{ all[i+1].select(); }catch(e){} } } exUpdateCount(); });
 document.addEventListener('change',function(ev){ const t=ev.target; if(t&&t.closest&&t.closest('#exRows')) exUpdateCount(); });
