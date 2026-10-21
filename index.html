@@ -4708,6 +4708,28 @@ body.dark #uiAwBar .nb-chips button.on{background:linear-gradient(180deg,#A9E26F
 
       </div>
 
+      <div class="form-group">
+        <label class="form-label">اسم الأم</label>
+        <input id="studentMotherName" class="form-control" type="text">
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">مكان الولادة</label>
+          <input id="studentBirthPlace" class="form-control" type="text">
+        </div>
+        <div class="form-group">
+          <label class="form-label">تاريخ الولادة</label>
+          <input id="studentBirthDate" class="form-control" type="date">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">الرقم في السجل العام</label>
+        <input id="studentRegistryNo" class="form-control" type="text">
+      </div>
+
+
       <div class="grid-2">
 
         <div class="form-group">
@@ -7677,6 +7699,10 @@ async function loadStudents(){
               status,
               active,
               parent_name,
+              mother_name,
+              birth_place,
+              birth_date,
+              registry_no,
               parent_email,
               parent_phone,
               class_id,
@@ -7717,6 +7743,10 @@ async function loadStudents(){
       status,
       active,
       parent_name,
+      mother_name,
+      birth_place,
+      birth_date,
+      registry_no,
       parent_email,
       parent_phone,
       created_at,
@@ -11613,6 +11643,7 @@ function openStudentModal(
     'studentParentName'
   ).value =
     student?.parent_name || '';
+  [['studentMotherName','mother_name'],['studentBirthPlace','birth_place'],['studentBirthDate','birth_date'],['studentRegistryNo','registry_no']].forEach(function(p){ var e=document.getElementById(p[0]); if(e) e.value=(student&&student[p[1]])||''; });
 
   document.getElementById(
     'studentParentPhone'
@@ -11746,6 +11777,10 @@ async function saveStudent() {
 
     parent_name:
       parentName,
+    mother_name: (document.getElementById('studentMotherName')?.value||'').trim()||null,
+    birth_place: (document.getElementById('studentBirthPlace')?.value||'').trim()||null,
+    birth_date: document.getElementById('studentBirthDate')?.value||null,
+    registry_no: (document.getElementById('studentRegistryNo')?.value||'').trim()||null,
 
     parent_phone:
       parentPhone,
@@ -21708,7 +21743,7 @@ saveEvaluations=async function(){ const k=draftKey(); await __seBase(); try{ loc
 /* 5) رأس التقارير + بيانات المدرسة */
 window.__school={name:'',logo:''};
 async function loadSchool(){
-  try{ const {data,error}=await sb.from('app_settings').select('value').eq('key','school').maybeSingle(); if(!error&&data&&data.value){ window.__school={name:data.value.name||'',logo:data.value.logo||''}; return; } }catch(e){}
+  try{ const {data,error}=await sb.from('app_settings').select('value').eq('key','school').maybeSingle(); if(!error&&data&&data.value){ window.__school=Object.assign({name:'',logo:'',directorate:'',district:'',principal:'',stamp:''},data.value); return; } }catch(e){}
   try{ const l=JSON.parse(localStorage.getItem('najm_school')||'null'); if(l) window.__school=l; }catch(e){}
 }
 const __ladBase=loadAllData;
@@ -21741,12 +21776,12 @@ const __gcrBase2=generateClassReport; generateClassReport=async function(){ awai
 function addSchoolSettings(){
   const wrap=document.querySelector('#adminContent .admin-sections'); if(!wrap||$('adminSchoolBox')) return;
   const d=document.createElement('section'); d.className='card'; d.id='adminSchoolBox';
-  d.innerHTML='<div class="card-header"><div><div class="card-title">بيانات المدرسة</div><div class="card-subtitle">تظهر في رأس التقارير وملفات PDF</div></div></div><div class="form-grid"><div class="field"><label>اسم المدرسة</label><input id="schName" type="text" maxlength="120"></div><div class="field"><label>رابط الشعار (اختياري)</label><input id="schLogo" type="url" dir="ltr" placeholder="https://..."></div></div><button class="btn btn-primary" type="button" style="margin-top:12px" onclick="saveSchool()">حفظ</button>';
-  wrap.appendChild(d); $('schName').value=window.__school.name||''; $('schLogo').value=window.__school.logo||'';
+  d.innerHTML='<div class="card-header"><div><div class="card-title">بيانات المدرسة</div><div class="card-subtitle">تظهر في رأس التقارير وملفات PDF</div></div></div><div class="form-grid"><div class="field"><label>اسم المدرسة</label><input id="schName" type="text" maxlength="120"></div><div class="field"><label>رابط الشعار (اختياري)</label><input id="schLogo" type="url" dir="ltr" placeholder="https://..."></div><div class="field"><label>المديرية</label><input id="schDir" type="text" maxlength="120"></div><div class="field"><label>المجمع</label><input id="schDistrict" type="text" maxlength="120"></div><div class="field"><label>اسم المدير</label><input id="schPrincipal" type="text" maxlength="120"></div><div class="field"><label>رابط صورة الختم (اختياري)</label><input id="schStamp" type="url" dir="ltr" placeholder="https://..."></div></div><button class="btn btn-primary" type="button" style="margin-top:12px" onclick="saveSchool()">حفظ</button>';
+  wrap.appendChild(d); $('schName').value=window.__school.name||''; $('schLogo').value=window.__school.logo||''; $('schDir').value=window.__school.directorate||''; $('schDistrict').value=window.__school.district||''; $('schPrincipal').value=window.__school.principal||''; $('schStamp').value=window.__school.stamp||'';
 }
 async function saveSchool(){
   if(!requireRole(['admin'])) return;
-  const v={name:$('schName').value.trim(),logo:$('schLogo').value.trim()};
+  const v={name:$('schName').value.trim(),logo:$('schLogo').value.trim(),directorate:$('schDir').value.trim(),district:$('schDistrict').value.trim(),principal:$('schPrincipal').value.trim(),stamp:$('schStamp').value.trim()};
   window.__school=v; try{ localStorage.setItem('najm_school',JSON.stringify(v)); }catch(e){}
   const {error}=await sb.from('app_settings').upsert({key:'school',value:v});
   if(error){ console.error(error); showToast('حُفظت على هذا الجهاز فقط. شغّل SQL جدول app_settings ليظهر عند الجميع','warning'); } else showToast('تم حفظ بيانات المدرسة','success');
@@ -22888,7 +22923,7 @@ function exIsNewGrade(g){
 }
 function exIsNewClass(c){ if(typeof c==='string') c=getClassById(c); return !!c&&exIsNewGrade(c.grade); }
 function exIsNewStudent(st){ const cl=getClassById(st.class_id)||st.classes; return !!cl&&exIsNewGrade(cl.grade); }
-function exStagesFor(nm,sem){ return nm?EX_KEYS.map((k,i)=>[k,'الفترة '+(i+1)+': '+EX_PERIODS[sem||1][i]]):EX_STAGES; }
+function exStagesFor(nm,sem){ return EX_STAGES; }
 function exTotalN(r,k){ if(!r||r.absent) return null; const t=k==='final'?r.exam:r.quiz; if(r.oral==null||r.homework==null||t==null) return null; return r.oral+r.homework+t; }
 function exSemN(rows){ rows=rows||{}; const p=EX_KEYS.map(k=>exTotalN(rows[k],k)); const sum=p.every(v=>v!=null)?p[0]+p[1]+p[2]:null; return {a:p[0],b:p[1],c:p[2],sum,res:sum!=null?Math.ceil(sum/3):null}; }
 function exRating(n){ if(n==null) return '—'; for(const r of EX_RATING){ if(n>=r[0]) return r[1]; } return '—'; }
@@ -22931,9 +22966,10 @@ async function renderExams(){
   const box=$('examsBox'); if(!box) return; box.innerHTML='<div class="loading-box"></div>';
   try{ await exLoadCfg(); }catch(e){ if(dbMissing(e)) dbNotice(box); else{ handleSupabaseError(e,'تعذر تحميل إعدادات الاختبارات'); box.innerHTML=''; } return; }
   const staff=isStaff(), tabs=staff?[['entry','إدخال الدرجات'],['results','النتائج والنشر'],['book','الدفتر']].concat(APP.role==='admin'?[['settings','الإعدادات']]:[]):[['book','دفتر الدرجات']];
+  tabs.splice(tabs.findIndex(t=>t[0]==='book')+1,0,['jalaa','الجلاء']);
   if(!tabs.some(t=>t[0]===window.__exTab)) window.__exTab=tabs[0][0];
   box.innerHTML='<div class="vtabs">'+tabs.map(t=>'<button type="button" class="'+(window.__exTab===t[0]?'on':'')+'" onclick="exTab(\''+t[0]+'\')">'+t[1]+'</button>').join('')+'</div><div id="exBody"></div>';
-  ({entry:exEntry,results:exResults,book:exBook,settings:exSettings})[window.__exTab]($('exBody'));
+  ({entry:exEntry,results:exResults,book:exBook,jalaa:exJalaa,settings:exSettings})[window.__exTab]($('exBody'));
 }
 function exTab(t){ window.__exTab=t; renderExams(); }
 
@@ -23029,6 +23065,50 @@ function exBook(b){
   b.innerHTML=pick+'<div id="exBookBox"><div class="loading-box"></div></div>';
   exRenderBook();
 }
+/* ===== الجلاء المدرسي ===== */
+const JALAA_MIN=41, JALAA_MAX=100;
+function jalaaResult(rows){ return ''; } /* قواعد النجاح والرسوب تُحدَّد لاحقًا */
+function exJalaa(b){
+  const sts=sortByName((APP.students||[]).filter(s=>s.active!==false),'full_name');
+  if(!sts.length){ b.innerHTML=emptyInline('لا يوجد طلاب.'); return; }
+  if(!window.__exBookSid||!sts.some(s=>s.id===window.__exBookSid)) window.__exBookSid=(APP.role==='parent'&&sts.some(s=>s.id===APP.selectedStudentId))?APP.selectedStudentId:sts[0].id;
+  const pick=APP.role==='parent'?(sts.length>1?'<div class="chip-row">'+sts.map(s=>'<button type="button" class="chip-btn '+(s.id===window.__exBookSid?'on':'')+'" onclick="exJalaaPick(\''+escapeAttr(s.id)+'\')">'+escapeHtml(s.full_name)+'</button>').join('')+'</div>':''):'<div class="form-group"><select class="form-control" onchange="exJalaaPick(this.value)">'+exOpt(sts,s=>s.id,s=>s.full_name+' — '+getStudentClassText(s),window.__exBookSid)+'</select></div>';
+  b.innerHTML=pick+'<div id="exBookBox"><div class="loading-box"></div></div>';
+  exRenderJalaa();
+}
+function exJalaaPick(id){ window.__exBookSid=id; exJalaa($('exBody')); }
+async function exRenderJalaa(){
+  const box=$('exBookBox'); if(!box) return; const st=getStudentById(window.__exBookSid); if(!st){ box.innerHTML=''; return; }
+  const cl=getClassById(st.class_id)||st.classes, grade=cl?cl.grade:'';
+  const subs=gbSubjects(grade);
+  if(!subs.length){ box.innerHTML=emptyInline(APP.role==='admin'?'لم تُحدَّد مواد دفتر الدرجات لهذا الصف. حدّدها من تبويب «الإعدادات».':'لم تُحدَّد مواد هذا الصف بعد.'); return; }
+  const r=await sb.from('exam_scores').select('*').eq('student_id',st.id); if(r.error){ handleSupabaseError(r.error,'تعذر تحميل الجلاء'); box.innerHTML=''; return; }
+  if(APP.role==='parent'&&!(r.data||[]).length){ box.innerHTML=emptyInline('لم تُنشر نتائج الاختبارات بعد.'); return; }
+  box.innerHTML='<div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap"><button class="btn btn-secondary btn-sm" type="button" onclick="exPdfBook()">📄 PDF</button><button class="btn btn-secondary btn-sm" type="button" onclick="exPrintBook()">🖨️ طباعة</button></div>'+jalaaHTML(st,subs,exIndex(r.data));
+}
+function jalaaHTML(st,subs,idx){
+  const sch=window.__school||{}, cl=getClassById(st.class_id)||st.classes||{}, nm=exIsNewGrade(cl.grade);
+  const c=x=>x==null?'—':x, sumOf=a=>a.length&&a.every(v=>v!=null)?a.reduce((p,q)=>p+q,0):null;
+  const wk=s=>(s.a!=null&&s.b!=null)?Math.ceil((s.a+s.b)/2):null;
+  const rows=subs.map(su=>{
+    const g=idx[st.id+'|'+su.id+'|1']||{}, h=idx[st.id+'|'+su.id+'|2']||{};
+    const s1=nm?exSemN(g):exSem(g), s2=nm?exSemN(h):exSem(h);
+    return {su,w1:nm?wk(s1):s1.work, e1:nm?s1.c:s1.e, r1:s1.res, w2:nm?wk(s2):s2.work, e2:nm?s2.c:s2.e, r2:s2.res, fin:exYear(s1,s2).fin};
+  });
+  const col=k=>sumOf(rows.map(x=>x[k]));
+  const body=rows.map(x=>'<tr><td class="sub">'+escapeHtml(x.su.name)+'</td><td>'+JALAA_MIN+'</td><td>'+JALAA_MAX+'</td><td>'+c(x.w1)+'</td><td>'+c(x.e1)+'</td><td class="hl">'+c(x.r1)+'</td><td>'+c(x.w2)+'</td><td>'+c(x.e2)+'</td><td class="hl">'+c(x.r2)+'</td><td class="hl">'+c(x.fin)+'</td></tr>').join('');
+  const total='<tr class="tot"><td class="sub">المجموع</td><td>'+JALAA_MIN*rows.length+'</td><td>'+JALAA_MAX*rows.length+'</td><td>'+c(col('w1'))+'</td><td>'+c(col('e1'))+'</td><td class="hl">'+c(col('r1'))+'</td><td>'+c(col('w2'))+'</td><td>'+c(col('e2'))+'</td><td class="hl">'+c(col('r2'))+'</td><td class="hl">'+c(col('fin'))+'</td></tr>';
+  const head='<tr><th rowspan="2">المادة</th><th rowspan="2">الدرجة الدنيا</th><th rowspan="2">الدرجة العظمى</th><th colspan="3">الفصل الأول</th><th colspan="3">الفصل الثاني</th><th rowspan="2">المحصلة النهائية</th></tr><tr><th>درجة الأعمال</th><th>درجة الامتحان</th><th>المحصلة</th><th>درجة الأعمال</th><th>درجة الامتحان</th><th>المحصلة</th></tr>';
+  const bd=st.birth_date?formatDate(st.birth_date):'';
+  const birth=[st.birth_place,bd].filter(Boolean).join(' ');
+  const f=(l,v)=>'<div><b>'+l+':</b>'+escapeHtml(v||'—')+'</div>';
+  const info='<div class="gb-info">'+f('المديرية',sch.directorate)+f('المجمع',sch.district)+f('المدرسة',sch.name)+f('العام الدراسي',cl.academic_year)+f('الصف',cl.grade)+f('الشعبة',cl.section)+f('اسم الطالب',st.full_name)+f('اسم الأم',st.mother_name)+f('المواليد',birth)+f('الرقم في السجل العام',st.registry_no)+'</div>';
+  const title='<div style="display:flex;align-items:center;justify-content:center;gap:12px;border-bottom:2px solid var(--primary-2);padding-bottom:8px;margin-bottom:10px">'+(sch.logo?'<img src="'+escapeAttr(sch.logo)+'" alt="" style="height:46px;border-radius:10px" crossorigin="anonymous" onerror="this.remove()">':'')+'<strong style="font-size:1.25rem">الجلاء المدرسي</strong></div>';
+  const res=jalaaResult(rows);
+  const foot='<div class="gb-info" style="margin-top:10px"><div><b>النتيجة النهائية:</b>'+escapeHtml(res||'—')+'</div><div><b>اسم المدير:</b>'+escapeHtml(sch.principal||'—')+'</div><div><b>الختم:</b>'+(sch.stamp?'<img src="'+escapeAttr(sch.stamp)+'" alt="" style="height:60px" crossorigin="anonymous" onerror="this.remove()">':'')+'</div></div>';
+  const cards='<div class="gb-cards">'+rows.map(x=>'<div class="gb-card"><h4>'+escapeHtml(x.su.name)+'</h4><div class="list-item-subtitle">الدنيا '+JALAA_MIN+' — العظمى '+JALAA_MAX+'</div><div class="gb-sem-title">الفصل الأول</div><div class="gb-sem"><div><span>أعمال</span>'+c(x.w1)+'</div><div><span>امتحان</span>'+c(x.e1)+'</div><div><span>المحصلة</span>'+c(x.r1)+'</div></div><div class="gb-sem-title">الفصل الثاني</div><div class="gb-sem"><div><span>أعمال</span>'+c(x.w2)+'</div><div><span>امتحان</span>'+c(x.e2)+'</div><div><span>المحصلة</span>'+c(x.r2)+'</div></div><div class="gb-final"><span>المحصلة النهائية: '+c(x.fin)+'</span></div></div>').join('')+'</div>';
+  return '<div id="gbPrint" class="gb-wrap" data-new="1"><div class="gb-pg">'+title+info+'<div class="table-wrap"><table class="gb-table">'+head+body+total+'</table></div>'+foot+'</div>'+cards+'</div>';
+}
 function exBookPick(id){ window.__exBookSid=id; exBook($('exBody')); }
 function exAttendanceHTML(st){
   const cfg=window.__exCfg.sem, cell=sem=>{ const c=cfg[sem]; if(!c||c.school_days==null) return ['—','—','—','—','—'];
@@ -23038,8 +23118,32 @@ function exAttendanceHTML(st){
   const r=n=>'<tr><td class="sub">'+(n===1?'الفصل الأول':'الفصل الثاني')+'</td>'+cell(n).map(v=>'<td>'+v+'</td>').join('')+'</tr>';
   return '<h4 style="margin:12px 0 6px">الدوام</h4><div class="table-wrap"><table class="gb-table" style="display:table"><tr><th>الفصل</th><th>الدوام المدرسي</th><th>غياب غير مبرر</th><th>غياب مبرر</th><th>دوام التلميذ</th><th>النسبة</th></tr>'+r(1)+r(2)+'</table></div>';
 }
+function gradebookOldDetailHTML(st,subs,idx){
+  const sch=window.__school||{}, par=st.parent_name||'—', c=x=>x==null?'—':x, wrd=x=>x!=null?'<small>'+escapeHtml(numWords(x))+'</small>':'';
+  const cell=(r,k)=>r&&r.absent?'غ':c(r&&r[k]!=null?r[k]:null);
+  const tot=r=>r&&r.absent?'غ':c(exTotal(r));
+  const ex=r=>r&&r.absent?'غ':c(r&&r.exam!=null?r.exam:null);
+  const data=subs.map(su=>{ const g=idx[st.id+'|'+su.id+'|1']||{}, h=idx[st.id+'|'+su.id+'|2']||{}, s1=exSem(g), s2=exSem(h); return {su,g,h,s1,s2,y:exYear(s1,s2)}; });
+  const head='<div style="display:flex;align-items:center;gap:12px;border-bottom:2px solid var(--primary-2);padding-bottom:10px;margin-bottom:12px">'+(sch.logo?'<img src="'+escapeAttr(sch.logo)+'" alt="" style="height:50px;border-radius:10px" crossorigin="anonymous" onerror="this.remove()">':'')+'<div><strong style="font-size:1.05rem">'+escapeHtml(sch.name||'نجم الصف')+'</strong><div class="list-item-subtitle">دفتر الدرجات — تاريخ الإصدار: '+escapeHtml(formatDate(todayISO()))+'</div></div></div>';
+  const info='<div class="gb-info"><div><b>الطالب:</b>'+escapeHtml(st.full_name)+'</div><div><b>الكود:</b>'+escapeHtml(st.student_code||'—')+'</div><div><b>الصف والشعبة:</b>'+escapeHtml(getStudentClassFullText(st))+'</div><div><b>ولي الأمر:</b>'+escapeHtml(par)+'</div></div>';
+  const semTable=n=>{
+    const key=n===1?'g':'h', sk=n===1?'s1':'s2', last=n===2;
+    const q4=t=>'<th colspan="4">'+t+'</th>';
+    const h1='<tr><th rowspan="2">المواد الدراسية</th>'+q4('المذاكرة الأولى')+q4('المذاكرة الثانية')+'<th rowspan="2">الأعمال<small>/100</small></th><th rowspan="2">الامتحان<small>/100</small></th><th rowspan="2">'+(n===1?'المحصلة الأولى':'المحصلة الثانية')+'<small>/100</small></th>'+(last?'<th rowspan="2">مجموع المحصلتين<small>/200</small></th><th rowspan="2">الدرجة النهائية<small>/100</small></th>':'')+'</tr>';
+    const sub4='<th>شفوي<small>/25</small></th><th>وظائف<small>/25</small></th><th>مذاكرة<small>/50</small></th><th>المجموع<small>/100</small></th>';
+    const h2='<tr>'+sub4+sub4+'</tr>';
+    const four=r=>'<td>'+cell(r,'oral')+'</td><td>'+cell(r,'homework')+'</td><td>'+cell(r,'quiz')+'</td><td class="hl">'+tot(r)+'</td>';
+    const body=data.map(d=>{ const g=d[key], s=d[sk];
+      return '<tr><td class="sub">'+escapeHtml(d.su.name)+'</td>'+four(g.q1)+four(g.q2)+'<td>'+c(s.work)+'</td><td>'+ex(g.final)+'</td><td class="hl">'+c(s.res)+wrd(s.res)+'</td>'+(last?'<td>'+c(d.y.sum)+'</td><td class="hl">'+c(d.y.fin)+wrd(d.y.fin)+'</td>':'')+'</tr>'; }).join('');
+    return '<div class="table-wrap"><table class="gb-table">'+h1+h2+body+'</table></div>';
+  };
+  const semBlock=(t,g,s)=>'<div class="gb-sem-title">'+t+'</div><div class="gb-sem"><div><span>مذاكرة 1</span>'+tot(g.q1)+'</div><div><span>مذاكرة 2</span>'+tot(g.q2)+'</div><div><span>أعمال</span>'+c(s.work)+'</div><div><span>امتحان</span>'+ex(g.final)+'</div><div><span>المحصلة</span>'+c(s.res)+'</div></div>'+(s.res!=null?'<div class="list-item-subtitle">'+escapeHtml(numWords(s.res))+'</div>':'');
+  const cards='<div class="gb-cards">'+data.map(d=>'<div class="gb-card"><h4>'+escapeHtml(d.su.name)+'</h4>'+semBlock('الفصل الأول',d.g,d.s1)+semBlock('الفصل الثاني',d.h,d.s2)+'<div class="gb-final"><span>المجموع /200: '+c(d.y.sum)+'</span><span>النهائية /100: '+c(d.y.fin)+(d.y.fin!=null?' ('+escapeHtml(numWords(d.y.fin))+')':'')+'</span></div></div>').join('')+'</div>';
+  return '<div id="gbPrint" class="gb-wrap" data-new="1"><div class="gb-pg">'+head+info+'<h4>الفصل الأول</h4>'+semTable(1)+'</div><div class="gb-pg"><h4>الفصل الثاني والنتيجة النهائية</h4>'+semTable(2)+exAttendanceHTML(st)+'<div class="sign-row"><div>توقيع معلم الصف<span></span></div><div>توقيع مدير المدرسة<span></span></div><div>ختم المدرسة<span></span></div></div></div>'+cards+'</div>';
+}
 function gradebookHTML(st,subs,idx){
   if(exIsNewStudent(st)) return gradebookNewHTML(st,subs,idx);
+  return gradebookOldDetailHTML(st,subs,idx);
   const sch=window.__school||{}, par=st.parent_name||'—', c=x=>x==null?'—':x, wrd=x=>x!=null?'<small>'+escapeHtml(numWords(x))+'</small>':'';
   const stage=r=>r&&r.absent?'غ':c(exTotal(r)), exam=r=>r&&r.absent?'غ':c(r&&r.exam!=null?r.exam:null);
   const data=subs.map(su=>{ const g=idx[st.id+'|'+su.id+'|1']||{}, h=idx[st.id+'|'+su.id+'|2']||{}, s1=exSem(g), s2=exSem(h); return {su,g,h,s1,s2,y:exYear(s1,s2)}; });
