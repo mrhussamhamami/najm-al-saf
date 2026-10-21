@@ -23066,15 +23066,38 @@ function exBook(b){
   exRenderBook();
 }
 /* ===== الجلاء المدرسي ===== */
-const JALAA_MIN=41, JALAA_MAX=100;
+const JALAA_MIN=41, JALAA_MAX=100, JALAA_MIN_TOTAL=410;
 function jalaaResult(rows){ return ''; } /* قواعد النجاح والرسوب تُحدَّد لاحقًا */
 function exJalaa(b){
   const sts=sortByName((APP.students||[]).filter(s=>s.active!==false),'full_name');
   if(!sts.length){ b.innerHTML=emptyInline('لا يوجد طلاب.'); return; }
   if(!window.__exBookSid||!sts.some(s=>s.id===window.__exBookSid)) window.__exBookSid=(APP.role==='parent'&&sts.some(s=>s.id===APP.selectedStudentId))?APP.selectedStudentId:sts[0].id;
   const pick=APP.role==='parent'?(sts.length>1?'<div class="chip-row">'+sts.map(s=>'<button type="button" class="chip-btn '+(s.id===window.__exBookSid?'on':'')+'" onclick="exJalaaPick(\''+escapeAttr(s.id)+'\')">'+escapeHtml(s.full_name)+'</button>').join('')+'</div>':''):'<div class="form-group"><select class="form-control" onchange="exJalaaPick(this.value)">'+exOpt(sts,s=>s.id,s=>s.full_name+' — '+getStudentClassText(s),window.__exBookSid)+'</select></div>';
-  b.innerHTML=pick+'<div id="exBookBox"><div class="loading-box"></div></div>';
+  const bulk=APP.role==='parent'?'':'<div class="card" style="margin-bottom:12px"><div class="form-group"><label class="form-label">طباعة جلاءات جماعية (A4 أفقي)</label><select id="jlBulkClass" class="form-control"><option value="">اختر الشعبة</option>'+exOpt(taskClasses(),c=>c.id,c=>c.grade+' / '+c.section)+'</select></div><button class="btn btn-primary btn-sm" type="button" onclick="exPrintJalaaBulk()">🖨️ طباعة جلاءات الشعبة</button></div>';
+  b.innerHTML=bulk+pick+'<div id="exBookBox"><div class="loading-box"></div></div>';
   exRenderJalaa();
+}
+function jalaaPrint(pages){
+  const w=window.open('','_blank'); if(!w){ showToast('المتصفح منع نافذة الطباعة','warning'); return; }
+  const css='@page{size:A4 landscape;margin:6mm}:root{--primary-2:#2e7d4f}*{-webkit-print-color-adjust:exact;print-color-adjust:exact;box-sizing:border-box}html,body{margin:0;padding:0;background:#fff}body{font-family:Tahoma,Arial,sans-serif;color:#111}.jl-page{width:1070px;height:740px;overflow:hidden;page-break-after:always;break-after:page}.jl-page:last-child{page-break-after:auto;break-after:auto}.jl-in{width:100%}table{width:100%;border-collapse:collapse;margin-bottom:6px}th,td{border:1px solid #6f7f6f;padding:5px 3px;text-align:center;vertical-align:middle;font-size:13px;line-height:1.35}th{background:#dfe8d9;font-weight:800}td.sub{font-weight:800;width:20%}td.hl{background:#e7f3e4;font-weight:900}tr.tot td{background:#eef3ea;font-weight:900}.gb-info{display:grid;grid-template-columns:repeat(5,1fr);gap:5px 10px;font-size:13px;margin:6px 0}.gb-info b{margin-left:4px}.table-wrap{overflow:visible}h4{margin:6px 0}img{max-height:60px}';
+  w.document.write('<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>الجلاء المدرسي</title><style>'+css+'</style></head><body>'+pages.map(p=>'<div class="jl-page"><div class="jl-in">'+p+'</div></div>').join('')+'<script>window.onload=function(){document.querySelectorAll(".jl-page").forEach(function(pg){var i=pg.firstChild;var s=Math.min(1,pg.clientHeight/i.scrollHeight,pg.clientWidth/i.scrollWidth);if(s<1)i.style.zoom=s;});setTimeout(function(){window.print();},400);};<\/script></body></html>');
+  w.document.close();
+}
+function exPrintJalaa(){ const el=$('gbPrint'), pg=el&&el.querySelector('.gb-pg'); if(!pg) return; jalaaPrint([pg.innerHTML]); }
+async function exPrintJalaaBulk(){
+  const cid=($('jlBulkClass')||{}).value; if(!cid){ showToast('اختر الشعبة أولاً','warning'); return; }
+  const sts=sortByName((APP.students||[]).filter(s=>s.class_id===cid&&s.active!==false),'full_name');
+  if(!sts.length){ showToast('لا يوجد طلاب في هذه الشعبة','warning'); return; }
+  const cl=getClassById(cid), subs=gbSubjects(cl?cl.grade:'');
+  if(!subs.length){ showToast('لم تُحدَّد مواد دفتر الدرجات لهذا الصف','warning'); return; }
+  setLoading(true); showToast('جاري تجهيز الجلاءات...','info');
+  try{
+    const ids=sts.map(s=>s.id);
+    const rows=await fetchAllRows(()=>sb.from('exam_scores').select('*').in('student_id',ids).order('student_id').order('subject_id').order('semester').order('stage'));
+    const idx=exIndex(rows), pages=sts.map(st=>{ const t=document.createElement('div'); t.innerHTML=jalaaHTML(st,subs,idx); return t.querySelector('.gb-pg').innerHTML; });
+    jalaaPrint(pages);
+  }catch(e){ handleSupabaseError(e,'تعذر تجهيز الجلاءات'); }
+  finally{ setLoading(false); }
 }
 function exJalaaPick(id){ window.__exBookSid=id; exJalaa($('exBody')); }
 async function exRenderJalaa(){
@@ -23084,7 +23107,7 @@ async function exRenderJalaa(){
   if(!subs.length){ box.innerHTML=emptyInline(APP.role==='admin'?'لم تُحدَّد مواد دفتر الدرجات لهذا الصف. حدّدها من تبويب «الإعدادات».':'لم تُحدَّد مواد هذا الصف بعد.'); return; }
   const r=await sb.from('exam_scores').select('*').eq('student_id',st.id); if(r.error){ handleSupabaseError(r.error,'تعذر تحميل الجلاء'); box.innerHTML=''; return; }
   if(APP.role==='parent'&&!(r.data||[]).length){ box.innerHTML=emptyInline('لم تُنشر نتائج الاختبارات بعد.'); return; }
-  box.innerHTML='<div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap"><button class="btn btn-secondary btn-sm" type="button" onclick="exPdfBook()">📄 PDF</button><button class="btn btn-secondary btn-sm" type="button" onclick="exPrintBook()">🖨️ طباعة</button></div>'+jalaaHTML(st,subs,exIndex(r.data));
+  box.innerHTML='<div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap"><button class="btn btn-secondary btn-sm" type="button" onclick="exPdfBook()">📄 PDF</button><button class="btn btn-secondary btn-sm" type="button" onclick="exPrintJalaa()">🖨️ طباعة</button></div>'+jalaaHTML(st,subs,exIndex(r.data));
 }
 function jalaaHTML(st,subs,idx){
   const sch=window.__school||{}, cl=getClassById(st.class_id)||st.classes||{}, nm=exIsNewGrade(cl.grade);
@@ -23097,7 +23120,7 @@ function jalaaHTML(st,subs,idx){
   });
   const col=k=>sumOf(rows.map(x=>x[k]));
   const body=rows.map(x=>'<tr><td class="sub">'+escapeHtml(x.su.name)+'</td><td>'+JALAA_MIN+'</td><td>'+JALAA_MAX+'</td><td>'+c(x.w1)+'</td><td>'+c(x.e1)+'</td><td class="hl">'+c(x.r1)+'</td><td>'+c(x.w2)+'</td><td>'+c(x.e2)+'</td><td class="hl">'+c(x.r2)+'</td><td class="hl">'+c(x.fin)+'</td></tr>').join('');
-  const total='<tr class="tot"><td class="sub">المجموع</td><td>'+JALAA_MIN*rows.length+'</td><td>'+JALAA_MAX*rows.length+'</td><td>'+c(col('w1'))+'</td><td>'+c(col('e1'))+'</td><td class="hl">'+c(col('r1'))+'</td><td>'+c(col('w2'))+'</td><td>'+c(col('e2'))+'</td><td class="hl">'+c(col('r2'))+'</td><td class="hl">'+c(col('fin'))+'</td></tr>';
+  const total='<tr class="tot"><td class="sub">المجموع</td><td>'+JALAA_MIN_TOTAL+'</td><td>'+JALAA_MAX*rows.length+'</td><td>'+c(col('w1'))+'</td><td>'+c(col('e1'))+'</td><td class="hl">'+c(col('r1'))+'</td><td>'+c(col('w2'))+'</td><td>'+c(col('e2'))+'</td><td class="hl">'+c(col('r2'))+'</td><td class="hl">'+c(col('fin'))+'</td></tr>';
   const head='<tr><th rowspan="2">المادة</th><th rowspan="2">الدرجة الدنيا</th><th rowspan="2">الدرجة العظمى</th><th colspan="3">الفصل الأول</th><th colspan="3">الفصل الثاني</th><th rowspan="2">المحصلة النهائية</th></tr><tr><th>درجة الأعمال</th><th>درجة الامتحان</th><th>المحصلة</th><th>درجة الأعمال</th><th>درجة الامتحان</th><th>المحصلة</th></tr>';
   const bd=st.birth_date?formatDate(st.birth_date):'';
   const birth=[st.birth_place,bd].filter(Boolean).join(' ');
