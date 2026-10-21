@@ -3020,6 +3020,33 @@ body.dark .gb-wrap{background:var(--surface);color:var(--text)}
 .gb-print .gb-table{display:table}.gb-print .gb-cards{display:none}
 /* ===== دفتر الصفوف 1-4 (3 فترات في الفصل) ===== */
 .gb-pg{margin-bottom:14px}.gb-wrap[data-new="1"] .gb-table{min-width:980px}.gb-wrap[data-new="1"] .gb-table th small{font-size:.6rem}.gb-pg h4{margin:10px 0 6px}
+/* ===== تحسينات الاختبارات والتواريخ ===== */
+input[type=date],input[type=time],input[type=month],input[type=datetime-local]{direction:ltr!important;text-align:right}
+input[type=date].ui-empty{direction:ltr!important}
+.ex-tabs{flex-wrap:wrap;overflow:visible}.ex-tabs button{flex:1 1 30%;min-width:0;padding:9px 6px}
+.ex-savebar{position:sticky;bottom:96px;z-index:5;padding:8px 0;background:linear-gradient(to bottom,transparent,var(--surface) 35%)}
+#exBody{padding-bottom:100px}
+.ex-row.ex-head span{font-size:.74rem;line-height:1.25;word-break:keep-all;overflow-wrap:normal}
+/* ===== المرحلة الثانية ===== */
+.ex-tools{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;flex-wrap:wrap}.ex-tools span{font-weight:800;font-size:.85rem}
+.ex-folded>*:not(.ex-fold-bar){display:none}.ex-fold-bar{display:flex;align-items:center;justify-content:space-between;gap:8px}.ex-fold-bar span{font-weight:800;font-size:.9rem}
+#exRes table th:nth-child(1),#exRes table td:nth-child(1){position:sticky;right:0;min-width:34px;z-index:2;background:var(--surface)}
+#exRes table th:nth-child(2),#exRes table td:nth-child(2){position:sticky;right:34px;z-index:2;background:var(--surface);box-shadow:-2px 0 4px -3px rgba(0,0,0,.25)}
+#exRes table th:nth-child(-n+2){background:var(--surface-2);z-index:3}
+td.ex-low{color:#c0392b;font-weight:900}td.ex-top{color:#2e7d32;font-weight:900}
+.gb-card h4{cursor:pointer}.gb-card h4::after{content:' ▾';font-size:.8em;opacity:.6}.gb-card.gb-collapsed h4::after{content:' ◂'}.gb-card.gb-collapsed>*:not(h4){display:none}
+.gb-wrap.hide-empty .gb-card.gb-empty{display:none}
+.gb-cardtools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.gb-sumcard{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}.gb-sumcard>div{background:var(--surface-2);border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center}.gb-sumcard b{display:block;font-size:1.2rem}.gb-sumcard span{font-size:.75rem;opacity:.7}
+.ex-mv{display:inline-flex;gap:4px;margin-inline-start:6px}.ex-mv button{padding:4px 9px}
+@media(max-width:699px){
+.gb-wrap[data-new="1"]:not(.gb-print){display:flex;flex-direction:column}
+.gb-wrap[data-new="1"]:not(.gb-print) .gb-pg{display:contents}
+.gb-wrap[data-new="1"]:not(.gb-print) .gb-pg>h4,.gb-wrap[data-new="1"]:not(.gb-print) .gb-pg>.table-wrap{display:none}
+.gb-wrap[data-new="1"]:not(.gb-print) .gb-cards{order:1}
+.gb-wrap[data-new="1"]:not(.gb-print) .gb-tail{order:2}
+.gb-wrap[data-new="1"] .gb-info>div:nth-child(3){grid-column:1/-1}
+}
 .ex-row{display:grid;grid-template-columns:minmax(0,1fr) repeat(3,64px) 54px 52px;gap:6px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:.84rem}
 .ex-row.final{grid-template-columns:minmax(0,1fr) 80px 52px}
 .ex-row input[type=number]{width:100%;min-height:40px;text-align:center;border:1px solid var(--border);border-radius:10px;background:var(--surface-2);color:var(--text);font-weight:800}
@@ -22787,7 +22814,7 @@ function rpAwards(awards){
   }).join('');
 }
 /* الزر العائم يغطي شارات الحضور في صفحة التقارير */
-const __apsV73=afterPageShown; afterPageShown=function(p){ const f=document.getElementById('fab'); if(f) f.style.display=(p==='reports'||p==='attendance')?'none':''; return __apsV73(p); };
+const __apsV73=afterPageShown; afterPageShown=function(p){ const f=document.getElementById('fab'); if(f) f.style.display=(p==='reports'||p==='attendance'||p==='exams')?'none':''; return __apsV73(p); };
 
 /* ---- V7.4: تقرير الشعبة (عرض بطاقات) + تبويبا صفحة التقارير + إصلاح ألوان PDF ---- */
 function crScreenHTML(students,evals,att,rows,cAvg,cls,sub,subs,from,to){
@@ -22944,8 +22971,8 @@ function gradebookNewHTML(st,subs,idx){
     return '<div class="table-wrap"><table class="gb-table">'+h1+h2+body+'</table></div>';
   };
   const semBlock=(t,s,g)=>'<div class="gb-sem-title">'+t+'</div><div class="gb-sem" style="grid-template-columns:repeat(4,1fr)">'+EX_KEYS.map((k,i)=>'<div><span>فترة '+(i+1)+'</span>'+(g[k]&&g[k].absent?'غ':c([s.a,s.b,s.c][i]))+'</div>').join('')+'<div><span>المحصلة</span>'+c(s.res)+'</div></div><div class="list-item-subtitle">المجموع /300: '+c(s.sum)+' — '+exRating(s.res)+(s.res!=null?' ('+escapeHtml(numWords(s.res))+')':'')+'</div>';
-  const cards='<div class="gb-cards">'+data.map(d=>'<div class="gb-card"><h4>'+escapeHtml(d.su.name)+'</h4>'+semBlock('الفصل الأول',d.s1,d.g)+semBlock('الفصل الثاني',d.s2,d.h)+'<div class="gb-final"><span>المجموع /200: '+c(d.y.sum)+'</span><span>النهائية /100: '+c(d.y.fin)+(d.y.fin!=null?' ('+escapeHtml(numWords(d.y.fin))+')':'')+' — '+exRating(d.y.fin)+'</span></div></div>').join('')+'</div>';
-  return '<div id="gbPrint" class="gb-wrap" data-new="1"><div class="gb-pg">'+head+info+'<h4>الفصل الأول</h4>'+semTable(1)+'</div><div class="gb-pg"><h4>الفصل الثاني والنتيجة النهائية</h4>'+semTable(2)+exAttendanceHTML(st)+'<div class="sign-row"><div>توقيع معلم الصف<span></span></div><div>توقيع مدير المدرسة<span></span></div><div>ختم المدرسة<span></span></div></div></div>'+cards+'</div>';
+  const cards='<div class="gb-cards">'+exSummaryHTML(data.map(d=>d.y.fin))+data.map(d=>'<div class="gb-card"><h4>'+escapeHtml(d.su.name)+'</h4>'+semBlock('الفصل الأول',d.s1,d.g)+semBlock('الفصل الثاني',d.s2,d.h)+'<div class="gb-final"><span>المجموع /200: '+c(d.y.sum)+'</span><span>النهائية /100: '+c(d.y.fin)+(d.y.fin!=null?' ('+escapeHtml(numWords(d.y.fin))+')':'')+' — '+exRating(d.y.fin)+'</span></div></div>').join('')+'</div>';
+  return '<div id="gbPrint" class="gb-wrap" data-new="1"><div class="gb-pg">'+head+info+'<h4>الفصل الأول</h4>'+semTable(1)+'</div><div class="gb-pg"><h4>الفصل الثاني والنتيجة النهائية</h4>'+semTable(2)+'<div class="gb-tail">'+exAttendanceHTML(st)+'<div class="sign-row"><div>توقيع معلم الصف<span></span></div><div>توقيع مدير المدرسة<span></span></div><div>ختم المدرسة<span></span></div></div></div></div>'+cards+'</div>';
 }
 function exSubj(id){ return (window.__exSubjects&&window.__exSubjects[id])||getSubjectById(id)||null; }
 async function exLoadCfg(){
@@ -22968,14 +22995,14 @@ async function renderExams(){
   const staff=isStaff(), tabs=staff?[['entry','إدخال الدرجات'],['results','النتائج والنشر'],['book','الدفتر']].concat(APP.role==='admin'?[['settings','الإعدادات']]:[]):[['book','دفتر الدرجات']];
   tabs.splice(tabs.findIndex(t=>t[0]==='book')+1,0,['jalaa','الجلاء']);
   if(!tabs.some(t=>t[0]===window.__exTab)) window.__exTab=tabs[0][0];
-  box.innerHTML='<div class="vtabs">'+tabs.map(t=>'<button type="button" class="'+(window.__exTab===t[0]?'on':'')+'" onclick="exTab(\''+t[0]+'\')">'+t[1]+'</button>').join('')+'</div><div id="exBody"></div>';
+  box.innerHTML='<div class="vtabs ex-tabs">'+tabs.map(t=>'<button type="button" class="'+(window.__exTab===t[0]?'on':'')+'" onclick="exTab(\''+t[0]+'\')">'+t[1]+'</button>').join('')+'</div><div id="exBody"></div>';
   ({entry:exEntry,results:exResults,book:exBook,jalaa:exJalaa,settings:exSettings})[window.__exTab]($('exBody'));
 }
 function exTab(t){ window.__exTab=t; renderExams(); }
 
 /* ---- إدخال الدرجات ---- */
 function exEntry(b){
-  b.innerHTML='<div class="card"><div class="grid-2"><div class="form-group"><label class="form-label">الشعبة</label><select id="exClass" class="form-control" onchange="exOnCls()"><option value="">اختر الشعبة</option>'+exOpt(taskClasses(),c=>c.id,c=>c.grade+' / '+c.section)+'</select></div><div class="form-group"><label class="form-label">المادة</label><select id="exSubject" class="form-control" onchange="exLoadRows()"><option value="">اختر المادة</option></select></div><div class="form-group"><label class="form-label">الفصل</label><select id="exSem" class="form-control" onchange="exRefreshStages();exLoadRows()"><option value="1">الأول</option><option value="2">الثاني</option></select></div><div class="form-group"><label class="form-label">المرحلة</label><select id="exStage" class="form-control" onchange="exLoadRows()">'+exOpt(EX_STAGES,s=>s[0],s=>s[1])+'</select></div></div></div><div id="exRows"></div>';
+  b.innerHTML='<div class="card"><div class="grid-2"><div class="form-group"><label class="form-label">الشعبة</label><select id="exClass" class="form-control" onchange="exOnCls()"><option value="">اختر الشعبة</option>'+exOpt(taskClasses(),c=>c.id,c=>c.grade+' / '+c.section)+'</select></div><div class="form-group"><label class="form-label">المادة</label><select id="exSubject" class="form-control" onchange="exLoadRows()"><option value="">اختر المادة</option></select></div><div class="form-group"><label class="form-label">الفصل</label><select id="exSem" class="form-control" onchange="exRefreshStages();exLoadRows()"><option value="1">الأول</option><option value="2">الثاني</option></select></div><div class="form-group"><label class="form-label">نوع الإدخال</label><select id="exStage" class="form-control" onchange="exLoadRows()">'+exOpt(EX_STAGES,s=>s[0],s=>s[1])+'</select></div></div></div><div id="exRows"></div>';
 }
 function exFillSubj(){ const c=$('exClass').value; $('exSubject').innerHTML='<option value="">اختر المادة</option>'+(c?exOpt(exSubjectsFor(c),s=>s.id,s=>s.name):''); }
 function exRowHTML(st,x,fin,nm,stg){
@@ -22993,7 +23020,7 @@ async function exLoadRows(){
   const r=await sb.from('exam_scores').select('*').eq('subject_id',s).eq('semester',sem).eq('stage',stg).in('student_id',sts.map(x=>x.id));
   if(r.error){ handleSupabaseError(r.error,'تعذر تحميل الدرجات'); el.innerHTML=''; return; }
   const by={}; (r.data||[]).forEach(x=>{ by[x.student_id]=x; }); const fin=stg==='final', nm=exIsNewClass(c), uf=fin&&!nm;
-  el.innerHTML='<div class="card"><div class="ex-row ex-head'+(uf?' final':'')+'"><span>الطالب</span>'+(uf?'<span>الامتحان /100</span>':'<span>شفوي /25</span><span>وظائف /25</span><span>'+(fin&&nm?'امتحان /50':'مذاكرة /50')+'</span><span>المجموع</span>')+'<span>غائب</span></div>'+sts.map(st=>exRowHTML(st,by[st.id],fin,nm,stg)).join('')+'<button class="btn btn-primary btn-block" type="button" style="margin-top:12px" onclick="exSave()">حفظ الدرجات</button><p class="list-item-subtitle" style="margin-top:8px">أعداد صحيحة فقط. الحقل الفارغ لا يحذف درجة محفوظة. «غائب» يُبقي النتيجة غير مكتملة حتى تعديلها.</p></div>';
+  el.innerHTML='<div class="card"><div class="ex-tools"><span id="exCount"></span><button class="btn btn-secondary btn-small" type="button" onclick="exAllAbs()">تعيين الجميع غائبين</button></div><div class="ex-row ex-head'+(uf?' final':'')+'"><span>الطالب</span>'+(uf?'<span>الامتحان /100</span>':'<span>شفوي /25</span><span>وظائف /25</span><span>'+(fin&&nm?'امتحان /50':'مذاكرة /50')+'</span><span>المجموع</span>')+'<span>غائب</span></div>'+sts.map(st=>exRowHTML(st,by[st.id],fin,nm,stg)).join('')+'<div class="ex-savebar"><button class="btn btn-primary btn-block" type="button" onclick="exSave()">حفظ الدرجات</button></div><p class="list-item-subtitle" style="margin-top:8px">أعداد صحيحة فقط. الحقل الفارغ لا يحذف درجة محفوظة. «غائب» يُبقي النتيجة غير مكتملة حتى تعديلها.</p></div>';
 }
 function exCalc(inp){
   const row=inp.closest('.ex-row'), v=inp.value; const n=Number(v);
@@ -23022,7 +23049,7 @@ async function exSave(){
 
 /* ---- النتائج والنشر (للمدرس والمدير) ---- */
 function exResults(b){
-  b.innerHTML='<div class="card"><div class="grid-2"><div class="form-group"><label class="form-label">الشعبة</label><select id="exClass" class="form-control" onchange="exFillSubj()"><option value="">اختر الشعبة</option>'+exOpt(taskClasses(),c=>c.id,c=>c.grade+' / '+c.section)+'</select></div><div class="form-group"><label class="form-label">المادة</label><select id="exSubject" class="form-control"><option value="">اختر المادة</option></select></div><div class="form-group"><label class="form-label">العرض</label><select id="exSem" class="form-control"><option value="1">الفصل الأول</option><option value="2">الفصل الثاني</option><option value="y">النتيجة السنوية</option></select></div></div><button class="btn btn-primary btn-block" type="button" onclick="exShowResults()">عرض النتائج</button></div><div id="exRes"></div>';
+  b.innerHTML='<div class="card"><div class="grid-2"><div class="form-group"><label class="form-label">الشعبة</label><select id="exClass" class="form-control" onchange="exFillSubj()"><option value="">اختر الشعبة</option>'+exOpt(taskClasses(),c=>c.id,c=>c.grade+' / '+c.section)+'</select></div><div class="form-group"><label class="form-label">المادة</label><select id="exSubject" class="form-control"><option value="">اختر المادة</option></select></div><div class="form-group"><label class="form-label">العرض</label><select id="exSem" class="form-control"><option value="1">الفصل الأول</option><option value="2">الفصل الثاني</option><option value="y">النتيجة السنوية</option></select></div></div><button class="btn btn-primary btn-block" type="button" onclick="exShowResults()">عرض النتائج</button></div><div class="card" id="exBulkCard"><div class="card-title"><h2>نشر النتائج لكل المواد</h2></div><div class="list-item-subtitle">يشمل مواد الصف المحدد في الأعلى دفعة واحدة دون اختيار كل مادة.</div><div class="form-group" style="margin-top:10px"><label class="form-label">الفصل</label><select id="exBulkSem" class="form-control"><option value="1">الفصل الأول</option><option value="2">الفصل الثاني</option></select></div><div id="exBulkInfo" class="list-item-subtitle" style="margin-bottom:10px"></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-primary btn-small" type="button" onclick="exBulkPublish(true)">نشر كل المواد</button><button class="btn btn-secondary btn-small" type="button" onclick="exBulkPublish(false)">إلغاء نشر كل المواد</button></div></div><div id="exRes"></div>';
 }
 async function exShowResults(){
   const c=$('exClass').value, s=$('exSubject').value, mode=$('exSem').value, el=$('exRes'); if(!c||!s){ showToast('اختر الشعبة والمادة','warning'); return; }
@@ -23066,7 +23093,7 @@ function exBook(b){
   exRenderBook();
 }
 /* ===== الجلاء المدرسي ===== */
-const JALAA_MIN=41, JALAA_MAX=100, JALAA_MIN_TOTAL=410;
+let JALAA_MIN=41, JALAA_MAX=100, JALAA_MIN_TOTAL=410;
 function jalaaResult(rows){ return ''; } /* قواعد النجاح والرسوب تُحدَّد لاحقًا */
 function exJalaa(b){
   const sts=sortByName((APP.students||[]).filter(s=>s.active!==false),'full_name');
@@ -23088,7 +23115,7 @@ async function exPrintJalaaBulk(){
   const cid=($('jlBulkClass')||{}).value; if(!cid){ showToast('اختر الشعبة أولاً','warning'); return; }
   const sts=sortByName((APP.students||[]).filter(s=>s.class_id===cid&&s.active!==false),'full_name');
   if(!sts.length){ showToast('لا يوجد طلاب في هذه الشعبة','warning'); return; }
-  const cl=getClassById(cid), subs=gbSubjects(cl?cl.grade:'');
+  const cl=getClassById(cid), subs=jalaaSubjects(cl?cl.grade:'');
   if(!subs.length){ showToast('لم تُحدَّد مواد دفتر الدرجات لهذا الصف','warning'); return; }
   setLoading(true); showToast('جاري تجهيز الجلاءات...','info');
   try{
@@ -23099,15 +23126,92 @@ async function exPrintJalaaBulk(){
   }catch(e){ handleSupabaseError(e,'تعذر تجهيز الجلاءات'); }
   finally{ setLoading(false); }
 }
+/* حساب أيام الدوام تلقائيًا (استثناء الجمعة والسبت) */
+function exCountDays(s,e){ const a=s.split('-').map(Number), b=e.split('-').map(Number); let t=Date.UTC(a[0],a[1]-1,a[2]); const end=Date.UTC(b[0],b[1]-1,b[2]); let n=0; for(;t<=end;t+=86400000){ const d=new Date(t).getUTCDay(); if(d!==5&&d!==6) n++; } return n; }
+document.addEventListener('change',function(ev){ const id=ev.target&&ev.target.id; if(!/^(ss|se)[12]$/.test(id)) return; const n=id.slice(2), s=$('ss'+n)&&$('ss'+n).value, e=$('se'+n)&&$('se'+n).value; if(s&&e&&e>=s&&$('sd'+n)){ $('sd'+n).value=exCountDays(s,e); showToast('حُسب الدوام تلقائيًا: '+$('sd'+n).value+' يومًا (دون الجمعة والسبت)','info'); } });
+/* ===== المرحلة الثانية: تحسينات الإدخال والنتائج والدفتر والإعدادات ===== */
+function exSummaryHTML(fins){ const v=fins.filter(x=>x!=null), avg=v.length?v.reduce((a,b)=>a+b,0)/v.length:null; return '<div class="gb-sumcard"><div><b>'+(avg!=null?Math.round(avg*10)/10:'—')+'</b><span>المعدل العام</span></div><div><b>'+exRating(avg!=null?Math.floor(avg):null)+'</b><span>التقدير</span></div><div><b>'+v.length+'/'+fins.length+'</b><span>مواد مكتملة</span></div></div>'; }
+function exDecorateCards(box){
+  if(!box) return; const wrap=box.querySelector('.gb-wrap'), holder=box.querySelector('.gb-cards'), cards=Array.from(box.querySelectorAll('.gb-card')); if(!wrap||!holder||!cards.length) return;
+  let empty=0;
+  cards.forEach(c=>{ const h=c.querySelector('h4'); if(h) h.addEventListener('click',()=>c.classList.toggle('gb-collapsed')); const vals=Array.from(c.querySelectorAll('.gb-sem>div')).map(d=>(d.lastChild?d.lastChild.textContent:'').trim()); if(vals.length&&vals.every(x=>x==='—'||x==='')){ c.classList.add('gb-empty'); empty++; } });
+  if(empty&&empty<cards.length) wrap.classList.add('hide-empty');
+  const first=cards[0]; first.insertAdjacentHTML('beforebegin','<div class="gb-cardtools"><button class="btn btn-secondary btn-small" type="button" data-act="fold">طي الكل</button>'+(empty&&empty<cards.length?'<button class="btn btn-secondary btn-small" type="button" data-act="empty">إظهار المواد الفارغة ('+empty+')</button>':'')+'</div>');
+  const tools=holder.querySelector('.gb-cardtools'); if(!tools) return;
+  tools.addEventListener('click',ev=>{ const a=ev.target&&ev.target.getAttribute('data-act'); if(a==='fold'){ const all=cards.every(c=>c.classList.contains('gb-collapsed')); cards.forEach(c=>c.classList.toggle('gb-collapsed',!all)); ev.target.textContent=all?'طي الكل':'فتح الكل'; } else if(a==='empty'){ const h=wrap.classList.toggle('hide-empty'); ev.target.textContent=(h?'إظهار':'إخفاء')+' المواد الفارغة ('+empty+')'; } });
+}
+function exUpdateCount(){ const rows=Array.from(document.querySelectorAll('#exRows .ex-row[data-sid]')); const el=$('exCount'); if(!el) return; let done=0; rows.forEach(r=>{ const ab=r.querySelector('[data-f="absent"]'); const ins=Array.from(r.querySelectorAll('input[type=number]')); if((ab&&ab.checked)||(ins.length&&ins.every(i=>i.value!==''&&!i.classList.contains('bad')))) done++; }); el.textContent='تم إدخال '+done+' من '+rows.length; }
+function exAllAbs(){ const rows=Array.from(document.querySelectorAll('#exRows .ex-row[data-sid]')); if(!rows.length) return; const cbs=rows.map(r=>r.querySelector('[data-f="absent"]')).filter(Boolean); const all=cbs.every(c=>c.checked); cbs.forEach(c=>{ c.checked=!all; exAbs(c); }); exUpdateCount(); }
+document.addEventListener('input',function(ev){ const t=ev.target; if(!t||!t.closest||!t.closest('#exRows')) return; if(t.type==='number'&&t.value!==''&&t.value.length>=String(t.max||'').length&&!t.classList.contains('bad')){ const all=Array.from(document.querySelectorAll('#exRows input[type=number]:not(:disabled)')), i=all.indexOf(t); if(i>-1&&all[i+1]){ all[i+1].focus(); try{ all[i+1].select(); }catch(e){} } } exUpdateCount(); });
+document.addEventListener('change',function(ev){ const t=ev.target; if(t&&t.closest&&t.closest('#exRows')) exUpdateCount(); });
+const __exLR=exLoadRows; exLoadRows=async function(){ await __exLR.apply(this,arguments); exUpdateCount(); };
+function exDecorateResults(el){
+  if(!el||!el.querySelector('table')) return;
+  el.querySelectorAll('td.hl').forEach(td=>{ const t=td.textContent.trim(); if(t===''||isNaN(Number(t))) return; const n=Number(t); if(n<50) td.classList.add('ex-low'); else if(n>=90) td.classList.add('ex-top'); });
+  const cls=$('exClass'), sbj=$('exSubject'), fc=cls&&cls.closest('.card'); if(!fc||fc.querySelector('.ex-fold-bar')) return;
+  const txt=(cls.selectedOptions[0]?cls.selectedOptions[0].text:'')+' — '+(sbj&&sbj.selectedOptions[0]?sbj.selectedOptions[0].text:'');
+  fc.classList.add('ex-folded'); fc.insertAdjacentHTML('afterbegin','<div class="ex-fold-bar"><span>'+escapeHtml(txt)+'</span><button class="btn btn-secondary btn-small" type="button" onclick="var c=this.closest(\'.card\');c.classList.remove(\'ex-folded\');this.parentElement.remove()">تعديل الاختيار</button></div>');
+}
+const __exSR=exShowResults; exShowResults=async function(){ await __exSR.apply(this,arguments); exDecorateResults($('exRes')); };
+function exMove(btn,dir){ const it=btn.closest('.list-item'); if(!it) return; const sib=dir<0?it.previousElementSibling:it.nextElementSibling; if(!sib||!sib.classList.contains('list-item')) return; if(dir<0) it.parentNode.insertBefore(it,sib); else it.parentNode.insertBefore(sib,it); Array.from(it.parentNode.querySelectorAll('.list-item')).forEach((x,i)=>{ const o=x.querySelector('input[data-ord]'); if(o) o.value=i+1; }); }
+const __exGL=exGradeList; exGradeList=function(){ __exGL.apply(this,arguments); document.querySelectorAll('#exGradeBox .list-item').forEach(it=>{ if(it.querySelector('.ex-mv')) return; it.insertAdjacentHTML('beforeend','<span class="ex-mv"><button type="button" class="btn btn-secondary btn-small" onclick="exMove(this,-1)">▲</button><button type="button" class="btn btn-secondary btn-small" onclick="exMove(this,1)">▼</button></span>'); }); };
+const __exLC=exLoadCfg; exLoadCfg=async function(){ await __exLC.apply(this,arguments); try{ const r=await sb.from('app_settings').select('value').eq('key','jalaa').maybeSingle(); const v=r&&r.data&&r.data.value; if(v){ if(v.min!=null) JALAA_MIN=Number(v.min); if(v.subjects&&typeof v.subjects==='object') window.__jalaaSubs=v.subjects; } }catch(e){} };
+const __exSt=exSettings; exSettings=function(b){ __exSt.apply(this,arguments); if(APP.role!=='admin') return; b.insertAdjacentHTML('beforeend','<div class="card"><div class="card-title"><h2>إعدادات الجلاء</h2></div><div class="grid-2"><div class="form-group"><label class="form-label">الدرجة الدنيا لكل مادة</label><input id="jlMin" class="form-control" type="number" min="0" max="100" value="'+JALAA_MIN+'"></div></div><div class="list-item-subtitle">المجموع الأدنى يُحسب تلقائيًا من المواد المعروضة. قواعد النجاح والرسوب تُضاف لاحقًا.</div><button class="btn btn-primary" type="button" style="margin-top:12px" onclick="exSaveJalaaCfg()">حفظ إعدادات الجلاء</button></div>'); const grades=[...new Set((APP.classes||[]).map(c=>c.grade).filter(Boolean))]; b.insertAdjacentHTML('beforeend','<div class="card"><div class="card-title"><h2>مواد الجلاء لكل صف</h2></div><div class="list-item-subtitle">تُعرض هذه المواد فقط في الجلاء (الشاشة والطباعة الفردية والجماعية). ترتيبها كترتيب مواد الدفتر.</div><div class="form-group" style="margin-top:10px"><label class="form-label">الصف</label><select id="jlGrade" class="form-control" onchange="exJlGradeList()"><option value="">اختر الصف</option>'+grades.map(g=>'<option value="'+escapeAttr(g)+'">'+escapeHtml(g)+'</option>').join('')+'</select></div><div id="jlSubBox"></div></div>'); };
+async function exSaveJalaaCfg(){ if(!requireRole(['admin'])) return; const min=Number($('jlMin').value); if(!Number.isFinite(min)||min<0){ showToast('أدخل قيمًا صحيحة','warning'); return; } setLoading(true); try{ const r=await sb.from('app_settings').upsert({key:'jalaa',value:{min,subjects:window.__jalaaSubs||{}}},{onConflict:'key'}); if(r.error) throw r.error; JALAA_MIN=min; showToast('تم حفظ إعدادات الجلاء','success'); }catch(e){ handleSupabaseError(e,'تعذر حفظ إعدادات الجلاء'); } finally{ setLoading(false); } }
+/* ===== نشر النتائج لكل المواد دفعة واحدة ===== */
+function exBulkCtx(){ const c=$('exClass')&&$('exClass').value, sem=Number($('exBulkSem')&&$('exBulkSem').value||1); if(!c) return null; const cl=getClassById(c); return {c,sem,subs:gbSubjects(cl?cl.grade:'')}; }
+async function exBulkStatus(){ const el=$('exBulkInfo'); if(!el) return; const x=exBulkCtx(); if(!x){ el.textContent='اختر الشعبة من الأعلى'; return; } if(!x.subs.length){ el.textContent='لم تُحدَّد مواد دفتر الدرجات لهذا الصف'; return; } const r=await sb.from('exam_publications').select('subject_id').eq('class_id',x.c).eq('semester',x.sem); if(r.error){ el.textContent=''; return; } const pubs=new Set((r.data||[]).map(p=>p.subject_id)); el.textContent='منشورة '+x.subs.filter(s=>pubs.has(s.id)).length+' من '+x.subs.length+' مادة'; }
+async function exBulkPublish(on){
+  if(!requireRole(['admin','teacher'])) return;
+  const x=exBulkCtx(); if(!x){ showToast('اختر الشعبة أولاً','warning'); return; }
+  if(!x.subs.length){ showToast('لم تُحدَّد مواد دفتر الدرجات لهذا الصف','warning'); return; }
+  if(!await confirmAction(on?'نشر نتائج كل المواد ('+x.subs.length+') للفصل '+(x.sem===1?'الأول':'الثاني')+' لأولياء الأمور؟ سيصلهم إشعار.':'إلغاء نشر نتائج كل المواد للفصل '+(x.sem===1?'الأول':'الثاني')+'؟ ستختفي عن أولياء الأمور.')) return;
+  setLoading(true);
+  try{
+    const ids=x.subs.map(s=>s.id);
+    if(on){
+      const ex=await sb.from('exam_publications').select('subject_id').eq('class_id',x.c).eq('semester',x.sem).in('subject_id',ids); if(ex.error) throw ex.error;
+      const have=new Set((ex.data||[]).map(p=>p.subject_id)), rows=ids.filter(id=>!have.has(id)).map(id=>({class_id:x.c,subject_id:id,semester:x.sem,published_by:APP.user.id}));
+      if(rows.length){ const r=await sb.from('exam_publications').insert(rows); if(r.error&&r.error.code!=='23505') throw r.error; }
+      showToast(rows.length?'تم نشر '+rows.length+' مادة':'كل المواد منشورة مسبقًا','success');
+    }else{
+      const r=await sb.from('exam_publications').delete().eq('class_id',x.c).eq('semester',x.sem).in('subject_id',ids); if(r.error) throw r.error;
+      showToast('تم إلغاء النشر','success');
+    }
+    await exBulkStatus();
+    if($('exSubject')&&$('exSubject').value) exShowResults();
+  }catch(e){ handleSupabaseError(e,'تعذر تنفيذ العملية'); }
+  finally{ setLoading(false); }
+}
+document.addEventListener('change',function(ev){ const id=ev.target&&ev.target.id; if((id==='exBulkSem'||id==='exClass')&&$('exBulkInfo')) exBulkStatus(); });
+/* ===== مواد الجلاء لكل صف ===== */
+window.__jalaaSubs=window.__jalaaSubs||{};
+function jalaaSubjects(grade){ const all=gbSubjects(grade), sel=(window.__jalaaSubs||{})[grade]; if(!Array.isArray(sel)||!sel.length) return all; const f=all.filter(s=>sel.indexOf(s.id)>-1); return f.length?f:all; }
+function exJlGradeList(){
+  const g=$('jlGrade').value, box=$('jlSubBox'); if(!g){ box.innerHTML=''; return; }
+  const all=gbSubjects(g); if(!all.length){ box.innerHTML='<div class="list-item-subtitle">حدّد مواد دفتر الدرجات لهذا الصف أولًا.</div>'; return; }
+  const cur=new Set(jalaaSubjects(g).map(s=>s.id));
+  box.innerHTML=all.map(s=>'<label class="list-item" style="display:flex;align-items:center;gap:8px"><input type="checkbox" data-jid="'+escapeAttr(s.id)+'"'+(cur.has(s.id)?' checked':'')+'><span>'+escapeHtml(s.name)+'</span></label>').join('')+'<button class="btn btn-primary btn-small" type="button" style="margin-top:10px" onclick="exSaveJalaaSubs()">حفظ مواد الجلاء لهذا الصف</button>';
+}
+async function exSaveJalaaSubs(){
+  if(!requireRole(['admin'])) return;
+  const g=$('jlGrade').value; if(!g) return;
+  const ids=Array.from(document.querySelectorAll('#jlSubBox input[data-jid]:checked')).map(i=>i.getAttribute('data-jid'));
+  if(!ids.length){ showToast('اختر مادة واحدة على الأقل','warning'); return; }
+  const prev=window.__jalaaSubs[g]; window.__jalaaSubs[g]=ids; setLoading(true);
+  try{ const r=await sb.from('app_settings').upsert({key:'jalaa',value:{min:JALAA_MIN,subjects:window.__jalaaSubs}},{onConflict:'key'}); if(r.error) throw r.error; showToast('تم حفظ مواد الجلاء ('+ids.length+')','success'); }
+  catch(e){ window.__jalaaSubs[g]=prev; handleSupabaseError(e,'تعذر حفظ مواد الجلاء'); }
+  finally{ setLoading(false); }
+}
 function exJalaaPick(id){ window.__exBookSid=id; exJalaa($('exBody')); }
 async function exRenderJalaa(){
   const box=$('exBookBox'); if(!box) return; const st=getStudentById(window.__exBookSid); if(!st){ box.innerHTML=''; return; }
   const cl=getClassById(st.class_id)||st.classes, grade=cl?cl.grade:'';
-  const subs=gbSubjects(grade);
+  const subs=jalaaSubjects(grade);
   if(!subs.length){ box.innerHTML=emptyInline(APP.role==='admin'?'لم تُحدَّد مواد دفتر الدرجات لهذا الصف. حدّدها من تبويب «الإعدادات».':'لم تُحدَّد مواد هذا الصف بعد.'); return; }
   const r=await sb.from('exam_scores').select('*').eq('student_id',st.id); if(r.error){ handleSupabaseError(r.error,'تعذر تحميل الجلاء'); box.innerHTML=''; return; }
   if(APP.role==='parent'&&!(r.data||[]).length){ box.innerHTML=emptyInline('لم تُنشر نتائج الاختبارات بعد.'); return; }
-  box.innerHTML='<div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap"><button class="btn btn-secondary btn-sm" type="button" onclick="exPdfBook()">📄 PDF</button><button class="btn btn-secondary btn-sm" type="button" onclick="exPrintJalaa()">🖨️ طباعة</button></div>'+jalaaHTML(st,subs,exIndex(r.data));
+  box.innerHTML='<div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap"><button class="btn btn-secondary btn-sm" type="button" onclick="exPdfBook()">📄 PDF</button><button class="btn btn-secondary btn-sm" type="button" onclick="exPrintJalaa()">🖨️ طباعة</button></div>'+jalaaHTML(st,subs,exIndex(r.data)); exDecorateCards(box);
 }
 function jalaaHTML(st,subs,idx){
   const sch=window.__school||{}, cl=getClassById(st.class_id)||st.classes||{}, nm=exIsNewGrade(cl.grade);
@@ -23120,7 +23224,7 @@ function jalaaHTML(st,subs,idx){
   });
   const col=k=>sumOf(rows.map(x=>x[k]));
   const body=rows.map(x=>'<tr><td class="sub">'+escapeHtml(x.su.name)+'</td><td>'+JALAA_MIN+'</td><td>'+JALAA_MAX+'</td><td>'+c(x.w1)+'</td><td>'+c(x.e1)+'</td><td class="hl">'+c(x.r1)+'</td><td>'+c(x.w2)+'</td><td>'+c(x.e2)+'</td><td class="hl">'+c(x.r2)+'</td><td class="hl">'+c(x.fin)+'</td></tr>').join('');
-  const total='<tr class="tot"><td class="sub">المجموع</td><td>'+JALAA_MIN_TOTAL+'</td><td>'+JALAA_MAX*rows.length+'</td><td>'+c(col('w1'))+'</td><td>'+c(col('e1'))+'</td><td class="hl">'+c(col('r1'))+'</td><td>'+c(col('w2'))+'</td><td>'+c(col('e2'))+'</td><td class="hl">'+c(col('r2'))+'</td><td class="hl">'+c(col('fin'))+'</td></tr>';
+  const total='<tr class="tot"><td class="sub">المجموع</td><td>'+JALAA_MIN*rows.length+'</td><td>'+JALAA_MAX*rows.length+'</td><td>'+c(col('w1'))+'</td><td>'+c(col('e1'))+'</td><td class="hl">'+c(col('r1'))+'</td><td>'+c(col('w2'))+'</td><td>'+c(col('e2'))+'</td><td class="hl">'+c(col('r2'))+'</td><td class="hl">'+c(col('fin'))+'</td></tr>';
   const head='<tr><th rowspan="2">المادة</th><th rowspan="2">الدرجة الدنيا</th><th rowspan="2">الدرجة العظمى</th><th colspan="3">الفصل الأول</th><th colspan="3">الفصل الثاني</th><th rowspan="2">المحصلة النهائية</th></tr><tr><th>درجة الأعمال</th><th>درجة الامتحان</th><th>المحصلة</th><th>درجة الأعمال</th><th>درجة الامتحان</th><th>المحصلة</th></tr>';
   const bd=st.birth_date?formatDate(st.birth_date):'';
   const birth=[st.birth_place,bd].filter(Boolean).join(' ');
@@ -23129,8 +23233,8 @@ function jalaaHTML(st,subs,idx){
   const title='<div style="display:flex;align-items:center;justify-content:center;gap:12px;border-bottom:2px solid var(--primary-2);padding-bottom:8px;margin-bottom:10px">'+(sch.logo?'<img src="'+escapeAttr(sch.logo)+'" alt="" style="height:46px;border-radius:10px" crossorigin="anonymous" onerror="this.remove()">':'')+'<strong style="font-size:1.25rem">الجلاء المدرسي</strong></div>';
   const res=jalaaResult(rows);
   const foot='<div class="gb-info" style="margin-top:10px"><div><b>النتيجة النهائية:</b>'+escapeHtml(res||'—')+'</div><div><b>اسم المدير:</b>'+escapeHtml(sch.principal||'—')+'</div><div><b>الختم:</b>'+(sch.stamp?'<img src="'+escapeAttr(sch.stamp)+'" alt="" style="height:60px" crossorigin="anonymous" onerror="this.remove()">':'')+'</div></div>';
-  const cards='<div class="gb-cards">'+rows.map(x=>'<div class="gb-card"><h4>'+escapeHtml(x.su.name)+'</h4><div class="list-item-subtitle">الدنيا '+JALAA_MIN+' — العظمى '+JALAA_MAX+'</div><div class="gb-sem-title">الفصل الأول</div><div class="gb-sem"><div><span>أعمال</span>'+c(x.w1)+'</div><div><span>امتحان</span>'+c(x.e1)+'</div><div><span>المحصلة</span>'+c(x.r1)+'</div></div><div class="gb-sem-title">الفصل الثاني</div><div class="gb-sem"><div><span>أعمال</span>'+c(x.w2)+'</div><div><span>امتحان</span>'+c(x.e2)+'</div><div><span>المحصلة</span>'+c(x.r2)+'</div></div><div class="gb-final"><span>المحصلة النهائية: '+c(x.fin)+'</span></div></div>').join('')+'</div>';
-  return '<div id="gbPrint" class="gb-wrap" data-new="1"><div class="gb-pg">'+title+info+'<div class="table-wrap"><table class="gb-table">'+head+body+total+'</table></div>'+foot+'</div>'+cards+'</div>';
+  const cards='<div class="gb-cards">'+exSummaryHTML(rows.map(x=>x.fin))+rows.map(x=>'<div class="gb-card"><h4>'+escapeHtml(x.su.name)+'</h4><div class="list-item-subtitle">الدنيا '+JALAA_MIN+' — العظمى '+JALAA_MAX+'</div><div class="gb-sem-title">الفصل الأول</div><div class="gb-sem"><div><span>أعمال</span>'+c(x.w1)+'</div><div><span>امتحان</span>'+c(x.e1)+'</div><div><span>المحصلة</span>'+c(x.r1)+'</div></div><div class="gb-sem-title">الفصل الثاني</div><div class="gb-sem"><div><span>أعمال</span>'+c(x.w2)+'</div><div><span>امتحان</span>'+c(x.e2)+'</div><div><span>المحصلة</span>'+c(x.r2)+'</div></div><div class="gb-final"><span>المحصلة النهائية: '+c(x.fin)+'</span></div></div>').join('')+'</div>';
+  return '<div id="gbPrint" class="gb-wrap" data-new="1"><div class="gb-pg">'+title+info+'<div class="table-wrap"><table class="gb-table">'+head+body+total+'</table></div><div class="gb-tail">'+foot+'</div></div>'+cards+'</div>';
 }
 function exBookPick(id){ window.__exBookSid=id; exBook($('exBody')); }
 function exAttendanceHTML(st){
@@ -23161,8 +23265,8 @@ function gradebookOldDetailHTML(st,subs,idx){
     return '<div class="table-wrap"><table class="gb-table">'+h1+h2+body+'</table></div>';
   };
   const semBlock=(t,g,s)=>'<div class="gb-sem-title">'+t+'</div><div class="gb-sem"><div><span>مذاكرة 1</span>'+tot(g.q1)+'</div><div><span>مذاكرة 2</span>'+tot(g.q2)+'</div><div><span>أعمال</span>'+c(s.work)+'</div><div><span>امتحان</span>'+ex(g.final)+'</div><div><span>المحصلة</span>'+c(s.res)+'</div></div>'+(s.res!=null?'<div class="list-item-subtitle">'+escapeHtml(numWords(s.res))+'</div>':'');
-  const cards='<div class="gb-cards">'+data.map(d=>'<div class="gb-card"><h4>'+escapeHtml(d.su.name)+'</h4>'+semBlock('الفصل الأول',d.g,d.s1)+semBlock('الفصل الثاني',d.h,d.s2)+'<div class="gb-final"><span>المجموع /200: '+c(d.y.sum)+'</span><span>النهائية /100: '+c(d.y.fin)+(d.y.fin!=null?' ('+escapeHtml(numWords(d.y.fin))+')':'')+'</span></div></div>').join('')+'</div>';
-  return '<div id="gbPrint" class="gb-wrap" data-new="1"><div class="gb-pg">'+head+info+'<h4>الفصل الأول</h4>'+semTable(1)+'</div><div class="gb-pg"><h4>الفصل الثاني والنتيجة النهائية</h4>'+semTable(2)+exAttendanceHTML(st)+'<div class="sign-row"><div>توقيع معلم الصف<span></span></div><div>توقيع مدير المدرسة<span></span></div><div>ختم المدرسة<span></span></div></div></div>'+cards+'</div>';
+  const cards='<div class="gb-cards">'+exSummaryHTML(data.map(d=>d.y.fin))+data.map(d=>'<div class="gb-card"><h4>'+escapeHtml(d.su.name)+'</h4>'+semBlock('الفصل الأول',d.g,d.s1)+semBlock('الفصل الثاني',d.h,d.s2)+'<div class="gb-final"><span>المجموع /200: '+c(d.y.sum)+'</span><span>النهائية /100: '+c(d.y.fin)+(d.y.fin!=null?' ('+escapeHtml(numWords(d.y.fin))+')':'')+'</span></div></div>').join('')+'</div>';
+  return '<div id="gbPrint" class="gb-wrap" data-new="1"><div class="gb-pg">'+head+info+'<h4>الفصل الأول</h4>'+semTable(1)+'</div><div class="gb-pg"><h4>الفصل الثاني والنتيجة النهائية</h4>'+semTable(2)+'<div class="gb-tail">'+exAttendanceHTML(st)+'<div class="sign-row"><div>توقيع معلم الصف<span></span></div><div>توقيع مدير المدرسة<span></span></div><div>ختم المدرسة<span></span></div></div></div></div>'+cards+'</div>';
 }
 function gradebookHTML(st,subs,idx){
   if(exIsNewStudent(st)) return gradebookNewHTML(st,subs,idx);
@@ -23175,7 +23279,7 @@ function gradebookHTML(st,subs,idx){
   const table='<table class="gb-table"><tr><th rowspan="2">المادة</th><th colspan="5">الفصل الأول</th><th colspan="5">الفصل الثاني</th><th rowspan="2">مجموع المحصلتين<small>/200</small></th><th rowspan="2">النتيجة النهائية<small>/100</small></th></tr><tr><th>مذاكرة 1</th><th>مذاكرة 2</th><th>أعمال</th><th>امتحان</th><th>المحصلة</th><th>مذاكرة 1</th><th>مذاكرة 2</th><th>أعمال</th><th>امتحان</th><th>المحصلة</th></tr>'+
     data.map(d=>'<tr><td class="sub">'+escapeHtml(d.su.name)+'</td><td>'+stage(d.g.q1)+'</td><td>'+stage(d.g.q2)+'</td><td>'+c(d.s1.work)+'</td><td>'+exam(d.g.final)+'</td><td class="hl">'+c(d.s1.res)+wrd(d.s1.res)+'</td><td>'+stage(d.h.q1)+'</td><td>'+stage(d.h.q2)+'</td><td>'+c(d.s2.work)+'</td><td>'+exam(d.h.final)+'</td><td class="hl">'+c(d.s2.res)+wrd(d.s2.res)+'</td><td>'+c(d.y.sum)+'</td><td class="hl">'+c(d.y.fin)+wrd(d.y.fin)+'</td></tr>').join('')+'</table>';
   const semBlock=(t,q1,q2,s,fin)=>'<div class="gb-sem-title">'+t+'</div><div class="gb-sem"><div><span>مذاكرة 1</span>'+stage(q1)+'</div><div><span>مذاكرة 2</span>'+stage(q2)+'</div><div><span>أعمال</span>'+c(s.work)+'</div><div><span>امتحان</span>'+exam(fin)+'</div><div><span>المحصلة</span>'+c(s.res)+'</div></div>'+(s.res!=null?'<div class="list-item-subtitle">'+escapeHtml(numWords(s.res))+'</div>':'');
-  const cards='<div class="gb-cards">'+data.map(d=>'<div class="gb-card"><h4>'+escapeHtml(d.su.name)+'</h4>'+semBlock('الفصل الأول',d.g.q1,d.g.q2,d.s1,d.g.final)+semBlock('الفصل الثاني',d.h.q1,d.h.q2,d.s2,d.h.final)+'<div class="gb-final"><span>المجموع /200: '+c(d.y.sum)+'</span><span>النهائية /100: '+c(d.y.fin)+(d.y.fin!=null?' ('+escapeHtml(numWords(d.y.fin))+')':'')+'</span></div></div>').join('')+'</div>';
+  const cards='<div class="gb-cards">'+exSummaryHTML(data.map(d=>d.y.fin))+data.map(d=>'<div class="gb-card"><h4>'+escapeHtml(d.su.name)+'</h4>'+semBlock('الفصل الأول',d.g.q1,d.g.q2,d.s1,d.g.final)+semBlock('الفصل الثاني',d.h.q1,d.h.q2,d.s2,d.h.final)+'<div class="gb-final"><span>المجموع /200: '+c(d.y.sum)+'</span><span>النهائية /100: '+c(d.y.fin)+(d.y.fin!=null?' ('+escapeHtml(numWords(d.y.fin))+')':'')+'</span></div></div>').join('')+'</div>';
   return '<div id="gbPrint" class="gb-wrap">'+head+info+table+cards+exAttendanceHTML(st)+'<div class="sign-row"><div>توقيع معلم الصف<span></span></div><div>توقيع مدير المدرسة<span></span></div><div>ختم المدرسة<span></span></div></div></div>';
 }
 async function exRenderBook(){
@@ -23185,7 +23289,7 @@ async function exRenderBook(){
   if(!subs.length){ box.innerHTML=emptyInline(APP.role==='admin'?'لم تُحدَّد مواد دفتر الدرجات لهذا الصف. حدّدها من تبويب «الإعدادات».':'لم تُحدَّد مواد دفتر الدرجات لهذا الصف بعد.'); return; }
   const r=await sb.from('exam_scores').select('*').eq('student_id',st.id); if(r.error){ handleSupabaseError(r.error,'تعذر تحميل الدفتر'); box.innerHTML=''; return; }
   if(APP.role==='parent'&&!(r.data||[]).length){ box.innerHTML=emptyInline('لم تُنشر نتائج الاختبارات بعد.'); return; }
-  box.innerHTML='<div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap"><button class="btn btn-secondary btn-sm" type="button" onclick="exPdfBook()">📄 PDF</button><button class="btn btn-secondary btn-sm" type="button" onclick="exPrintBook()">🖨️ طباعة</button></div>'+gradebookHTML(st,subs,exIndex(r.data));
+  box.innerHTML='<div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap"><button class="btn btn-secondary btn-sm" type="button" onclick="exPdfBook()">📄 PDF</button><button class="btn btn-secondary btn-sm" type="button" onclick="exPrintBook()">🖨️ طباعة</button></div>'+gradebookHTML(st,subs,exIndex(r.data)); exDecorateCards(box);
 }
 function exPrintBook(){
   const el=$('gbPrint'); if(!el) return; const w=window.open('','_blank'); if(!w){ showToast('المتصفح منع نافذة الطباعة','warning'); return; }
