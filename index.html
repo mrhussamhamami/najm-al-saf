@@ -3685,10 +3685,10 @@ body.dark #uiAwBar .nb-chips button.on{background:linear-gradient(180deg,#A9E26F
 .fx-btn{width:44px;height:44px;border-radius:16px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:box-shadow .2s,transform .1s}
 .fx-btn:active{transform:scale(.94)}
 .fx-btn.on{box-shadow:0 0 0 2px var(--fx-jade),0 0 18px rgba(24,192,143,.55)}
-.fx-ring{position:fixed;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;border:2px solid var(--fx-jade);box-shadow:0 0 18px var(--fx-jade),inset 0 0 12px var(--fx-jade);pointer-events:none;z-index:99999;animation:fxRing .7s ease-out forwards}
-.fx-ring.danger{border-color:#ff5d6c;box-shadow:0 0 18px #ff5d6c,inset 0 0 12px #ff5d6c}
-.fx-ring.warn{border-color:#ffb020;box-shadow:0 0 18px #ffb020,inset 0 0 12px #ffb020}
-@keyframes fxRing{from{transform:scale(.4);opacity:.95}to{transform:scale(7);opacity:0}}
+.fx-ring{position:fixed;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;border:1.5px solid var(--fx-jade);box-shadow:0 0 9px var(--fx-jade),inset 0 0 6px var(--fx-jade);pointer-events:none;z-index:99999;animation:fxRing .55s ease-out forwards}
+.fx-ring.danger{border-color:#ff5d6c;box-shadow:0 0 9px #ff5d6c,inset 0 0 6px #ff5d6c}
+.fx-ring.warn{border-color:#ffb020;box-shadow:0 0 9px #ffb020,inset 0 0 6px #ffb020}
+@keyframes fxRing{from{transform:scale(.5);opacity:.95}to{transform:scale(4);opacity:0}}
 
 body.fx{--fx-glass:rgba(255,255,255,.58);--fx-glass-2:rgba(255,255,255,.38);--fx-line:rgba(255,255,255,.75);--fx-glow:0 0 22px rgba(24,192,143,.3);--fx-shadow:0 10px 30px rgba(10,50,30,.12);background:transparent!important}
 body.fx.dark{--fx-glass:rgba(20,42,32,.52);--fx-glass-2:rgba(20,42,32,.34);--fx-line:rgba(170,255,205,.17);--fx-glow:0 0 26px rgba(24,230,160,.34);--fx-shadow:0 12px 34px rgba(0,0,0,.4)}
@@ -3730,6 +3730,21 @@ body.fx #pageDashboard .dashboard-date{padding:6px 14px;font-size:.78rem;backgro
 body.fx #dashboardContent .mini-row{border-radius:14px;padding:10px 12px;border:1px solid transparent;border-bottom-color:var(--fx-line);transition:background .2s,border-color .2s}
 body.fx #dashboardContent .mini-row:hover{background:var(--fx-glass-2);border-color:var(--fx-line)}
 
+/* ===== تعميم الشكل على كل صفحات الموقع ===== */
+body.fx .card,body.fx .modal,body.fx .bottom-sheet,body.fx .login-card,body.fx #sideNav,body.fx .report-section,body.fx .profile-section,body.fx .report-chart-card,body.fx .evaluation-save-card{background:var(--fx-glass)!important;backdrop-filter:blur(16px) saturate(150%);-webkit-backdrop-filter:blur(16px) saturate(150%);border:1px solid var(--fx-line)!important;box-shadow:var(--fx-shadow),inset 0 1px 0 rgba(255,255,255,.5)!important;border-radius:24px}
+body.fx .alert-card{background:var(--fx-glass)!important;backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%);box-shadow:var(--fx-shadow),inset 0 1px 0 rgba(255,255,255,.5)!important}
+body.fx .student-card,body.fx .note-card,body.fx .award-card,body.fx .sug-card,body.fx .adm-tile,body.fx .evaluation-row,body.fx .list-item,body.fx .record,body.fx .profile-info,body.fx .ex-row,body.fx .pb-row,body.fx .ex-rc,body.fx .gb-card{background:var(--fx-glass-2)!important;border:1px solid var(--fx-line)!important;box-shadow:0 6px 18px rgba(10,50,30,.08),inset 0 1px 0 rgba(255,255,255,.45)!important;border-radius:20px}
+body.fx .student-card:hover,body.fx .adm-tile:hover,body.fx .award-card:hover{box-shadow:0 10px 26px rgba(10,50,30,.14),var(--fx-glow)!important}
+body.fx .form-control,body.fx .field input,body.fx .field select,body.fx .field textarea,body.fx .score-input,body.fx .evaluation-note{background-color:var(--fx-glass-2)!important;border:1px solid var(--fx-line)!important;border-radius:14px;transition:box-shadow .2s,border-color .2s}
+body.fx .form-control:focus,body.fx .field input:focus,body.fx .field select:focus,body.fx .field textarea:focus,body.fx .score-input:focus,body.fx .evaluation-note:focus{border-color:var(--fx-jade)!important;box-shadow:0 0 0 3px rgba(24,192,143,.22),0 0 16px rgba(24,192,143,.22)!important;outline:0}
+body.fx .vtabs button:not(.on),body.fx .segmented button:not(.on),body.fx .chip-btn:not(.on),body.fx .ex-sub{background:var(--fx-glass-2)!important;border:1px solid var(--fx-line)}
+body.fx .vtabs button.on,body.fx .ex-sub button.on,body.fx .segmented button.on,body.fx .chip-btn.on{background:linear-gradient(135deg,#2f8f67,#1fb88a)!important;color:#fff!important;border-color:transparent!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.25),0 0 16px rgba(24,192,143,.45)!important}
+body.fx .ex-sub button.on{color:#fff!important}
+body.fx .ex-prog i,body.fx .pb-prog i{background:linear-gradient(90deg,var(--fx-jade),var(--fx-lime))!important;box-shadow:0 0 12px rgba(24,192,143,.55)}
+body.fx .page .card::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .25s;background:radial-gradient(260px circle at var(--mx,50%) var(--my,0%),rgba(255,255,255,.4),transparent 62%)}
+body.fx .page .card{position:relative}
+body.fx .page .card.fx-hot::before{opacity:1}
+@media print{body.fx::before{display:none}body.fx{background:#fff!important}body.fx *{backdrop-filter:none!important}}
 /* إمكانية الوصول والأداء */
 @media(prefers-reduced-motion:reduce){body.fx *,body.fx *::before,body.fx *::after{animation:none!important;transition:none!important}.fx-ring{display:none}}
 @media(prefers-contrast:more){body.fx #pageDashboard .card,body.fx #pageDashboard .stat-card,body.fx .topbar,body.fx .bottom-nav{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:var(--surface)!important}}
@@ -24783,20 +24798,20 @@ mo.observe(document.body,{childList:true,subtree:true});guarded();
   /* حلقات الضوء عند اللمس */
   document.addEventListener('pointerdown',function(ev){
     if(!on()||reduce) return;
-    var t=ev.target&&ev.target.closest&&ev.target.closest('.btn,.icon-btn,.fx-btn,.chip-btn,.bottom-nav button,.segmented button,.stat-card');
-    if(!t) return; ring(ev.clientX,ev.clientY,t.classList.contains('btn-danger')?'danger':'');
-  },{passive:true});
+    var t=ev.target&&ev.target.closest&&ev.target.closest('button,a[href],summary,label,select,[onclick],[role=button],.btn,.icon-btn,.fx-btn,.chip-btn,.stat-card,.student-card,.list-item,.adm-tile,.award-card,.note-card,.alert-card,.ex-row,.pb-row,.ex-rc');
+    if(!t||t.disabled) return; ring(ev.clientX,ev.clientY,(t.classList.contains('btn-danger')||t.classList.contains('btn-danger-solid'))?'danger':'');
+  },{passive:true,capture:true});
 
   /* حلقة عند ظهور تنبيه (نجاح / خطأ / تحذير) */
   new MutationObserver(function(ms){
-    if(!on()||reduce) return;
+    if(!on()||reduce||ms.length>80) return;
     ms.forEach(function(m){ m.addedNodes.forEach(function(n){
       if(n.nodeType!==1) return;
       var el=(n.classList&&n.classList.contains('toast'))?n:(n.querySelector&&n.querySelector('.toast')); if(!el) return;
       var c=String(el.className), tone=/error|danger/.test(c)?'danger':/warn/.test(c)?'warning':'';
       var rc=el.getBoundingClientRect(); ring(rc.left+rc.width/2,rc.top+rc.height/2,tone==='warning'?'warn':tone);
     }); });
-  }).observe(document.body,{childList:true});
+  }).observe(document.body,{childList:true,subtree:true});
 
   /* إمالة ثلاثية الأبعاد + بريق يتبع المؤشر (الأجهزة ذات المؤشر فقط) */
   if(fine&&!reduce){
@@ -24805,7 +24820,7 @@ mo.observe(document.body,{childList:true,subtree:true});guarded();
     function apply(){ raf=0; if(!cur) return; var r=cur.getBoundingClientRect(), x=(px-r.left)/r.width, y=(py-r.top)/r.height; cur.style.setProperty('--mx',(x*100)+'%'); cur.style.setProperty('--my',(y*100)+'%'); if(cur.matches('.stat-card,.dashboard-hero')){ cur.style.setProperty('--rx',((y-.5)*-6)+'deg'); cur.style.setProperty('--ry',((x-.5)*6)+'deg'); } }
     document.addEventListener('pointermove',function(ev){
       if(!on()||body.classList.contains('fx-lite')) return;
-      var t=ev.target&&ev.target.closest&&ev.target.closest('#pageDashboard .stat-card,#pageDashboard .dashboard-hero,#pageDashboard .card');
+      var t=ev.target&&ev.target.closest&&ev.target.closest('#pageDashboard .stat-card,#pageDashboard .dashboard-hero,.page.active .card');
       if(t!==cur){ reset(cur); cur=t; if(cur) cur.classList.add('fx-hot'); }
       if(!cur) return; px=ev.clientX; py=ev.clientY; if(!raf) raf=requestAnimationFrame(apply);
     },{passive:true});
