@@ -23048,7 +23048,7 @@ async function renderExams(){
   const main=groups.length>1?'<div class="vtabs ex-tabs">'+groups.map(g=>'<button type="button" class="'+(g===cur?'on':'')+'" onclick="exTab(window.__exGL[\''+g.k+'\']||\''+g.leaves[0]+'\')">'+g.l+'</button>').join('')+'</div>':'';
   const sub=cur.leaves.length>1?'<div class="ex-sub">'+cur.leaves.map(x=>'<button type="button" class="'+(x===window.__exTab?'on':'')+'" onclick="exTab(\''+x+'\')">'+EX_LEAF[x]+'</button>').join('')+'</div>':'';
   box.innerHTML=main+sub+'<div id="exBody"></div>';
-  ({entry:exEntry,results:exResults,publish:exPublishPage,book:exBook,jalaa:exJalaa,settings:exSettings})[window.__exTab]($('exBody'));
+  ({entry:exEntry,results:exResults,publish:exPublishPage,book:exBook,jalaa:exJalaa,settings:exSettings})[window.__exTab]($('exBody')); box.insertAdjacentHTML('beforeend','<div class="list-item-subtitle" style="text-align:center;margin:18px 0 90px;opacity:.5">إصدار 22-10-2026 / د</div>');
 }
 function exTab(t){ window.__exTab=t; renderExams(); }
 
@@ -23179,6 +23179,67 @@ function exBookletOrder(pages){
   for(let i=1;i<=n/4;i++){ sides.push([p[2*i-2],p[n-2*i+1]]); sides.push([p[n-2*i],p[2*i-1]]); }
   return sides;
 }
+/* ===== صفحة الدفتر الورقي العمودية (مثل الدفتر المطبوع) + كتيب الشعبة ===== */
+function exPaperCols(nm,sem){
+  const v=x=>x==null?'—':x, ab=(r,k)=>r&&r.absent?'غ':v(r&&r[k]!=null?r[k]:null), P=EX_PERIODS[sem], cols=[];
+  if(nm){
+    EX_KEYS.forEach((k,i)=>{ const T='درجات '+P[i], t=k==='final'?'exam':'quiz';
+      cols.push({top:T,h:'مذاكرات شفوية',max:25,f:d=>ab(d.g[k],'oral')});
+      cols.push({top:T,h:'تدريبات ووظائف',max:25,f:d=>ab(d.g[k],'homework')});
+      cols.push({top:T,h:k==='final'?'امتحان':'مذاكرة',max:50,f:d=>ab(d.g[k],t)});
+      cols.push({top:T,h:'مجموع',max:100,hl:1,f:d=>d.g[k]&&d.g[k].absent?'غ':v([d.s.a,d.s.b,d.s.c][i])});
+    });
+    cols.push({h:'مجموع 1+2+3',max:300,f:d=>v(d.s.sum)});
+    const M=sem===1?'المحصلة الأولى':'المحصلة الثانية';
+    cols.push({top:M,h:'الدرجة',max:100,hl:1,f:d=>v(d.s.res)});
+    cols.push({top:M,h:'التقدير',max:'',f:d=>exRating(d.s.res)});
+  }else{
+    ['q1','q2'].forEach((k,i)=>{ const T=i?'المذاكرة الثانية':'المذاكرة الأولى';
+      cols.push({top:T,h:'مذاكرات شفوية',max:25,f:d=>ab(d.g[k],'oral')});
+      cols.push({top:T,h:'تدريبات ووظائف',max:25,f:d=>ab(d.g[k],'homework')});
+      cols.push({top:T,h:'مذاكرة',max:50,f:d=>ab(d.g[k],'quiz')});
+      cols.push({top:T,h:'مجموع',max:100,hl:1,f:d=>d.g[k]&&d.g[k].absent?'غ':v(exTotal(d.g[k]))});
+    });
+    cols.push({h:'الأعمال',max:100,f:d=>v(d.s.work)});
+    cols.push({h:'الامتحان',max:100,f:d=>ab(d.g.final,'exam')});
+    cols.push({h:sem===1?'المحصلة الأولى':'المحصلة الثانية',max:100,hl:1,f:d=>v(d.s.res)});
+    cols.push({h:'التقدير',max:'',f:d=>exRating(d.s.res)});
+  }
+  if(sem===2){
+    cols.push({h:'مجموع المحصلتين',max:200,f:d=>v(d.y.sum)});
+    cols.push({h:'الدرجة النهائية',max:100,hl:1,f:d=>v(d.y.fin)});
+    cols.push({h:'التقدير النهائي',max:'',f:d=>exRating(d.y.fin)});
+  }
+  return cols;
+}
+function exPaperPage(st,subs,idx,sem,cl,nm){
+  const sch=window.__school||{}, e=x=>escapeHtml(String(x==null?'':x));
+  const SEM=nm?exSemN:exSem;
+  const data=subs.map(su=>{ const g1=idx[st.id+'|'+su.id+'|1']||{}, g2=idx[st.id+'|'+su.id+'|2']||{}, s1=SEM(g1), s2=SEM(g2); return {su,g:sem===1?g1:g2,s:sem===1?s1:s2,y:exYear(s1,s2)}; });
+  const cols=exPaperCols(nm,sem);
+  let r1='<tr><th rowspan="3" class="sh">المواد الدراسية</th>', r2='<tr>', r3='<tr>', i=0;
+  while(i<cols.length){ const c=cols[i]; if(c.top){ let j=i; while(j<cols.length&&cols[j].top===c.top) j++; r1+='<th colspan="'+(j-i)+'" class="gt">'+e(c.top)+'</th>'; for(let k=i;k<j;k++) r2+='<th class="vh"><span>'+e(cols[k].h)+'</span></th>'; i=j; } else { r1+='<th rowspan="2" class="vh"><span>'+e(c.h)+'</span></th>'; i++; } }
+  cols.forEach(c=>{ r3+='<th class="mx">'+e(c.max)+'</th>'; });
+  r1+='</tr>'; r2+='</tr>'; r3+='</tr>';
+  const body=data.map(d=>'<tr class="r"><td class="sub">'+e(d.su.name)+'</td>'+cols.map(c=>'<td'+(c.hl?' class="hl"':'')+'>'+c.f(d)+'</td>').join('')+'</tr>').join('');
+  const table='<table class="pt"><colgroup><col style="width:88px">'+cols.map(()=>'<col>').join('')+'</colgroup>'+r1+r2+r3+body+'</table>';
+  const birth=[st.birth_place,st.birth_date?formatDate(st.birth_date):''].filter(Boolean).join(' ');
+  const f=(l,x)=>'<div><b>'+l+':</b> '+e(x||'.......')+'</div>';
+  let top,bottom;
+  const bar='<div class="pb"><span>'+e(sch.name||'')+'</span><b>دفتر الدرجات — '+(sem===1?'الفصل الأول':'الفصل الثاني')+'</b></div>';
+  if(sem===1){
+    top=bar+'<div class="pi">'+f('اسم التلميذ/ة',st.full_name)+f('كود التلميذ/ة',st.student_code)+f('ابن/ة',st.parent_name)+f('والدته',st.mother_name)+f('المواليد',birth)+f('الصف والشعبة',cl?cl.grade+' / '+cl.section:'')+'</div>';
+    bottom='<div class="att">'+exAttendanceHTML(st)+'</div><table class="bx"><tr><th>السلوك — صفات التلميذ/ة البارزة</th></tr><tr><td style="height:52px"></td></tr></table>';
+  }else{
+    top=bar+'<div class="pi">'+f('الصف',cl&&cl.grade)+f('الشعبة',cl&&cl.section)+f('الرقم في السجل العام',st.registry_no)+f('العام الدراسي',cl&&cl.academic_year)+'</div>';
+    bottom='<table class="bx"><tr><th>التسرب</th><th>النقل خارج المدرسة</th><th>نتيجة التلميذ/ة</th></tr><tr><td style="height:56px"></td><td></td><td></td></tr></table><div class="pi" style="margin-top:8px"><div><b>نجاح إلى الصف:</b> ...........</div><div><b>رسوب في الصف:</b> ...........</div></div><table class="bx sg"><tr><td>اسم معلم/ة الصف:<br>توقيعه/ها:</td><td>اسم مدير المدرسة: '+e(sch.principal||'')+'<br>توقيعه:</td><td>الواقع في &nbsp;/&nbsp;&nbsp;/ &nbsp;14هـ<br>الموافق لـ &nbsp;/&nbsp;&nbsp;/ &nbsp;20م</td></tr></table>';
+  }
+  return exMarkLowHTML('<div class="pp">'+top+table+bottom+'</div>');
+}
+function exPaperCover(cl,n){
+  const sch=window.__school||{}, e=x=>escapeHtml(String(x==null?'':x));
+  return '<div class="pp" style="text-align:center;padding-top:150px">'+(sch.logo?'<img src="'+escapeAttr(sch.logo)+'" alt="" style="max-height:90px" crossorigin="anonymous" onerror="this.remove()"><br>':'')+'<h1 style="font-size:30px;margin:16px 0">دفتر الدرجات</h1><h2 style="margin:8px 0">'+e(sch.name)+'</h2><h3 style="margin:8px 0">الصف: '+e(cl?cl.grade+' / '+cl.section:'')+'</h3><p style="font-size:15px">العام الدراسي: '+e((cl&&cl.academic_year)||'—')+'</p><p style="font-size:13px">عدد الطلاب: '+n+'</p></div>';
+}
 async function exBookletPrint(){
   const cid=window.__exPCid; if(!cid){ showToast('اختر الشعبة أولاً','warning'); return; }
   const cl=getClassById(cid), sts=sortByName((APP.students||[]).filter(s=>s.class_id===cid&&s.active!==false),'full_name');
@@ -23186,20 +23247,31 @@ async function exBookletPrint(){
   const subs=gbSubjects(cl?cl.grade:''); if(!subs.length){ showToast('لم تُحدَّد مواد دفتر الدرجات لهذا الصف','warning'); return; }
   setLoading(true); showToast('جاري تجهيز الكتيب...','info');
   try{
-    const rows=await fetchAllRows(()=>sb.from('exam_scores').select('*').in('student_id',sts.map(s=>s.id)).order('student_id').order('subject_id').order('semester').order('stage')), idx=exIndex(rows), sch=window.__school||{};
-    const cover='<div style="min-height:600px;text-align:center;padding-top:120px">'+(sch.logo?'<img src="'+escapeAttr(sch.logo)+'" alt="" style="max-height:90px" crossorigin="anonymous" onerror="this.remove()"><br>':'')+'<h1 style="font-size:34px;margin:18px 0">دفتر الدرجات</h1><h2 style="margin:8px 0">'+escapeHtml(sch.name||'')+'</h2><h3 style="margin:8px 0">الصف: '+escapeHtml(cl?cl.grade+' / '+cl.section:'')+'</h3><p style="font-size:16px">العام الدراسي: '+escapeHtml((cl&&cl.academic_year)||'—')+'</p><p style="font-size:14px">عدد الطلاب: '+sts.length+'</p></div>';
-    const pages=[cover];
-    sts.forEach(st=>{ const t=document.createElement('div'); t.innerHTML=gradebookHTML(st,subs,idx); const g=t.querySelectorAll('.gb-pg'); pages.push(g[0]?g[0].innerHTML:''); pages.push(g[1]?g[1].innerHTML:''); });
+    const rows=await fetchAllRows(()=>sb.from('exam_scores').select('*').in('student_id',sts.map(s=>s.id)).order('student_id').order('subject_id').order('semester').order('stage')), idx=exIndex(rows), nm=exIsNewClass(cid);
+    const pages=[exPaperCover(cl,sts.length)];
+    sts.forEach(st=>{ pages.push(exPaperPage(st,subs,idx,1,cl,nm)); pages.push(exPaperPage(st,subs,idx,2,cl,nm)); });
     const sides=exBookletOrder(pages);
-    const half=h=>'<div class="half"><div class="rot"><div class="fit">'+h+'</div></div></div>';
-    const css='@page{size:A4 landscape;margin:0}*{-webkit-print-color-adjust:exact;print-color-adjust:exact;box-sizing:border-box}html,body{margin:0;padding:0;background:#fff}body{font-family:Tahoma,Arial,sans-serif;color:#111}.sheet{width:297mm;height:210mm;display:flex;direction:ltr;overflow:hidden;page-break-after:always;break-after:page}.sheet:last-child{page-break-after:auto;break-after:auto}.half{width:148.5mm;height:210mm;position:relative;overflow:hidden}.rot{position:absolute;left:142.5mm;top:6mm;width:748px;height:516px;transform:rotate(90deg);transform-origin:top left;direction:rtl}.fit{width:1040px;transform-origin:top left}table{width:100%;border-collapse:collapse;margin-bottom:8px}th,td{border:1px solid #8a9a8a;padding:3px 2px;text-align:center;vertical-align:middle;font-size:12px;line-height:1.25}th{background:#dfe8d9;font-weight:800}td.sub{font-weight:800;width:14%}td.hl{background:#e7f3e4;font-weight:900}small{display:block;font-size:9px;color:#444;font-weight:600;line-height:1.2}.gb-info{display:grid;grid-template-columns:repeat(4,1fr);gap:3px 12px;font-size:12px;margin-bottom:4px}.gb-info b{color:#555;margin-left:4px}.sign-row{display:flex;gap:20px;margin-top:8px}.sign-row div{flex:1;text-align:center;font-size:12px}.sign-row span{display:block;border-bottom:1px solid #444;height:18px;margin-top:3px}.list-item-subtitle{font-size:11px;color:#555}h4{margin:4px 0 3px;font-size:13px}.table-wrap{border:0;overflow:visible}img{max-height:46px}.ex-low{color:#c0392b!important;font-weight:900}';
+    const half=h=>'<div class="half"><div class="box"><div class="fit">'+h+'</div></div></div>';
+    const css='@page{size:A4 landscape;margin:0}*{-webkit-print-color-adjust:exact;print-color-adjust:exact;box-sizing:border-box}html,body{margin:0;padding:0;background:#fff}body{font-family:Tahoma,Arial,sans-serif;color:#111}.sheet{width:297mm;height:210mm;display:flex;direction:ltr;overflow:hidden;page-break-after:always;break-after:page}.sheet:last-child{page-break-after:auto;break-after:auto}.half{width:148.5mm;height:210mm;position:relative;overflow:hidden}.box{position:absolute;left:5mm;top:5mm;width:138.5mm;height:200mm;direction:rtl;overflow:hidden}.fit{width:523px;transform-origin:top left}'
+      +'.pp{width:523px;font-size:10px}.pb{display:flex;justify-content:space-between;font-size:10px;border-bottom:1.5px solid #8a5a44;padding-bottom:3px;margin-bottom:5px}.pi{display:grid;grid-template-columns:1fr 1fr;gap:3px 10px;font-size:10px;margin-bottom:6px}.pi b{color:#555}'
+      +'table{border-collapse:collapse;width:100%}.pt{table-layout:fixed;margin-bottom:6px}.pt th,.pt td{border:1px solid #6f6f6f;padding:1px;text-align:center;vertical-align:middle;line-height:1.15;overflow:hidden;font-size:9.5px}.pt th{background:#e9d9cd;font-weight:800}.pt th.gt{background:#d9c1b0;font-size:9px}.pt th.sh{font-size:10px}.pt th.vh{height:76px;padding:2px 0}.pt th.vh span{display:inline-block;writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap;font-size:8.5px;line-height:1}.pt th.mx{font-size:8.5px;background:#f3ebe4;font-weight:700}.pt tr.r td{height:23px}.pt td.sub{text-align:right;font-weight:800;padding-right:3px;font-size:9.5px}.pt td.hl{background:#f1e7dd;font-weight:900}'
+      +'.bx{margin-top:6px}.bx th,.bx td{border:1px solid #6f6f6f;padding:3px;text-align:center;font-size:10px;background:#fff}.bx th{background:#e9d9cd}.bx.sg td{text-align:right;height:54px;vertical-align:top;line-height:1.7}.att table{width:100%;table-layout:auto}.att th,.att td{border:1px solid #6f6f6f;padding:2px;text-align:center;font-size:9px}.att th{background:#e9d9cd}.att h4{margin:2px 0;font-size:10px}.att .table-wrap{overflow:visible;border:0}.ex-low{color:#c0392b!important;font-weight:900}';
     const w=window.open('','_blank'); if(!w){ showToast('المتصفح منع نافذة الطباعة','warning'); return; }
-    w.document.write('<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>كتيب الدفتر</title><style>'+css+'</style></head><body>'+sides.map(s=>'<div class="sheet">'+half(s[0])+half(s[1])+'</div>').join('')+'<script>window.onload=function(){document.querySelectorAll(".fit").forEach(function(f){var r=f.parentNode,RW=r.clientWidth,RH=r.clientHeight,best=0,bw=1040;for(var W=900;W<=1700;W+=50){f.style.width=W+"px";var h=f.scrollHeight||1,s=Math.min(RW/W,RH/h);if(s>best){best=s;bw=W}}f.style.width=bw+"px";f.style.transform="scale("+Math.min(best,1)+")"});setTimeout(function(){window.print()},500)};<\/script></body></html>');
+    w.document.write('<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>كتيب الدفتر</title><style>'+css+'</style></head><body>'+sides.map(s=>'<div class="sheet">'+half(s[0])+half(s[1])+'</div>').join('')+'<script>window.onload=function(){document.querySelectorAll(".fit").forEach(function(f){var r=f.parentNode,wd=Math.max(f.scrollWidth,523),h=f.scrollHeight||1;var s=Math.min(1,r.clientWidth/wd,r.clientHeight/h);if(s<1)f.style.transform="scale("+s+")"});setTimeout(function(){window.print()},500)};<\/script></body></html>');
     w.document.close();
-    showToast('اطبع على الوجهين: A4 أفقي، القلب على الحافة القصيرة، دون تكبير أو تصغير','info');
+    showToast('اطبع على الوجهين: A4 أفقي، القلب على الحافة القصيرة، المقياس 100%','info');
   }catch(e){ handleSupabaseError(e,'تعذر تجهيز الكتيب'); }
   finally{ setLoading(false); }
 }
+/* ملاءمة جداول الدفتر والجلاء لعرض الشاشة دون تمرير أفقي */
+function exFitTables(root){
+  (root||document).querySelectorAll('.gb-wrap:not(.gb-print) .table-wrap').forEach(function(w){
+    const t=w.querySelector('table'); if(!t||!t.offsetParent) return;
+    t.style.zoom=''; const aw=w.clientWidth, nw=Math.max(t.scrollWidth,w.scrollWidth);
+    if(aw>0&&nw>aw+1){ t.style.zoom=Math.max(0.4,aw/nw); }
+  });
+}
+window.addEventListener('resize',function(){ clearTimeout(window.__ftT); window.__ftT=setTimeout(function(){ exFitTables(document); },200); });
 function exPickRefresh(kind){
   const list=exPickList(), q=String(window.__exPQ||'').trim();
   if(!list.some(s=>s.id===window.__exBookSid)) window.__exBookSid=list[0]?list[0].id:null;
@@ -23242,7 +23314,7 @@ document.addEventListener('change',function(ev){ const id=ev.target&&ev.target.i
 /* ===== المرحلة الثانية: تحسينات الإدخال والنتائج والدفتر والإعدادات ===== */
 function exSummaryHTML(fins){ const v=fins.filter(x=>x!=null), avg=v.length?v.reduce((a,b)=>a+b,0)/v.length:null; return '<div class="gb-sumcard"><div><b>'+(avg!=null?Math.round(avg*10)/10:'—')+'</b><span>المعدل العام</span></div><div><b>'+exRating(avg!=null?Math.floor(avg):null)+'</b><span>التقدير</span></div><div><b>'+v.length+'/'+fins.length+'</b><span>مواد مكتملة</span></div></div>'; }
 function exDecorateCards(box){
-  if(!box) return; const wrap=box.querySelector('.gb-wrap'), holder=box.querySelector('.gb-cards'), cards=Array.from(box.querySelectorAll('.gb-card')); if(!wrap||!holder||!cards.length) return;
+  if(!box) return; exFitTables(box); const wrap=box.querySelector('.gb-wrap'), holder=box.querySelector('.gb-cards'), cards=Array.from(box.querySelectorAll('.gb-card')); if(!wrap||!holder||!cards.length) return;
   let empty=0;
   cards.forEach(c=>{ const h=c.querySelector('h4'); if(h) h.addEventListener('click',()=>c.classList.toggle('gb-collapsed')); const vals=Array.from(c.querySelectorAll('.gb-sem>div')).map(d=>(d.lastChild?d.lastChild.textContent:'').trim()); if(vals.length&&vals.every(x=>x==='—'||x==='')){ c.classList.add('gb-empty'); empty++; } });
   if(empty&&empty<cards.length) wrap.classList.add('hide-empty');
