@@ -3678,6 +3678,64 @@ body.dark #uiAwBar .nb-chips button.on{background:linear-gradient(180deg,#A9E26F
 #uiAwBar .nb-count{margin-inline-start:auto;font-size:12.5px;color:var(--muted);white-space:nowrap}
 #uiAwEmpty{text-align:center;color:var(--muted);padding:22px 16px;border:1.5px dashed var(--border);border-radius:var(--r-card);background:var(--glass-in)}
 </style>
+<style id="fxCss">
+/* ===================== المظهر المستقبلي (اختياري) =====================
+   طبقة عرض فقط: لا تغيّر أي منطق. تُفعَّل بإضافة الصنف fx إلى body.        */
+:root{--fx-jade:#18c08f;--fx-lime:#b8f34a}
+.fx-btn{width:44px;height:44px;border-radius:16px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:box-shadow .2s,transform .1s}
+.fx-btn:active{transform:scale(.94)}
+.fx-btn.on{box-shadow:0 0 0 2px var(--fx-jade),0 0 18px rgba(24,192,143,.55)}
+.fx-ring{position:fixed;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;border:2px solid var(--fx-jade);box-shadow:0 0 18px var(--fx-jade),inset 0 0 12px var(--fx-jade);pointer-events:none;z-index:99999;animation:fxRing .7s ease-out forwards}
+.fx-ring.danger{border-color:#ff5d6c;box-shadow:0 0 18px #ff5d6c,inset 0 0 12px #ff5d6c}
+.fx-ring.warn{border-color:#ffb020;box-shadow:0 0 18px #ffb020,inset 0 0 12px #ffb020}
+@keyframes fxRing{from{transform:scale(.4);opacity:.95}to{transform:scale(7);opacity:0}}
+
+body.fx{--fx-glass:rgba(255,255,255,.58);--fx-glass-2:rgba(255,255,255,.38);--fx-line:rgba(255,255,255,.75);--fx-glow:0 0 22px rgba(24,192,143,.3);--fx-shadow:0 10px 30px rgba(10,50,30,.12);background:transparent!important}
+body.fx.dark{--fx-glass:rgba(20,42,32,.52);--fx-glass-2:rgba(20,42,32,.34);--fx-line:rgba(170,255,205,.17);--fx-glow:0 0 26px rgba(24,230,160,.34);--fx-shadow:0 12px 34px rgba(0,0,0,.4)}
+body.fx::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(900px 520px at 92% -8%,rgba(24,192,143,.24),transparent 60%),radial-gradient(760px 480px at -8% 22%,rgba(184,243,74,.2),transparent 55%),linear-gradient(180deg,#f6f3ea,#e8f0e3)}
+body.fx.dark::before{background:radial-gradient(900px 540px at 88% -8%,rgba(24,230,160,.2),transparent 60%),radial-gradient(720px 460px at -8% 28%,rgba(184,243,74,.13),transparent 55%),linear-gradient(180deg,#08110d,#0f1f18)}
+body.fx :focus-visible{outline:3px solid var(--fx-jade);outline-offset:2px}
+
+/* شريط علوي وسفلي زجاجي */
+body.fx .topbar,body.fx .bottom-nav{background:var(--fx-glass)!important;backdrop-filter:blur(18px) saturate(150%);-webkit-backdrop-filter:blur(18px) saturate(150%);border-color:var(--fx-line)!important}
+
+/* أزرار ميكانيكية ثلاثية الأبعاد */
+body.fx .btn{transition:transform .08s ease,box-shadow .08s ease,filter .2s}
+body.fx .btn-primary{background:linear-gradient(180deg,#3f7d5a,#2b5942)!important;border:0;box-shadow:0 4px 0 #1b3b2a,0 10px 20px rgba(24,80,50,.28),inset 0 1px 0 rgba(255,255,255,.3)!important}
+body.fx .btn-primary:active{transform:translateY(3px);box-shadow:0 1px 0 #1b3b2a,0 3px 8px rgba(24,80,50,.25),inset 0 2px 5px rgba(0,0,0,.25)!important}
+body.fx .btn-secondary{box-shadow:0 3px 0 rgba(0,0,0,.12),0 8px 16px rgba(0,0,0,.07)}
+body.fx .btn-secondary:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.12)}
+body.fx.dark .btn-primary{background:linear-gradient(180deg,#27b888,#12865f)!important;box-shadow:0 4px 0 #0a553f,0 0 22px rgba(24,230,160,.35),inset 0 1px 0 rgba(255,255,255,.3)!important}
+
+/* حبات الحالة المضيئة */
+body.fx .score-pill,body.fx .badge{backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);box-shadow:0 0 0 1px color-mix(in srgb,currentColor 32%,transparent),0 0 14px color-mix(in srgb,currentColor 26%,transparent)}
+
+/* الصفحة الرئيسية: زجاج + Bento */
+body.fx #pageDashboard .card,body.fx #pageDashboard .stat-card{position:relative;overflow:hidden;background:var(--fx-glass)!important;backdrop-filter:blur(16px) saturate(150%);-webkit-backdrop-filter:blur(16px) saturate(150%);border:1px solid var(--fx-line)!important;box-shadow:var(--fx-shadow),inset 0 1px 0 rgba(255,255,255,.5),inset 0 0 26px rgba(255,255,255,.1)!important;border-radius:24px}
+body.fx #pageDashboard .stat-card,body.fx #pageDashboard .dashboard-hero{transform:perspective(900px) translateY(var(--ty,0)) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .18s ease,box-shadow .25s ease}
+body.fx #pageDashboard .stat-card:hover{--ty:-3px}
+body.fx #pageDashboard .card::before,body.fx #pageDashboard .stat-card::before,body.fx #pageDashboard .dashboard-hero::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .25s;background:radial-gradient(260px circle at var(--mx,50%) var(--my,0%),rgba(255,255,255,.42),transparent 62%);width:auto;height:auto;left:0;bottom:auto}
+body.fx #pageDashboard .fx-hot::before{opacity:1}
+body.fx #dashboardStats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(min-width:760px){body.fx #dashboardStats{grid-template-columns:repeat(4,1fr)}}
+body.fx #dashboardStats .stat-card:first-child{grid-column:span 2;padding:20px}
+body.fx #dashboardStats .stat-card:last-child:nth-child(even){grid-column:span 2}
+body.fx #dashboardStats .stat-card:first-child .stat-value{font-size:clamp(2rem,9vw,2.8rem)}
+body.fx #pageDashboard .stat-icon{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 30% 28%,rgba(255,255,255,.95),rgba(24,192,143,.38));box-shadow:var(--fx-glow);margin-bottom:10px}
+body.fx #pageDashboard .stat-value{background:linear-gradient(120deg,#1d3a2c,#0f9f78);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+body.fx.dark #pageDashboard .stat-value{background:linear-gradient(120deg,#e8ffee,#6dffbd);-webkit-background-clip:text;background-clip:text}
+body.fx #pageDashboard .dashboard-hero{padding:24px;border-radius:28px;color:#fff;background:linear-gradient(135deg,rgba(8,127,115,.94),rgba(28,160,108,.84) 55%,rgba(150,226,80,.72))!important;border:1px solid rgba(255,255,255,.38);box-shadow:0 18px 40px rgba(8,100,80,.3),inset 0 1px 0 rgba(255,255,255,.4)}
+body.fx #pageDashboard .dashboard-hero h1{font-size:clamp(1.5rem,6vw,2.2rem)}
+body.fx #pageDashboard .dashboard-date{padding:6px 14px;font-size:.78rem;background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.45);box-shadow:0 0 18px rgba(255,255,255,.3);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+body.fx #dashboardContent .mini-row{border-radius:14px;padding:10px 12px;border:1px solid transparent;border-bottom-color:var(--fx-line);transition:background .2s,border-color .2s}
+body.fx #dashboardContent .mini-row:hover{background:var(--fx-glass-2);border-color:var(--fx-line)}
+
+/* إمكانية الوصول والأداء */
+@media(prefers-reduced-motion:reduce){body.fx *,body.fx *::before,body.fx *::after{animation:none!important;transition:none!important}.fx-ring{display:none}}
+@media(prefers-contrast:more){body.fx #pageDashboard .card,body.fx #pageDashboard .stat-card,body.fx .topbar,body.fx .bottom-nav{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:var(--surface)!important}}
+body.fx.fx-lite *{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+body.fx.fx-lite #pageDashboard .card,body.fx.fx-lite #pageDashboard .stat-card{background:color-mix(in srgb,var(--surface) 92%,transparent)!important}
+</style>
 </head>
 
 <body>
@@ -24689,6 +24747,70 @@ function guarded(){if(!mo)return;mo.disconnect();safe(pass);mo.takeRecords();mo.
 var q=false;
 mo=new MutationObserver(function(){if(q)return;q=true;requestAnimationFrame(function(){q=false;guarded()})});
 mo.observe(document.body,{childList:true,subtree:true});guarded();
+})();
+</script>
+<script id="fxJs">
+(function(){
+  'use strict';
+  var KEY='fx_theme_v1', body=document.body;
+  var mq=function(q){ return !!(window.matchMedia&&window.matchMedia(q).matches); };
+  var reduce=mq('(prefers-reduced-motion: reduce)'), fine=mq('(hover: hover) and (pointer: fine)');
+  var lite=(navigator.deviceMemory&&navigator.deviceMemory<=3)||(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=3);
+  function on(){ return body.classList.contains('fx'); }
+  function set(v){
+    body.classList.toggle('fx',v); body.classList.toggle('fx-lite',!!(v&&lite));
+    try{ localStorage.setItem(KEY,v?'1':'0'); }catch(e){}
+    var b=document.getElementById('fxToggle'); if(b){ b.setAttribute('aria-pressed',v?'true':'false'); b.classList.toggle('on',v); }
+  }
+  function ring(x,y,tone){
+    if(!on()||reduce) return;
+    var r=document.createElement('span'); r.className='fx-ring'+(tone?' '+tone:''); r.style.left=x+'px'; r.style.top=y+'px';
+    document.body.appendChild(r); setTimeout(function(){ if(r.parentNode) r.parentNode.removeChild(r); },750);
+  }
+  try{ set(localStorage.getItem(KEY)==='1'); }catch(e){}
+
+  /* زر التبديل في الشريط العلوي */
+  function ensureBtn(){
+    var host=document.querySelector('.topbar-actions'); if(!host||document.getElementById('fxToggle')) return;
+    var b=document.createElement('button'); b.id='fxToggle'; b.type='button'; b.className='fx-btn'+(on()?' on':'');
+    b.title='المظهر المستقبلي'; b.setAttribute('aria-label','المظهر المستقبلي'); b.setAttribute('aria-pressed',on()?'true':'false'); b.textContent='\u2728';
+    b.addEventListener('click',function(ev){ set(!on()); ring(ev.clientX||innerWidth/2,ev.clientY||60,''); });
+    host.insertBefore(b,host.firstChild);
+  }
+  var pend=false; function sched(){ if(pend) return; pend=true; requestAnimationFrame(function(){ pend=false; ensureBtn(); }); }
+  ensureBtn(); new MutationObserver(sched).observe(document.body,{childList:true,subtree:true});
+
+  /* حلقات الضوء عند اللمس */
+  document.addEventListener('pointerdown',function(ev){
+    if(!on()||reduce) return;
+    var t=ev.target&&ev.target.closest&&ev.target.closest('.btn,.icon-btn,.fx-btn,.chip-btn,.bottom-nav button,.segmented button,.stat-card');
+    if(!t) return; ring(ev.clientX,ev.clientY,t.classList.contains('btn-danger')?'danger':'');
+  },{passive:true});
+
+  /* حلقة عند ظهور تنبيه (نجاح / خطأ / تحذير) */
+  new MutationObserver(function(ms){
+    if(!on()||reduce) return;
+    ms.forEach(function(m){ m.addedNodes.forEach(function(n){
+      if(n.nodeType!==1) return;
+      var el=(n.classList&&n.classList.contains('toast'))?n:(n.querySelector&&n.querySelector('.toast')); if(!el) return;
+      var c=String(el.className), tone=/error|danger/.test(c)?'danger':/warn/.test(c)?'warning':'';
+      var rc=el.getBoundingClientRect(); ring(rc.left+rc.width/2,rc.top+rc.height/2,tone==='warning'?'warn':tone);
+    }); });
+  }).observe(document.body,{childList:true});
+
+  /* إمالة ثلاثية الأبعاد + بريق يتبع المؤشر (الأجهزة ذات المؤشر فقط) */
+  if(fine&&!reduce){
+    var cur=null, raf=0, px=0, py=0;
+    function reset(el){ if(!el) return; el.classList.remove('fx-hot'); el.style.removeProperty('--rx'); el.style.removeProperty('--ry'); }
+    function apply(){ raf=0; if(!cur) return; var r=cur.getBoundingClientRect(), x=(px-r.left)/r.width, y=(py-r.top)/r.height; cur.style.setProperty('--mx',(x*100)+'%'); cur.style.setProperty('--my',(y*100)+'%'); if(cur.matches('.stat-card,.dashboard-hero')){ cur.style.setProperty('--rx',((y-.5)*-6)+'deg'); cur.style.setProperty('--ry',((x-.5)*6)+'deg'); } }
+    document.addEventListener('pointermove',function(ev){
+      if(!on()||body.classList.contains('fx-lite')) return;
+      var t=ev.target&&ev.target.closest&&ev.target.closest('#pageDashboard .stat-card,#pageDashboard .dashboard-hero,#pageDashboard .card');
+      if(t!==cur){ reset(cur); cur=t; if(cur) cur.classList.add('fx-hot'); }
+      if(!cur) return; px=ev.clientX; py=ev.clientY; if(!raf) raf=requestAnimationFrame(apply);
+    },{passive:true});
+    document.addEventListener('pointerleave',function(){ reset(cur); cur=null; },true);
+  }
 })();
 </script>
 </body>
