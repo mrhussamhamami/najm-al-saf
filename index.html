@@ -3022,7 +3022,10 @@ body.dark .gb-wrap{background:var(--surface);color:var(--text)}
 .gb-pg{margin-bottom:14px}.gb-wrap[data-new="1"] .gb-table{min-width:980px}.gb-wrap[data-new="1"] .gb-table th small{font-size:.6rem}.gb-pg h4{margin:10px 0 6px}
 /* ===== تحسينات الاختبارات والتواريخ ===== */
 input[type=date],input[type=time],input[type=month],input[type=datetime-local]{direction:ltr!important;text-align:right}
-input[type=date].ui-empty{direction:ltr!important}
+input[type=date].ui-empty::-webkit-datetime-edit{color:transparent}
+input[type=date].ui-empty{color:transparent;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27130%27%20height%3D%2728%27%3E%3Ctext%20x%3D%27128%27%20y%3D%2719%27%20text-anchor%3D%27end%27%20font-size%3D%2715%27%20fill%3D%27%238a948a%27%20font-family%3D%27Tahoma%2CArial%2Csans-serif%27%3E%D8%A7%D8%AE%D8%AA%D8%B1%20%D8%A7%D9%84%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE%3C%2Ftext%3E%3C%2Fsvg%3E");background-repeat:no-repeat;background-position:right 14px center}
+.ex-addsub{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;margin-top:12px}
+.ex-note{font-size:.8rem;color:var(--muted);margin-top:6px;line-height:1.6}
 .ex-tabs{flex-wrap:wrap;overflow:visible}.ex-tabs button{flex:1 1 20%;min-width:0;padding:10px 6px;font-size:.92rem}
 .ex-sub{display:flex;gap:4px;margin:0 0 12px;padding:4px;background:var(--surface-2);border-radius:999px}.ex-sub button{flex:1;border:0;background:transparent;padding:9px 6px;border-radius:999px;font-weight:700;color:var(--muted);font-family:inherit;font-size:.9rem}.ex-sub button.on{background:var(--surface);color:var(--primary);box-shadow:0 1px 4px rgba(0,0,0,.14)}
 .pb-list{display:grid;gap:10px;grid-template-columns:1fr;margin-top:10px}@media(min-width:760px){.pb-list{grid-template-columns:repeat(2,1fr)}}@media(min-width:1180px){.pb-list{grid-template-columns:repeat(3,1fr)}}
@@ -23335,7 +23338,7 @@ const __exLR=exLoadRows; exLoadRows=async function(){
   await __exLR.apply(this,arguments); exRememberSel(); exUpdateCount();
 };
 const __exS=exSave; exSave=async function(){ window.__exSaving=true; try{ await __exS.apply(this,arguments); } finally{ window.__exSaving=false; } };
-const __exT=exTab; exTab=async function(t){ if(window.__exDirty&&window.__exTab==='entry'&&!await confirmAction('لديك درجات لم تُحفظ، والخروج سيفقدها. هل تتابع؟')) return; window.__exDirty=false; __exT(t); };
+const __exT=exTab; exTab=async function(t){ if(window.__exDirty&&(window.__exTab==='entry'||window.__exTab==='settings')&&!await confirmAction('لديك درجات لم تُحفظ، والخروج سيفقدها. هل تتابع؟')) return; window.__exDirty=false; __exT(t); };
 ['input','change'].forEach(function(evn){ document.addEventListener(evn,function(ev){ const t=ev.target; if(t&&t.closest&&t.closest('#exRows')) window.__exDirty=true; }); });
 window.addEventListener('beforeunload',function(ev){ if(window.__exDirty){ ev.preventDefault(); ev.returnValue=''; } });
 function exDecorateResults(el){
@@ -23349,7 +23352,6 @@ const __exSR=exShowResults; exShowResults=async function(){ await __exSR.apply(t
 function exMove(btn,dir){ const it=btn.closest('.list-item'); if(!it) return; const sib=dir<0?it.previousElementSibling:it.nextElementSibling; if(!sib||!sib.classList.contains('list-item')) return; if(dir<0) it.parentNode.insertBefore(it,sib); else it.parentNode.insertBefore(sib,it); Array.from(it.parentNode.querySelectorAll('.list-item')).forEach((x,i)=>{ const o=x.querySelector('input[data-ord]'); if(o) o.value=i+1; }); }
 const __exGL=exGradeList; exGradeList=function(){ __exGL.apply(this,arguments); document.querySelectorAll('#exGradeBox .list-item').forEach(it=>{ if(it.querySelector('.ex-mv')) return; it.insertAdjacentHTML('beforeend','<span class="ex-mv"><button type="button" class="btn btn-secondary btn-small" onclick="exMove(this,-1)">▲</button><button type="button" class="btn btn-secondary btn-small" onclick="exMove(this,1)">▼</button></span>'); }); exAddCopyUI(); };
 const __exLC=exLoadCfg; exLoadCfg=async function(){ await __exLC.apply(this,arguments); try{ const r=await sb.from('app_settings').select('value').eq('key','jalaa').maybeSingle(); const v=r&&r.data&&r.data.value; if(v){ if(v.min!=null) JALAA_MIN=Number(v.min); if(v.subjects&&typeof v.subjects==='object') window.__jalaaSubs=v.subjects; } }catch(e){} };
-const __exSt=exSettings; exSettings=function(b){ __exSt.apply(this,arguments); if(APP.role!=='admin') return; b.insertAdjacentHTML('beforeend','<div class="card"><div class="card-title"><h2>إعدادات الجلاء</h2></div><div class="grid-2"><div class="form-group"><label class="form-label">الدرجة الدنيا لكل مادة</label><input id="jlMin" class="form-control" type="number" min="0" max="100" value="'+JALAA_MIN+'"></div></div><div class="list-item-subtitle">المجموع الأدنى يُحسب تلقائيًا من المواد المعروضة. قواعد النجاح والرسوب تُضاف لاحقًا.</div><button class="btn btn-primary" type="button" style="margin-top:12px" onclick="exSaveJalaaCfg()">حفظ إعدادات الجلاء</button></div>'); const grades=[...new Set((APP.classes||[]).map(c=>c.grade).filter(Boolean))]; b.insertAdjacentHTML('beforeend','<div class="card"><div class="card-title"><h2>مواد الجلاء لكل صف</h2></div><div class="list-item-subtitle">تُعرض هذه المواد فقط في الجلاء (الشاشة والطباعة الفردية والجماعية). ترتيبها كترتيب مواد الدفتر.</div><div class="form-group" style="margin-top:10px"><label class="form-label">الصف</label><select id="jlGrade" class="form-control" onchange="exJlGradeList()"><option value="">اختر الصف</option>'+grades.map(g=>'<option value="'+escapeAttr(g)+'">'+escapeHtml(g)+'</option>').join('')+'</select></div><div id="jlSubBox"></div></div>'); };
 async function exSaveJalaaCfg(){ if(!requireRole(['admin'])) return; const min=Number($('jlMin').value); if(!Number.isFinite(min)||min<0){ showToast('أدخل قيمًا صحيحة','warning'); return; } setLoading(true); try{ const r=await sb.from('app_settings').upsert({key:'jalaa',value:{min,subjects:window.__jalaaSubs||{}}},{onConflict:'key'}); if(r.error) throw r.error; JALAA_MIN=min; showToast('تم حفظ إعدادات الجلاء','success'); }catch(e){ handleSupabaseError(e,'تعذر حفظ إعدادات الجلاء'); } finally{ setLoading(false); } }
 /* ===== نشر النتائج لكل المواد دفعة واحدة ===== */
 function exBulkCtx(){ const c=$('exClass')&&$('exClass').value, sem=Number($('exBulkSem')&&$('exBulkSem').value||1); if(!c) return null; const cl=getClassById(c); return {c,sem,subs:gbSubjects(cl?cl.grade:'')}; }
@@ -23525,6 +23527,11 @@ async function exPbApply(items,on){
   }catch(e){ handleSupabaseError(e,'تعذر تنفيذ العملية'); }
   finally{ setLoading(false); }
 }
+document.addEventListener('input',function(ev){ const t=ev.target; if(t&&t.closest&&t.tagName!=='SELECT'&&t.closest('#exSetBody')) window.__exDirty=true; });
+document.addEventListener('change',function(ev){ const t=ev.target; if(t&&t.closest&&t.tagName!=='SELECT'&&t.closest('#exSetBody')) window.__exDirty=true; });
+const __exSG=exSaveGrade; exSaveGrade=async function(){ await __exSG.apply(this,arguments); window.__exDirty=false; };
+const __exSJC=exSaveJalaaCfg; exSaveJalaaCfg=async function(){ await __exSJC.apply(this,arguments); window.__exDirty=false; };
+const __exSJS=exSaveJalaaSubs; exSaveJalaaSubs=async function(){ await __exSJS.apply(this,arguments); window.__exDirty=false; };
 function exJalaaPick(id){ window.__exBookSid=id; exJalaa($('exBody')); }
 async function exRenderJalaa(){
   const box=$('exBookBox'); if(!box) return; const st=getStudentById(window.__exBookSid); if(!st){ box.innerHTML=''; return; }
@@ -23642,10 +23649,34 @@ async function exPdfBook(){
 
 /* ---- الإعدادات (المدير): أيام الدوام ومواد الدفتر لكل صف ---- */
 function exSettings(b){
-  const cfg=window.__exCfg.sem, grades=[...new Set((APP.classes||[]).map(c=>c.grade).filter(Boolean))];
-  const semForm=n=>{ const c=cfg[n]||{}; return '<div class="card"><div class="card-title"><h2>الفصل '+(n===1?'الأول':'الثاني')+'</h2></div><div class="grid-2"><div class="form-group"><label class="form-label">الدوام المدرسي (عدد الأيام)</label><input id="sd'+n+'" type="number" min="0" step="1" class="form-control" value="'+(c.school_days??'')+'"></div><div class="form-group"><label class="form-label">بداية الفصل</label><input id="ss'+n+'" type="date" class="form-control" value="'+(c.start_date||'')+'"></div><div class="form-group"><label class="form-label">نهاية الفصل</label><input id="se'+n+'" type="date" class="form-control" value="'+(c.end_date||'')+'"></div></div></div>'; };
-  b.innerHTML=semForm(1)+semForm(2)+'<button class="btn btn-primary btn-block" type="button" onclick="exSaveSem()" style="margin-bottom:14px">حفظ إعدادات الفصلين</button>'+
-    '<div class="card"><div class="card-title"><h2>مواد دفتر الدرجات</h2></div><div class="chip-row"><button class="btn btn-secondary btn-small" type="button" onclick="exAddDefaults()">إضافة مواد الدفتر الافتراضية</button></div><div class="grid-2"><div class="form-group"><input id="exNewSub" class="form-control" placeholder="اسم مادة جديدة"></div><div class="form-group"><button class="btn btn-secondary btn-small" type="button" onclick="exAddSubject()">إضافة المادة</button></div></div><div class="form-group"><label class="form-label">الصف</label><select id="exGrade" class="form-control" onchange="exGradeList()"><option value="">اختر الصف</option>'+exOpt(grades,g=>g,g=>g)+'</select></div><div id="exGradeBox"></div></div>';
+  const t=window.__exSetTab||'sem';
+  const nav='<div class="ex-sub">'+[['sem','الفصول'],['subj','المواد'],['jalaa','الجلاء']].map(x=>'<button type="button" class="'+(x[0]===t?'on':'')+'" onclick="exSetTab(\''+x[0]+'\')">'+x[1]+'</button>').join('')+'</div>';
+  b.innerHTML=nav+'<div id="exSetBody"></div>';
+  ({sem:exSetSem,subj:exSetSubj,jalaa:exSetJalaa})[t]($('exSetBody'));
+}
+async function exSetTab(t){ if(window.__exDirty&&!await confirmAction('لديك تعديلات لم تُحفظ، والانتقال سيفقدها. هل تتابع؟')) return; window.__exDirty=false; window.__exSetTab=t; exSettings($('exBody')); }
+function exSetSem(b){
+  const cfg=window.__exCfg.sem;
+  const form=n=>{ const c=cfg[n]||{}, nmx=n===1?'الأول':'الثاني'; return '<div class="card"><div class="card-title"><h2>الفصل '+nmx+'</h2></div><div class="grid-2"><div class="form-group"><label class="form-label">بداية الفصل</label><input id="ss'+n+'" type="date" class="form-control" value="'+(c.start_date||'')+'"></div><div class="form-group"><label class="form-label">نهاية الفصل</label><input id="se'+n+'" type="date" class="form-control" value="'+(c.end_date||'')+'"></div></div><div class="form-group"><label class="form-label">الدوام المدرسي (عدد الأيام)</label><input id="sd'+n+'" type="number" min="0" step="1" class="form-control" value="'+(c.school_days??'')+'"><div class="ex-note">يُحسب تلقائيًا عند اختيار التاريخين (دون الجمعة والسبت)، ويمكنك تعديله يدويًا.</div></div><button class="btn btn-primary btn-block" type="button" onclick="exSaveSemN('+n+')">حفظ الفصل '+nmx+'</button></div>'; };
+  b.innerHTML=form(1)+form(2);
+}
+async function exSaveSemN(n){
+  if(!requireRole(['admin'])) return;
+  const d=$('sd'+n).value, s=$('ss'+n).value, en=$('se'+n).value;
+  if(d!==''&&(!Number.isInteger(Number(d))||Number(d)<0)){ showToast('عدد أيام الدوام يجب أن يكون عددًا صحيحًا','warning'); return; }
+  if(s&&en&&en<s){ showToast('نهاية الفصل قبل بدايته','warning'); return; }
+  setLoading(true);
+  try{ const r=await sb.from('semester_settings').upsert({semester:n,school_days:d===''?null:Number(d),start_date:s||null,end_date:en||null,updated_by:APP.user.id,updated_at:new Date().toISOString()},{onConflict:'semester'}); if(r.error) throw r.error; window.__exDirty=false; await exLoadCfg(); showToast('تم حفظ إعدادات الفصل '+(n===1?'الأول':'الثاني')+(d!==''?' — الدوام '+d+' يومًا':''),'success'); }
+  catch(err){ handleSupabaseError(err,'تعذر الحفظ'); } finally{ setLoading(false); }
+}
+function exSetSubj(b){
+  const grades=[...new Set((APP.classes||[]).map(c=>c.grade).filter(Boolean))];
+  b.innerHTML='<div class="card"><div class="card-title"><h2>مواد دفتر الدرجات</h2></div><div class="form-group"><label class="form-label">الصف</label><select id="exGrade" class="form-control" onchange="window.__exSetGrade=this.value;exGradeList()"><option value="">اختر الصف</option>'+exOpt(grades,g=>g,g=>g,window.__exSetGrade||'')+'</select></div><div id="exGradeBox"><div class="ex-hint">اختر الصف لعرض مواده وترتيبها</div></div><div class="ex-addsub"><input id="exNewSub" class="form-control" placeholder="اسم مادة جديدة تُضاف لهذا الصف"><button class="btn btn-primary btn-small" type="button" onclick="exAddSubject()">إضافة</button></div><div class="chip-row" style="margin-top:10px"><button class="btn btn-secondary btn-small" type="button" onclick="exAddDefaults()">إضافة مواد الدفتر الافتراضية</button></div></div>';
+  if(window.__exSetGrade&&$('exGrade').value) exGradeList();
+}
+function exSetJalaa(b){
+  const grades=[...new Set((APP.classes||[]).map(c=>c.grade).filter(Boolean))];
+  b.innerHTML='<div class="card"><div class="card-title"><h2>إعدادات الجلاء</h2></div><div class="form-group"><label class="form-label">الدرجة الدنيا لكل مادة</label><input id="jlMin" class="form-control" type="number" min="0" max="100" value="'+JALAA_MIN+'"></div><div class="ex-note">المجموع الأدنى يُحسب تلقائيًا من المواد المعروضة. قواعد النجاح والرسوب تُضاف لاحقًا.</div><button class="btn btn-primary btn-block" type="button" style="margin-top:12px" onclick="exSaveJalaaCfg()">حفظ إعدادات الجلاء</button></div><div class="card"><div class="card-title"><h2>مواد الجلاء لكل صف</h2></div><div class="ex-note" style="margin:0 0 10px">تُعرض هذه المواد فقط في الجلاء (الشاشة والطباعة الفردية والجماعية). ترتيبها كترتيب مواد الدفتر.</div><div class="form-group"><label class="form-label">الصف</label><select id="jlGrade" class="form-control" onchange="exJlGradeList()"><option value="">اختر الصف</option>'+grades.map(g=>'<option value="'+escapeAttr(g)+'">'+escapeHtml(g)+'</option>').join('')+'</select></div><div id="jlSubBox"></div></div>';
 }
 async function exSaveSem(){
   if(!requireRole(['admin'])) return; const rows=[];
@@ -23675,10 +23706,19 @@ async function exSaveGrade(all){
   }catch(e){ handleSupabaseError(e,'تعذر حفظ المواد'); } finally{ setLoading(false); }
 }
 async function exAddSubject(){
-  if(!requireRole(['admin'])) return; const name=$('exNewSub').value.trim(); if(!name){ showToast('اكتب اسم المادة','warning'); return; }
-  if((APP.subjects||[]).some(s=>s.name===name)){ showToast('المادة موجودة','warning'); return; }
-  const {error}=await sb.from('subjects').insert({name,key:'gb_'+Date.now().toString(36),sort_order:99,active:true}); if(error){ handleSupabaseError(error,'تعذر إضافة المادة'); return; }
-  await loadSubjects(); await exLoadCfg(); showToast('أُضيفت المادة','success'); exSettings($('exBody'));
+  if(!requireRole(['admin'])) return;
+  const name=$('exNewSub').value.trim(), g=$('exGrade')&&$('exGrade').value;
+  if(!g){ showToast('اختر الصف أولاً لإضافة المادة إليه','warning'); return; }
+  if(!name){ showToast('اكتب اسم المادة','warning'); return; }
+  setLoading(true);
+  try{
+    const ex=(APP.subjects||[]).find(s=>s.name===name); let sid=ex&&ex.id;
+    if(!sid){ const r=await sb.from('subjects').insert({name,key:'gb_'+Date.now().toString(36),sort_order:99,active:true}).select('id').single(); if(r.error) throw r.error; sid=r.data.id; }
+    const cur=(window.__exCfg.grade||[]).filter(x=>x.grade===g);
+    if(cur.some(x=>x.subject_id===sid)){ showToast('المادة موجودة في هذا الصف','warning'); }
+    else{ const mx=cur.reduce((m,x)=>Math.max(m,Number(x.sort_order)||0),0), i=await sb.from('grade_subjects').insert({grade:g,subject_id:sid,sort_order:mx+1}); if(i.error) throw i.error; showToast('أُضيفت المادة إلى '+g,'success'); }
+    await loadSubjects(); await exLoadCfg(); window.__exSetGrade=g; window.__exDirty=false; exSettings($('exBody'));
+  }catch(err){ handleSupabaseError(err,'تعذر إضافة المادة'); } finally{ setLoading(false); }
 }
 async function exAddDefaults(){
   if(!requireRole(['admin'])) return; const have=new Set((APP.subjects||[]).map(s=>s.name)), add=GB_DEFAULT.filter(n=>!have.has(n));
