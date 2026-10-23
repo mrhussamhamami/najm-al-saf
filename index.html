@@ -24878,18 +24878,20 @@ body #loginScreen #loginMessage{position:static!important;padding:10px 0 0!impor
 @keyframes lgS{to{background-position:300% 0}}
 @media(prefers-reduced-motion:reduce){#loginScreen *,#loginScreen::before,#loginScreen::after{animation:none!important}}
 /* أدوات المعلم */
-#uxFab{position:fixed;z-index:450;left:14px;bottom:calc(var(--bottom-height) + 16px + env(safe-area-inset-bottom,0px));width:54px;height:54px;border-radius:18px;font-size:24px;color:#fff;background:linear-gradient(135deg,#1fb88a,#2b5942);box-shadow:0 12px 28px -8px rgba(24,150,100,.7)}
 .ux-row{display:flex;gap:10px;align-items:center;margin:10px 0}.ux-chk{font-size:13px;white-space:nowrap}
-.ux-hub{display:grid;gap:10px;margin-top:12px}.ux-hub button{padding:16px;border-radius:18px;text-align:start;font-weight:700;background:var(--surface-2);color:var(--text);border:1px solid var(--border)}
 .ux-msg{width:100%;min-height:240px;line-height:1.9}
 .ux-plan{padding-inline-start:20px;line-height:2}
 .ux-radar .ew-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}.ux-radar .ew-row span{display:block;font-size:12.5px;color:var(--danger)}
-.uw-stage{position:relative;perspective:900px;display:grid;place-items:center;padding:6px 0}
-.uw-stage canvas{width:min(100%,330px);height:auto;transform:rotateX(16deg);filter:drop-shadow(0 26px 22px rgba(0,0,0,.35))}
-.uw-pin{position:absolute;top:0;left:50%;margin-left:-13px;z-index:2;width:0;height:0;border-inline:13px solid transparent;border-top:28px solid #d64545;filter:drop-shadow(0 3px 3px rgba(0,0,0,.4))}
-.uw-res{min-height:44px;text-align:center;font-size:1.35rem;font-weight:800;color:var(--primary-2)}
-body.ux-present{font-size:19px}body.ux-present .topbar,body.ux-present .bottom-nav,body.ux-present #sideNav,body.ux-present #uxFab{display:none!important}
-#uxExit{position:fixed;z-index:3000;top:12px;left:12px;padding:10px 16px;border-radius:14px;background:#d64545;color:#fff;font-weight:700}
+
+.uw-meta{font-size:12.5px;color:var(--muted);text-align:center}
+.uw-stage{position:relative;perspective:1000px;display:grid;place-items:center;padding:8px 0}
+.uw-stage canvas{width:min(100%,380px);height:auto;grid-area:1/1;transform:rotateX(14deg)}
+#uwC{filter:drop-shadow(0 26px 22px rgba(0,0,0,.4))}.uw-fx{pointer-events:none}
+.uw-pin{position:absolute;top:2px;left:50%;margin-left:-14px;z-index:3;width:0;height:0;border-inline:14px solid transparent;border-top:32px solid #d64545;transform-origin:50% 0;filter:drop-shadow(0 3px 3px rgba(0,0,0,.45))}
+.uw-pin.k{animation:uwK .12s}@keyframes uwK{50%{transform:rotate(-16deg)}}
+.uw-res{min-height:56px;text-align:center;font-size:1.1rem;color:var(--muted)}.uw-res b{display:block;font-size:1.7rem;color:var(--primary-2)}
+.uw-hist{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:6px 0}.uw-hist span{font-size:12px;padding:4px 10px;border-radius:99px;background:var(--primary-soft);color:var(--primary)}
+.ls-wheel{margin:12px 0}.ux-pbar{margin:0 0 12px}
 </style>
 
 <script id="ux-pack-js">
@@ -24927,31 +24929,36 @@ if(sb.length>1)L.push('وقد '+g('تألّق','تألّقت')+' في مادة '
 else if(sb.length)L.push('وتظهر نتيجته في مادة '+sb[0].n+' بنسبة '+r(sb[0].v)+'%.');
 if(att&&att.total){var p=att.percentage;L.push(p>=95?'ونُشيد بانتظامه الرائع في الحضور ('+r(p)+'%).':p>=85?'وحضوره جيد ('+r(p)+'%)، ونأمل المحافظة عليه.':'ونلاحظ تكرار الغياب (نسبة الحضور '+r(p)+'%)، ونرجو الحرص على الانتظام لأثره المباشر على التحصيل.')}
 L.push('','شاكرين لكم تعاونكم وحرصكم، ونسأل الله أن يوفّق '+nm+' ويبارك فيه.','مع خالص التحية والتقدير،',(APP.profile&&APP.profile.full_name)||'معلم الصف');return L.join('\n')}
-function msgTool(){var o=modal('<div class="modal-header"><div class="modal-title">✉️ رسالة ولي الأمر</div></div><div class="ux-row"><select id="umS" class="form-control"></select><select id="umG" class="form-control" style="max-width:110px"><option value="0">طالب</option><option value="1">طالبة</option></select></div><textarea id="umT" class="form-control ux-msg"></textarea><div class="modal-actions"><button type="button" class="btn btn-secondary" data-x>إغلاق</button><button type="button" class="btn btn-secondary" id="umC">نسخ</button><button type="button" class="btn btn-primary" id="umW">واتساب</button></div>');
+function msgTool(pid){var o=modal('<div class="modal-header"><div class="modal-title">✉️ رسالة ولي الأمر</div></div><div class="ux-row"><select id="umS" class="form-control"></select><select id="umG" class="form-control" style="max-width:110px"><option value="0">طالب</option><option value="1">طالبة</option></select></div><textarea id="umT" class="form-control ux-msg"></textarea><div class="modal-actions"><button type="button" class="btn btn-secondary" data-x>إغلاق</button><button type="button" class="btn btn-secondary" id="umC">نسخ</button><button type="button" class="btn btn-primary" id="umW">واتساب</button></div>');
 var S=o.querySelector('#umS'),G=o.querySelector('#umG'),T=o.querySelector('#umT');S.innerHTML=(APP.students||[]).map(function(s){return'<option value="'+E(s.id)+'">'+E(s.full_name)+'</option>'}).join('');
-var up=function(){T.value=compose(S.value,G.value==='1')};S.onchange=G.onchange=up;up();
+if(pid)S.value=String(pid);var up=function(){T.value=compose(S.value,G.value==='1')};S.onchange=G.onchange=up;up();
 o.querySelector('#umC').onclick=function(){try{navigator.clipboard.writeText(T.value);showToast('تم النسخ','success')}catch(e){T.select();document.execCommand('copy')}};
 o.querySelector('#umW').onclick=function(){window.open('https://wa.me/?text='+encodeURIComponent(T.value),'_blank','noopener')}}
-/* عجلة الطالب المحظوظ */
-function wheel(){var o=modal('<div class="modal-header"><div class="modal-title">🎡 عجلة الطالب المحظوظ</div></div><div class="ux-row"><select id="uwK" class="form-control"></select><label class="ux-chk"><input type="checkbox" id="uwN" checked> بدون تكرار</label></div><div class="uw-stage"><div class="uw-pin"></div><canvas id="uwC" width="560" height="560"></canvas></div><div id="uwR" class="uw-res">اضغط «دوّر» لاختيار طالب</div><div class="modal-actions"><button type="button" class="btn btn-secondary" data-x>إغلاق</button><button type="button" class="btn btn-primary" id="uwG">🎲 دوّر</button></div>');
-var K=o.querySelector('#uwK'),cv=o.querySelector('#uwC'),cx=cv.getContext('2d'),R=o.querySelector('#uwR'),rot=0,busy=false,used={},list=[];
-K.innerHTML='<option value="">كل الطلاب</option>'+(APP.classes||[]).map(function(c){return'<option value="'+E(c.id)+'">'+E(c.name||c.class_name||c.title||c.id)+'</option>'}).join('');
-function load(){list=(APP.students||[]).filter(function(s){return !K.value||String(s.class_id)===K.value});used={};draw()}
-function draw(){var n=list.length||1,sg=2*Math.PI/n,c=280;cx.clearRect(0,0,560,560);for(var i=0;i<n;i++){var a=-Math.PI/2+rot+i*sg;cx.beginPath();cx.moveTo(c,c);cx.arc(c,c,266,a,a+sg);cx.fillStyle='hsl('+(i*360/n+130)%360+',62%,'+(used[i]?'78%':'52%')+')';cx.fill();cx.strokeStyle='rgba(255,255,255,.7)';cx.lineWidth=2;cx.stroke();
-if(list.length&&n<=40){cx.save();cx.translate(c,c);cx.rotate(a+sg/2);cx.fillStyle='#fff';cx.font='bold '+Math.max(14,Math.min(26,300/n))+'px Tahoma';cx.textAlign='right';cx.shadowColor='rgba(0,0,0,.5)';cx.shadowBlur=4;cx.fillText(String(list[i].full_name).split(' ').slice(0,2).join(' '),250,8);cx.restore()}}
-cx.beginPath();cx.arc(c,c,34,0,7);cx.fillStyle='#fff';cx.fill();cx.font='30px serif';cx.textAlign='center';cx.fillText('⭐',c,c+11)}
-K.onchange=load;load();
-o.querySelector('#uwG').onclick=function(){if(busy||!list.length)return;var ids=list.map(function(_,i){return i}).filter(function(i){return !o.querySelector('#uwN').checked||!used[i]});if(!ids.length){used={};ids=list.map(function(_,i){return i})}
-var i=ids[Math.floor(Math.random()*ids.length)],sg=2*Math.PI/list.length,tg=-(i*sg+sg/2),d=((tg-rot)%(2*Math.PI)+2*Math.PI)%(2*Math.PI),end=rot+6*Math.PI*2+d,st=rot,t0=performance.now(),T=4200;busy=true;R.textContent='...';
-(function f(t){var p=Math.min(1,(t-t0)/T);rot=st+(end-st)*(1-Math.pow(1-p,3));draw();if(p<1)requestAnimationFrame(f);else{busy=false;rot=rot%(2*Math.PI);used[i]=1;draw();R.textContent='🎉 '+list[i].full_name}})(t0)}}
-/* وضع العرض الصفي */
-function present(on){document.body.classList.toggle('ux-present',on);var x=document.getElementById('uxExit');if(on&&!x){x=document.createElement('button');x.id='uxExit';x.type='button';x.textContent='✕ إنهاء العرض';x.onclick=function(){present(false)};document.body.appendChild(x)}else if(!on&&x)x.remove();try{if(on&&document.documentElement.requestFullscreen)document.documentElement.requestFullscreen();else if(!on&&document.fullscreenElement)document.exitFullscreen()}catch(e){}}
-document.addEventListener('keydown',function(e){if(e.key==='Escape')document.body.classList.contains('ux-present')&&present(false)});
-/* زر الأدوات */
-var fab=document.createElement('button');fab.id='uxFab';fab.type='button';fab.textContent='🧰';fab.setAttribute('aria-label','أدوات المعلم');fab.style.display='none';document.body.appendChild(fab);
-fab.onclick=function(){var o=modal('<div class="modal-header"><div class="modal-title">🧰 أدوات المعلم</div></div><div class="ux-hub"><button type="button" data-a="w">🎡 عجلة الطالب المحظوظ</button><button type="button" data-a="m">✉️ رسالة ولي الأمر</button><button type="button" data-a="p">🖥️ وضع العرض الصفي</button></div>'+CL);
-o.querySelector('.ux-hub').onclick=function(e){var b=e.target.closest('button');if(!b)return;o.remove();({w:wheel,m:msgTool,p:function(){present(true)}})[b.dataset.a]()}};
-setInterval(function(){var l=document.getElementById('loginScreen');fab.style.display=(staff()&&l&&l.classList.contains('hidden'))?'':'none'},1200);
+/* عجلة المشاركة (صفحة حصة) */
+function wheel(){var Ls=window.__ls||{},sts=(Ls.sts||[]).filter(function(s){var a=(Ls.att||{})[s.id];return a!=='absent'&&a!=='excused'});
+if(!sts.length){showToast('اختر الشعبة والمادة أولاً — لا يوجد طلاب حاضرون','warning');return}
+var o=modal('<div class="modal-header"><div class="modal-title">🎡 عجلة المشاركة</div><button class="icon-btn" type="button" data-x>✕</button></div><div class="uw-meta">الحاضرون فقط: <b>'+sts.length+'</b> طالب</div><div class="uw-stage"><div class="uw-pin" id="uwP"></div><canvas id="uwC" width="640" height="640"></canvas><canvas id="uwF" width="640" height="640" class="uw-fx"></canvas></div><div id="uwR" class="uw-res">اضغط «دوّر»</div><div id="uwH" class="uw-hist"></div><div class="ux-row"><label class="ux-chk"><input type="checkbox" id="uwN" checked> بدون تكرار</label><label class="ux-chk"><input type="checkbox" id="uwS" checked> 🔊 صوت</label></div><div class="modal-actions"><button type="button" class="btn btn-secondary" data-x>إغلاق</button><button type="button" class="btn btn-primary" id="uwG">🎲 دوّر</button></div>');
+var cx=o.querySelector('#uwC').getContext('2d'),fx=o.querySelector('#uwF').getContext('2d'),R=o.querySelector('#uwR'),H=o.querySelector('#uwH'),P=o.querySelector('#uwP'),N=o.querySelector('#uwN'),S=o.querySelector('#uwS'),n=sts.length,sg=2*Math.PI/n,rot=0,ph=0,busy=false,used={},hist=[],AC=null,PAL=['#2f8f67','#e9a23b','#3478d4','#d64545','#7b5ea7','#18a999','#e0702f','#5b8c2a'];
+function snd(f,d,v){if(!S.checked)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();var a=AC.createOscillator(),g=AC.createGain();a.type='triangle';a.frequency.value=f;g.gain.value=v||.05;a.connect(g);g.connect(AC.destination);a.start();g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+d);a.stop(AC.currentTime+d)}catch(e){}}
+function draw(){var c=320,i;cx.clearRect(0,0,640,640);cx.beginPath();cx.arc(c,c,316,0,7);cx.fillStyle='#1b3b2a';cx.fill();
+for(i=0;i<24;i++){var b=i*Math.PI/12;cx.beginPath();cx.arc(c+Math.cos(b)*300,c+Math.sin(b)*300,6.5,0,7);cx.fillStyle=((i+ph)%2)?'#ffe27a':'#6b5d25';cx.fill()}
+for(i=0;i<n;i++){var a=-Math.PI/2+rot+i*sg;cx.beginPath();cx.moveTo(c,c);cx.arc(c,c,280,a,a+sg);cx.globalAlpha=(used[i]&&N.checked)?.35:1;cx.fillStyle=PAL[i%PAL.length];cx.fill();cx.globalAlpha=1;cx.strokeStyle='rgba(255,255,255,.75)';cx.lineWidth=2;cx.stroke();
+if(n<=36){cx.save();cx.translate(c,c);cx.rotate(a+sg/2);cx.fillStyle='#fff';cx.font='bold '+Math.max(15,Math.min(28,330/n))+'px Tahoma';cx.textAlign='right';cx.shadowColor='rgba(0,0,0,.55)';cx.shadowBlur=4;cx.fillText(String(sts[i].full_name).split(' ').slice(0,2).join(' '),262,9);cx.restore()}}
+var g=cx.createRadialGradient(c,c,4,c,c,44);g.addColorStop(0,'#fff');g.addColorStop(1,'#cfe9d8');cx.beginPath();cx.arc(c,c,44,0,7);cx.fillStyle=g;cx.fill();cx.font='34px serif';cx.textAlign='center';cx.fillText('⭐',c,c+12)}
+function boom(){var ps=[],i,t0=performance.now();for(i=0;i<80;i++)ps.push({x:320,y:320,vx:(Math.random()-.5)*16,vy:-Math.random()*14-3,c:PAL[i%8],s:5+Math.random()*6});
+(function f(t){fx.clearRect(0,0,640,640);if((t-t0)>1700)return;ps.forEach(function(p){p.vy+=.45;p.x+=p.vx;p.y+=p.vy;fx.fillStyle=p.c;fx.fillRect(p.x,p.y,p.s,p.s)});requestAnimationFrame(f)})(t0)}
+N.onchange=draw;draw();
+o.querySelector('#uwG').onclick=function(){if(busy)return;var pool=[],i;for(i=0;i<n;i++)if(!(used[i]&&N.checked))pool.push(i);if(!pool.length){used={};for(i=0;i<n;i++)pool.push(i);showToast('اكتملت الدورة، بدأنا من جديد','info')}
+var w=pool[Math.floor(Math.random()*pool.length)],tg=-(w*sg+sg/2)+(Math.random()-.5)*sg*.6,d=((tg-rot)%(2*Math.PI)+2*Math.PI)%(2*Math.PI),st=rot,en=rot+(5+Math.floor(Math.random()*3))*2*Math.PI+d,T=4800+Math.random()*900,t0=performance.now(),last=-1;busy=true;R.textContent='...';
+(function f(t){var p=Math.min(1,(t-t0)/T);rot=st+(en-st)*(1-Math.pow(1-p,4));ph=Math.floor(t/90);var k=Math.floor((((-rot)%(2*Math.PI)+2*Math.PI)%(2*Math.PI))/sg);if(k!==last){last=k;snd(880,.05,.04);P.classList.remove('k');void P.offsetWidth;P.classList.add('k')}draw();
+if(p<1)return requestAnimationFrame(f);busy=false;rot=rot%(2*Math.PI);used[w]=1;draw();var nm=sts[w].full_name;R.innerHTML='🎉<b>'+E(nm)+'</b>';hist.unshift(String(nm).split(' ')[0]);H.innerHTML=hist.slice(0,12).map(function(x){return'<span>'+E(x)+'</span>'}).join('');boom();snd(523,.18,.06);setTimeout(function(){snd(659,.18,.06)},140);setTimeout(function(){snd(784,.3,.06)},280)})(t0)}}
+/* زر العجلة داخل صفحة حصة */
+function lsBar(){var b=document.getElementById('lessonBox');if(!b||!staff()||document.getElementById('lsWheelBar'))return;var l=b.querySelector('#lsList');if(!l)return;var d=document.createElement('div');d.id='lsWheelBar';d.className='ls-wheel';d.innerHTML='<button type="button" class="btn btn-secondary w-full">🎡 عجلة المشاركة (للحاضرين فقط)</button>';d.firstChild.onclick=wheel;l.parentNode.insertBefore(d,l)}
+var lb=document.getElementById('lessonBox');if(lb){new MutationObserver(lsBar).observe(lb,{childList:true});lsBar()}
+/* زر رسالة ولي الأمر داخل ملف الطالب */
+function pBar(){var b=document.getElementById('studentProfileBox'),id=window.__uxPid;if(!b||!staff()||!id||!stu(id)||b.querySelector('.ux-pbar'))return;var d=document.createElement('div');d.className='ux-pbar';d.innerHTML='<button type="button" class="btn btn-secondary w-full">✉️ رسالة لولي الأمر</button>';d.firstChild.onclick=function(){msgTool(id)};b.insertBefore(d,b.firstChild)}
+var lp=window.loadStudentProfile;if(typeof lp==='function')window.loadStudentProfile=async function(id){window.__uxPid=id;var r=await lp.apply(this,arguments);try{pBar()}catch(e){}return r};
+var pb=document.getElementById('studentProfileBox');if(pb)new MutationObserver(function(){try{pBar()}catch(e){}}).observe(pb,{childList:true});
 })();
 </script>
 </body>
