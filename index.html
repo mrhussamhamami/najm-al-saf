@@ -3750,16 +3750,30 @@ body.fx .page .card.fx-hot::before{opacity:1}
 @media(prefers-contrast:more){body.fx #pageDashboard .card,body.fx #pageDashboard .stat-card,body.fx .topbar,body.fx .bottom-nav{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:var(--surface)!important}}
 body.fx.fx-lite *{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
 body.fx.fx-lite #pageDashboard .card,body.fx.fx-lite #pageDashboard .stat-card{background:color-mix(in srgb,var(--surface) 92%,transparent)!important}
+
+/* ===== إصلاحات: قراءة النوافذ، الأداء، التباين ===== */
+body.fx .modal,body.fx .bottom-sheet{background:color-mix(in srgb,var(--surface) 95%,transparent)!important}
+body.fx .card{backdrop-filter:none;-webkit-backdrop-filter:none}
+body.fx #pageDashboard .card,body.fx #pageDashboard .stat-card{backdrop-filter:blur(16px) saturate(150%);-webkit-backdrop-filter:blur(16px) saturate(150%)}
+body.fx #pageDashboard .dashboard-hero{background:linear-gradient(135deg,rgba(8,127,115,.96),rgba(22,140,96,.93) 60%,rgba(60,150,60,.92))!important;text-shadow:0 1px 2px rgba(0,0,0,.25)}
+body.fx.fx-lite{--fx-glass:rgba(255,255,255,.94);--fx-glass-2:rgba(255,255,255,.88)}
+body.fx.dark.fx-lite{--fx-glass:rgba(20,42,32,.94);--fx-glass-2:rgba(20,42,32,.88)}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  body.fx{--fx-glass:rgba(255,255,255,.95);--fx-glass-2:rgba(255,255,255,.9)}
+  body.fx.dark{--fx-glass:rgba(20,42,32,.95);--fx-glass-2:rgba(20,42,32,.9)}
+}
+@media(prefers-contrast:more){body.fx .modal,body.fx .bottom-sheet,body.fx .card,body.fx #sideNav{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:var(--surface)!important}}
 </style>
 </head>
 
-<body>
+<body class="fx">
 
 <!-- =======================================================
      LOGIN
      ======================================================= -->
 
 <section id="loginScreen">
+<i class="lg-star"></i><i class="lg-star"></i><i class="lg-star"></i><i class="lg-star"></i><i class="lg-star"></i>
 
   <div class="login-card">
 
@@ -3774,6 +3788,7 @@ body.fx.fx-lite #pageDashboard .card,body.fx.fx-lite #pageDashboard .stat-card{b
     <p class="login-subtitle">
       نظام ذكي لمتابعة الطلاب وتقييمهم
     </p>
+    <div class="lg-chips"><span>📊 تقارير فورية</span><span>📡 إنذار مبكر</span><span>💬 تواصل مع الأولياء</span></div>
 
     <form id="loginForm">
 
@@ -3825,6 +3840,7 @@ body.fx.fx-lite #pageDashboard .card,body.fx.fx-lite #pageDashboard .stat-card{b
       class="muted text-center"
       style="font-size:11px;margin:13px 0 0"
     ></p>
+    <div class="lg-foot">🔒 اتصال آمن ومشفّر</div>
 
   </div>
 
@@ -24767,7 +24783,7 @@ mo.observe(document.body,{childList:true,subtree:true});guarded();
 <script id="fxJs">
 (function(){
   'use strict';
-  var KEY='fx_theme_v1', body=document.body;
+  var KEY='fx_theme_v2', body=document.body;
   var mq=function(q){ return !!(window.matchMedia&&window.matchMedia(q).matches); };
   var reduce=mq('(prefers-reduced-motion: reduce)'), fine=mq('(hover: hover) and (pointer: fine)');
   var lite=(navigator.deviceMemory&&navigator.deviceMemory<=3)||(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=3);
@@ -24782,7 +24798,7 @@ mo.observe(document.body,{childList:true,subtree:true});guarded();
     var r=document.createElement('span'); r.className='fx-ring'+(tone?' '+tone:''); r.style.left=x+'px'; r.style.top=y+'px';
     document.body.appendChild(r); setTimeout(function(){ if(r.parentNode) r.parentNode.removeChild(r); },750);
   }
-  try{ set(localStorage.getItem(KEY)==='1'); }catch(e){}
+  var __fxv=null; try{ __fxv=localStorage.getItem(KEY); }catch(e){} set(__fxv!=='0'); /* مفعّل افتراضيًا للجميع، والزر ✨ لمن أراد إيقافه */
 
   /* زر التبديل في الشريط العلوي */
   function ensureBtn(){
@@ -24811,7 +24827,7 @@ mo.observe(document.body,{childList:true,subtree:true});guarded();
       var c=String(el.className), tone=/error|danger/.test(c)?'danger':/warn/.test(c)?'warning':'';
       var rc=el.getBoundingClientRect(); ring(rc.left+rc.width/2,rc.top+rc.height/2,tone==='warning'?'warn':tone);
     }); });
-  }).observe(document.body,{childList:true,subtree:true});
+  }).observe(document.getElementById('toastContainer')||document.body,{childList:true,subtree:true});
 
   /* إمالة ثلاثية الأبعاد + بريق يتبع المؤشر (الأجهزة ذات المؤشر فقط) */
   if(fine&&!reduce){
@@ -24824,8 +24840,118 @@ mo.observe(document.body,{childList:true,subtree:true});guarded();
       if(t!==cur){ reset(cur); cur=t; if(cur) cur.classList.add('fx-hot'); }
       if(!cur) return; px=ev.clientX; py=ev.clientY; if(!raf) raf=requestAnimationFrame(apply);
     },{passive:true});
-    document.addEventListener('pointerleave',function(){ reset(cur); cur=null; },true);
+    document.documentElement.addEventListener('pointerleave',function(){ reset(cur); cur=null; });
   }
+})();
+</script>
+
+<style id="ux-pack">
+body #loginScreen,body.dark #loginScreen{display:grid;place-items:center;min-height:100dvh;padding:20px;position:relative;overflow:hidden;isolation:isolate;background:linear-gradient(160deg,#06130e,#0c2a1f 55%,#0a3a2c)}
+body #loginScreen::before,body #loginScreen::after{content:"";position:absolute;width:62vmax;height:62vmax;border-radius:50%;filter:blur(64px);opacity:.5;z-index:-1;animation:lgF 16s ease-in-out infinite alternate}
+body #loginScreen::before{top:-22vmax;right:-18vmax;background:#18c08f}
+body #loginScreen::after{bottom:-26vmax;left:-20vmax;background:#9be22f;animation-delay:-8s}
+.lg-star{position:absolute;z-index:-1;width:6px;height:6px;border-radius:50%;background:#fff;opacity:.5;animation:lgT 3s ease-in-out infinite}
+.lg-star:nth-child(1){top:12%;left:18%}.lg-star:nth-child(2){top:22%;right:14%;animation-delay:-1s}.lg-star:nth-child(3){top:64%;left:10%;animation-delay:-2s}.lg-star:nth-child(4){top:78%;right:22%;animation-delay:-.5s}.lg-star:nth-child(5){top:40%;right:6%;animation-delay:-1.6s}
+body #loginScreen .login-card{width:min(420px,100%)!important;max-width:420px!important;min-height:0!important;margin:0!important;padding:34px 26px 22px!important;display:flex;flex-direction:column;align-items:center;text-align:center;background:rgba(255,255,255,.07)!important;border:1px solid rgba(255,255,255,.17)!important;border-radius:30px!important;box-shadow:0 30px 80px -20px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.18)!important;backdrop-filter:blur(22px) saturate(160%);-webkit-backdrop-filter:blur(22px) saturate(160%);animation:lgIn .7s cubic-bezier(.2,.8,.2,1) both}
+body #loginScreen .login-logo{width:78px;height:78px;margin:0 0 16px;border-radius:26px;background:linear-gradient(135deg,#1fb88a,#b8f34a);display:grid;place-items:center;font-size:38px;box-shadow:0 0 0 7px rgba(184,243,74,.12),0 18px 40px -10px rgba(24,192,143,.75);animation:lgP 3.2s ease-in-out infinite}
+body #loginScreen .login-logo svg{color:#06130e;stroke:#06130e}
+body #loginScreen .login-title{margin:0 0 6px;font-size:32px;font-weight:800;text-align:center;background:linear-gradient(90deg,#fff,#b8f34a,#18c08f,#fff);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;animation:lgS 6s linear infinite}
+body #loginScreen .login-subtitle{margin:0 0 14px;max-width:none;text-align:center;color:rgba(255,255,255,.78);font-size:14px}
+.lg-chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:22px}
+.lg-chips span{font-size:11.5px;padding:5px 11px;border-radius:99px;color:#d8ffe9;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14)}
+body #loginScreen #loginForm{width:100%;margin:0!important;padding:0!important;display:flex;flex-direction:column;gap:14px;text-align:start;background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important}
+body #loginScreen #loginForm::before{content:none!important;display:none}
+body #loginScreen .form-label{color:rgba(255,255,255,.82);font-size:13px}
+body #loginScreen .form-control{height:54px;color:#fff!important;background:rgba(255,255,255,.08)!important;border:1px solid rgba(255,255,255,.2)!important;border-radius:16px!important;padding:0 16px}
+body #loginScreen .form-control::placeholder{color:rgba(255,255,255,.45)}
+body #loginScreen .form-control:focus{border-color:#18c08f!important;box-shadow:0 0 0 3px rgba(24,192,143,.28),0 0 22px rgba(24,192,143,.3)!important;outline:0}
+body #loginScreen #loginPassword{padding-inline-end:48px}
+#lgEye{position:absolute;inset-inline-end:8px;bottom:7px;width:40px;height:40px;border-radius:12px;background:transparent;font-size:18px;color:#fff;opacity:.75}
+body #loginScreen #loginButton{height:56px;border:0;border-radius:18px;font-size:16px;font-weight:800;color:#06130e!important;background:linear-gradient(135deg,#1fd6a0,#b8f34a)!important;box-shadow:0 14px 34px -10px rgba(24,230,160,.7)!important;transition:transform .15s,filter .2s}
+body #loginScreen #loginButton:active{transform:scale(.97)}body #loginScreen #loginButton:hover{filter:brightness(1.08)}
+body #loginScreen #loginMessage{position:static!important;padding:10px 0 0!important;margin:0;color:#ffb4b4}
+.lg-foot{margin-top:14px;font-size:11px;color:rgba(255,255,255,.5)}
+@keyframes lgIn{from{opacity:0;transform:translateY(26px) scale(.97)}}
+@keyframes lgF{to{transform:translate(-6vmax,5vmax) scale(1.12)}}
+@keyframes lgT{50%{opacity:.1;transform:scale(1.8)}}
+@keyframes lgP{50%{box-shadow:0 0 0 14px rgba(184,243,74,.04),0 18px 40px -10px rgba(24,192,143,.75)}}
+@keyframes lgS{to{background-position:300% 0}}
+@media(prefers-reduced-motion:reduce){#loginScreen *,#loginScreen::before,#loginScreen::after{animation:none!important}}
+/* أدوات المعلم */
+#uxFab{position:fixed;z-index:450;left:14px;bottom:calc(var(--bottom-height) + 16px + env(safe-area-inset-bottom,0px));width:54px;height:54px;border-radius:18px;font-size:24px;color:#fff;background:linear-gradient(135deg,#1fb88a,#2b5942);box-shadow:0 12px 28px -8px rgba(24,150,100,.7)}
+.ux-row{display:flex;gap:10px;align-items:center;margin:10px 0}.ux-chk{font-size:13px;white-space:nowrap}
+.ux-hub{display:grid;gap:10px;margin-top:12px}.ux-hub button{padding:16px;border-radius:18px;text-align:start;font-weight:700;background:var(--surface-2);color:var(--text);border:1px solid var(--border)}
+.ux-msg{width:100%;min-height:240px;line-height:1.9}
+.ux-plan{padding-inline-start:20px;line-height:2}
+.ux-radar .ew-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}.ux-radar .ew-row span{display:block;font-size:12.5px;color:var(--danger)}
+.uw-stage{position:relative;perspective:900px;display:grid;place-items:center;padding:6px 0}
+.uw-stage canvas{width:min(100%,330px);height:auto;transform:rotateX(16deg);filter:drop-shadow(0 26px 22px rgba(0,0,0,.35))}
+.uw-pin{position:absolute;top:0;left:50%;margin-left:-13px;z-index:2;width:0;height:0;border-inline:13px solid transparent;border-top:28px solid #d64545;filter:drop-shadow(0 3px 3px rgba(0,0,0,.4))}
+.uw-res{min-height:44px;text-align:center;font-size:1.35rem;font-weight:800;color:var(--primary-2)}
+body.ux-present{font-size:19px}body.ux-present .topbar,body.ux-present .bottom-nav,body.ux-present #sideNav,body.ux-present #uxFab{display:none!important}
+#uxExit{position:fixed;z-index:3000;top:12px;left:12px;padding:10px 16px;border-radius:14px;background:#d64545;color:#fff;font-weight:700}
+</style>
+
+<script id="ux-pack-js">
+(function(){'use strict';
+var E=function(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
+function staff(){try{return APP&&(APP.role==='admin'||APP.role==='teacher')}catch(e){return false}}
+function stu(id){try{return getStudentById(id)}catch(e){return null}}
+function subN(id){var s=(APP.subjects||[]).find(function(x){return String(x.id)===String(id)});return s?(s.name||s.title||'المادة'):'المادة'}
+function modal(h){var o=document.createElement('div');o.className='modal-overlay active';o.style.zIndex=2600;o.innerHTML='<div class="modal">'+h+'</div>';o.addEventListener('click',function(e){if(e.target===o||e.target.closest('[data-x]'))o.remove()});document.body.appendChild(o);return o}
+var CL='<div class="modal-actions"><button type="button" class="btn btn-secondary" data-x>إغلاق</button></div>';
+/* كلمة المرور */
+function eye(){var p=document.getElementById('loginPassword');if(!p||document.getElementById('lgEye'))return;var b=document.createElement('button');b.type='button';b.id='lgEye';b.textContent='👁';b.setAttribute('aria-label','إظهار كلمة المرور');b.onclick=function(){p.type=p.type==='password'?'text':'password'};p.parentNode.style.position='relative';p.parentNode.appendChild(b)}
+eye();
+/* رادار الإنذار المبكر */
+function radar(){var D=864e5,now=Date.now(),m={};(APP.evaluations||[]).forEach(function(e){var t=new Date(e.evaluation_date||e.created_at).getTime(),sc=Number(e.score);if(!isFinite(t)||!isFinite(sc)||!e.student_id)return;var w=Math.floor((now-t)/(7*D));if(w<0||w>2)return;var k=e.student_id+'|'+e.subject_id;(m[k]=m[k]||{s:e.student_id,j:e.subject_id,b:[[],[],[]]}).b[w].push(sc)});
+var out=[];Object.keys(m).forEach(function(k){var x=m[k],a=x.b.map(function(v){return v.length?v.reduce(function(p,c){return p+c},0)/v.length:null}),q=[a[2],a[1],a[0]].filter(function(v){return v!==null});if(q.length<2)return;var d=q[0]-q[q.length-1];if(d>=8&&q.every(function(v,i){return !i||v<=q[i-1]+1}))out.push({s:x.s,j:x.j,from:q[0],to:q[q.length-1],drop:d})});
+return out.sort(function(a,b){return b.drop-a.drop})}
+function plan(x){var s=stu(x.s),j=subN(x.j);modal('<div class="modal-header"><div class="modal-title">خطة دعم سريعة</div></div><p><b>'+E(s&&s.full_name)+'</b> — '+E(j)+': من '+Math.round(x.from)+'% إلى '+Math.round(x.to)+'%</p><ol class="ux-plan"><li>جلسة مراجعة قصيرة (١٠ دقائق) للدروس الأخيرة في '+E(j)+' هذا الأسبوع.</li><li>حدّد مع الطالب نقطة الضعف الأساسية وكلّفه بتدريب يومي قصير.</li><li>اختبار قصير بعد أسبوع لقياس التحسن.</li><li>شارك ولي الأمر الخطة قبل الاختبارات النهائية.</li></ol>'+CL)}
+function paint(){var c=document.getElementById('dashboardContent');if(!c||!staff())return;var o=document.getElementById('ewRadar');if(o)o.remove();var r=radar(),el=document.createElement('section');el.id='ewRadar';el.className='card ux-radar';
+el.innerHTML='<div class="card-title"><h3>📡 رادار الإنذار المبكر</h3><small>تراجع تدريجي خلال آخر ٣ أسابيع</small></div>'+(r.length?r.slice(0,6).map(function(x,i){var s=stu(x.s);return'<div class="ew-row"><div><b>'+E(s&&s.full_name)+'</b><span>'+E(subN(x.j))+' · '+Math.round(x.from)+'% ← '+Math.round(x.to)+'%</span></div><button type="button" class="btn btn-secondary btn-sm" data-i="'+i+'">خطة دعم</button></div>'}).join(''):'<p class="muted">لا توجد مؤشرات تراجع حاليًا 👌</p>');
+el.addEventListener('click',function(e){var b=e.target.closest('button[data-i]');if(b)plan(r[+b.dataset.i])});c.insertBefore(el,c.firstChild)}
+var rd=window.renderDashboard;if(typeof rd==='function')window.renderDashboard=async function(){var r=await rd.apply(this,arguments);try{paint()}catch(e){console.warn(e)}return r};
+/* رسالة ولي الأمر (قوالب تربوية، بدون ذكاء اصطناعي خارجي) */
+function compose(id,f){var s=stu(id);if(!s)return'';var g=function(m,w){return f?w:m},r=Math.round,nm=String(s.full_name||'').split(' ')[0],k=String(id);
+var ev=(APP.evaluations||[]).filter(function(e){return String(e.student_id)===k}),at=(APP.attendance||[]).filter(function(e){return String(e.student_id)===k}),avg=calculateWeightedAverage(ev),att=calculateAttendanceStats(at),by={};
+ev.forEach(function(e){(by[e.subject_id]=by[e.subject_id]||[]).push(e)});
+var sb=Object.keys(by).map(function(j){return{n:subN(j),v:calculateWeightedAverage(by[j])}}).filter(function(x){return x.v!==null}).sort(function(a,b){return b.v-a.v});
+var L=['السلام عليكم ورحمة الله وبركاته،','حضرة ولي أمر '+g('الطالب','الطالبة')+' '+s.full_name+'، حفظكم الله ورعاكم،',''];
+if(avg===null)L.push('يسعدنا التواصل معكم، ولا تتوفر لدينا تقييمات كافية لـ'+nm+' حتى الآن، وسنوافيكم بالتفاصيل فور اكتمالها.');
+else if(avg>=90)L.push('يسرّنا أن نزفّ إليكم بشرى تميّز '+g('ابنكم','ابنتكم')+' '+nm+'؛ فقد '+g('حقّق','حقّقت')+' مستوى عامًا بلغ '+r(avg)+'%، وهذا ثمرة جدّ واجتهاد نُثمّنه عاليًا.');
+else if(avg>=75)L.push('نُطمئنكم أن '+nm+' '+g('يسير','تسير')+' بخطى ثابتة ومشجّعة؛ إذ بلغ المستوى العام '+r(avg)+'%، وفي '+g('ابنكم','ابنتكم')+' كل مقومات الارتقاء لمراتب أعلى بإذن الله.');
+else if(avg>=60)L.push('بلغ المستوى العام لـ'+nm+' '+r(avg)+'%، وهو مستوى مقبول يحمل فرصة طيبة للتقدم متى تضافرت جهود البيت والمدرسة.');
+else L.push('نودّ مشاركتكم بصدق ومحبة أن المستوى العام لـ'+nm+' '+r(avg)+'%، وهو بحاجة إلى دعم إضافي، وثقتنا كبيرة بقدرة '+g('ابنكم','ابنتكم')+' على التحسن مع المتابعة المشتركة.');
+if(sb.length>1)L.push('وقد '+g('تألّق','تألّقت')+' في مادة '+sb[0].n+' ('+r(sb[0].v)+'%)، ونرى أن مادة '+sb[sb.length-1].n+' ('+r(sb[sb.length-1].v)+'%) تستحق مزيدًا من العناية.');
+else if(sb.length)L.push('وتظهر نتيجته في مادة '+sb[0].n+' بنسبة '+r(sb[0].v)+'%.');
+if(att&&att.total){var p=att.percentage;L.push(p>=95?'ونُشيد بانتظامه الرائع في الحضور ('+r(p)+'%).':p>=85?'وحضوره جيد ('+r(p)+'%)، ونأمل المحافظة عليه.':'ونلاحظ تكرار الغياب (نسبة الحضور '+r(p)+'%)، ونرجو الحرص على الانتظام لأثره المباشر على التحصيل.')}
+L.push('','شاكرين لكم تعاونكم وحرصكم، ونسأل الله أن يوفّق '+nm+' ويبارك فيه.','مع خالص التحية والتقدير،',(APP.profile&&APP.profile.full_name)||'معلم الصف');return L.join('\n')}
+function msgTool(){var o=modal('<div class="modal-header"><div class="modal-title">✉️ رسالة ولي الأمر</div></div><div class="ux-row"><select id="umS" class="form-control"></select><select id="umG" class="form-control" style="max-width:110px"><option value="0">طالب</option><option value="1">طالبة</option></select></div><textarea id="umT" class="form-control ux-msg"></textarea><div class="modal-actions"><button type="button" class="btn btn-secondary" data-x>إغلاق</button><button type="button" class="btn btn-secondary" id="umC">نسخ</button><button type="button" class="btn btn-primary" id="umW">واتساب</button></div>');
+var S=o.querySelector('#umS'),G=o.querySelector('#umG'),T=o.querySelector('#umT');S.innerHTML=(APP.students||[]).map(function(s){return'<option value="'+E(s.id)+'">'+E(s.full_name)+'</option>'}).join('');
+var up=function(){T.value=compose(S.value,G.value==='1')};S.onchange=G.onchange=up;up();
+o.querySelector('#umC').onclick=function(){try{navigator.clipboard.writeText(T.value);showToast('تم النسخ','success')}catch(e){T.select();document.execCommand('copy')}};
+o.querySelector('#umW').onclick=function(){window.open('https://wa.me/?text='+encodeURIComponent(T.value),'_blank','noopener')}}
+/* عجلة الطالب المحظوظ */
+function wheel(){var o=modal('<div class="modal-header"><div class="modal-title">🎡 عجلة الطالب المحظوظ</div></div><div class="ux-row"><select id="uwK" class="form-control"></select><label class="ux-chk"><input type="checkbox" id="uwN" checked> بدون تكرار</label></div><div class="uw-stage"><div class="uw-pin"></div><canvas id="uwC" width="560" height="560"></canvas></div><div id="uwR" class="uw-res">اضغط «دوّر» لاختيار طالب</div><div class="modal-actions"><button type="button" class="btn btn-secondary" data-x>إغلاق</button><button type="button" class="btn btn-primary" id="uwG">🎲 دوّر</button></div>');
+var K=o.querySelector('#uwK'),cv=o.querySelector('#uwC'),cx=cv.getContext('2d'),R=o.querySelector('#uwR'),rot=0,busy=false,used={},list=[];
+K.innerHTML='<option value="">كل الطلاب</option>'+(APP.classes||[]).map(function(c){return'<option value="'+E(c.id)+'">'+E(c.name||c.class_name||c.title||c.id)+'</option>'}).join('');
+function load(){list=(APP.students||[]).filter(function(s){return !K.value||String(s.class_id)===K.value});used={};draw()}
+function draw(){var n=list.length||1,sg=2*Math.PI/n,c=280;cx.clearRect(0,0,560,560);for(var i=0;i<n;i++){var a=-Math.PI/2+rot+i*sg;cx.beginPath();cx.moveTo(c,c);cx.arc(c,c,266,a,a+sg);cx.fillStyle='hsl('+(i*360/n+130)%360+',62%,'+(used[i]?'78%':'52%')+')';cx.fill();cx.strokeStyle='rgba(255,255,255,.7)';cx.lineWidth=2;cx.stroke();
+if(list.length&&n<=40){cx.save();cx.translate(c,c);cx.rotate(a+sg/2);cx.fillStyle='#fff';cx.font='bold '+Math.max(14,Math.min(26,300/n))+'px Tahoma';cx.textAlign='right';cx.shadowColor='rgba(0,0,0,.5)';cx.shadowBlur=4;cx.fillText(String(list[i].full_name).split(' ').slice(0,2).join(' '),250,8);cx.restore()}}
+cx.beginPath();cx.arc(c,c,34,0,7);cx.fillStyle='#fff';cx.fill();cx.font='30px serif';cx.textAlign='center';cx.fillText('⭐',c,c+11)}
+K.onchange=load;load();
+o.querySelector('#uwG').onclick=function(){if(busy||!list.length)return;var ids=list.map(function(_,i){return i}).filter(function(i){return !o.querySelector('#uwN').checked||!used[i]});if(!ids.length){used={};ids=list.map(function(_,i){return i})}
+var i=ids[Math.floor(Math.random()*ids.length)],sg=2*Math.PI/list.length,tg=-(i*sg+sg/2),d=((tg-rot)%(2*Math.PI)+2*Math.PI)%(2*Math.PI),end=rot+6*Math.PI*2+d,st=rot,t0=performance.now(),T=4200;busy=true;R.textContent='...';
+(function f(t){var p=Math.min(1,(t-t0)/T);rot=st+(end-st)*(1-Math.pow(1-p,3));draw();if(p<1)requestAnimationFrame(f);else{busy=false;rot=rot%(2*Math.PI);used[i]=1;draw();R.textContent='🎉 '+list[i].full_name}})(t0)}}
+/* وضع العرض الصفي */
+function present(on){document.body.classList.toggle('ux-present',on);var x=document.getElementById('uxExit');if(on&&!x){x=document.createElement('button');x.id='uxExit';x.type='button';x.textContent='✕ إنهاء العرض';x.onclick=function(){present(false)};document.body.appendChild(x)}else if(!on&&x)x.remove();try{if(on&&document.documentElement.requestFullscreen)document.documentElement.requestFullscreen();else if(!on&&document.fullscreenElement)document.exitFullscreen()}catch(e){}}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')document.body.classList.contains('ux-present')&&present(false)});
+/* زر الأدوات */
+var fab=document.createElement('button');fab.id='uxFab';fab.type='button';fab.textContent='🧰';fab.setAttribute('aria-label','أدوات المعلم');fab.style.display='none';document.body.appendChild(fab);
+fab.onclick=function(){var o=modal('<div class="modal-header"><div class="modal-title">🧰 أدوات المعلم</div></div><div class="ux-hub"><button type="button" data-a="w">🎡 عجلة الطالب المحظوظ</button><button type="button" data-a="m">✉️ رسالة ولي الأمر</button><button type="button" data-a="p">🖥️ وضع العرض الصفي</button></div>'+CL);
+o.querySelector('.ux-hub').onclick=function(e){var b=e.target.closest('button');if(!b)return;o.remove();({w:wheel,m:msgTool,p:function(){present(true)}})[b.dataset.a]()}};
+setInterval(function(){var l=document.getElementById('loginScreen');fab.style.display=(staff()&&l&&l.classList.contains('hidden'))?'':'none'},1200);
 })();
 </script>
 </body>
