@@ -13,9 +13,10 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
-<title>نجم الصف V2 | متابعة الطلاب</title>
+<title>نجم الصف – متابعة الطلاب</title>
 
 <link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
@@ -24893,5 +24894,14 @@ setInterval(probe,1200);
 .pws-b{height:6px;border-radius:6px;background:var(--border);margin-top:9px;overflow:hidden}.pws-b i{display:block;height:100%;border-radius:6px;background:var(--c)}
 .pws-note{display:flex;gap:10px;align-items:flex-start;margin-top:12px;padding:12px 14px;border-radius:16px;background:var(--primary-soft);font-size:13.5px;line-height:1.7}.pws-note .ic{flex:none;margin-top:3px;color:var(--primary-2)}.pws-note small{display:block;color:var(--muted);font-size:11.5px}
 </style>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('./sw.js').catch(function (e) {
+      console.warn('SW registration failed', e);
+    });
+  });
+}
+</script>
 </body>
 </html>
