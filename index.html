@@ -24903,5 +24903,240 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
+<style id="ew-css">
+.ew-tabs{display:flex;gap:6px;padding:4px;background:var(--surface-2);border-radius:999px;margin-bottom:12px}
+.ew-tabs button{flex:1;min-height:40px;border-radius:999px;background:transparent;color:var(--muted);font-weight:800;font-size:.85rem}
+.ew-tabs button.on{background:var(--surface);color:var(--primary);box-shadow:0 1px 4px rgba(0,0,0,.14)}
+.ew-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:14px;margin-bottom:10px}
+.ew-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.ew-top>div{flex:1;min-width:0}.ew-top small{display:block;color:var(--muted)}
+.ew-av{width:38px;height:38px;flex:none;border-radius:50%;display:grid;place-items:center;background:var(--primary-soft);color:var(--primary);font-weight:900}
+.ew-drop{color:var(--danger)}
+.ew-bar{height:8px;border-radius:99px;background:var(--surface-2);overflow:hidden;margin:6px 0 4px}
+.ew-bar i{display:block;height:100%;background:var(--success)}
+.ew-note{margin-top:8px;padding:10px 12px;border-radius:14px;background:var(--primary-soft);font-size:.85rem;line-height:1.7}
+.ew-act{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}.ew-act select{flex:1;min-width:120px}
+.ew-day{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--border);font-size:.85rem}
+.ew-day>div{width:64px;flex:none}.ew-day>div small{display:block;color:var(--muted)}
+.ew-day>span{flex:1;line-height:1.6}.ew-day em{color:var(--muted);font-style:normal}
+.ew-tri{min-width:80px;min-height:40px;border-radius:12px;border:2px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:.78rem}
+.ew-tri.done{background:var(--success);border-color:var(--success);color:#fff}
+.ew-tri.partial{background:var(--warning);border-color:var(--warning);color:#1b1b1b}
+.ew-tri:disabled{opacity:.45}
+.ew-h{margin:14px 0 6px;font-weight:900;font-size:.9rem}
+.ew-er{display:flex;gap:6px;align-items:center;margin-bottom:6px}
+.ew-er b{width:58px;flex:none;font-size:.8rem}.ew-er input:first-of-type{flex:1;min-width:0}.ew-er input[type=number]{width:62px;flex:none}
+.ew-ban{margin:0 0 12px;padding:12px 14px;border-radius:16px;background:var(--primary-soft);border:1px solid var(--primary-2);font-weight:800;cursor:pointer}
+.ew-sub{font-size:.85rem;color:var(--muted)}
+</style>
+<script id="ew-js">
+(function(){'use strict';
+if(typeof registerPage!=='function'||typeof EXTRA_PAGES==='undefined')return;
+var $=function(i){return document.getElementById(i)};
+var X=function(s){return escapeHtml(s==null?'':String(s))};
+var DAYS=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة'];
+var STAT={draft:['مسودة','info'],active:['نشطة','info'],improved:['تحسّن','success'],needs_review:['تحتاج تعديل','warning'],closed:['مغلقة','info']};
+var S={plans:[],ck:{},ok:false,t:0,view:'alerts'},RD=[],MEMO={};
+function uid(){return APP.user&&APP.user.id}
+function staff(){return APP.role==='admin'||APP.role==='teacher'}
+function iso(d){return new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)}
+function addD(s,n){var d=new Date(s+'T12:00:00');d.setDate(d.getDate()+n);return iso(d)}
+function wd(s){return new Date(s+'T12:00:00').getDay()}
+function stu(id){try{return getStudentById(id)}catch(e){return null}}
+function subN(id){var s=(APP.subjects||[]).find(function(x){return String(x.id)===String(id)});return s?(s.name||s.title||'المادة'):'المادة'}
+function fn(id){var s=stu(id);return s?String(s.full_name||'').split(' ')[0]:'الطالب'}
+function same(a,b){return String(a)===String(b)}
+function modal(h){var o=document.createElement('div');o.className='modal-overlay active';o.style.zIndex=2600;o.innerHTML='<div class="modal" style="max-height:88vh;overflow:auto">'+h+'</div>';o.addEventListener('click',function(e){if(e.target===o||e.target.closest('[data-x]'))o.remove()});document.body.appendChild(o);return o}
+async function memo(k,ttl,fn2){var m=MEMO[k];if(m&&Date.now()-m.t<ttl)return m.v;var v=await fn2();MEMO[k]={t:Date.now(),v:v};return v}
+
+/* ---------- البيانات ---------- */
+async function load(){
+ var a=await sb.from('support_plans').select('*').order('created_at',{ascending:false}).limit(200);
+ if(a.error)throw a.error;
+ S.plans=a.data||[];S.ck={};
+ if(S.plans.length){
+  var b=await sb.from('plan_checkins').select('*').in('plan_id',S.plans.map(function(p){return p.id})).limit(3000);
+  if(b.error)throw b.error;
+  (b.data||[]).forEach(function(r){(S.ck[r.plan_id]=S.ck[r.plan_id]||{})[r.item_key]=r});
+ }
+ S.ok=true;S.t=Date.now();
+}
+async function ensure(f){if(f||!S.ok||Date.now()-S.t>6e4)await load()}
+function fail(box,e){
+ if(e&&(e.code==='42P01'||/does not exist|schema cache/i.test(e.message||'')))box.innerHTML='<div class="empty-state"><h3>الميزة تحتاج تحديث قاعدة البيانات</h3><p>شغّل ملف early_warning.sql في Supabase ثم حدّث الصفحة.</p></div>';
+ else{handleSupabaseError(e,'تعذر التحميل');box.innerHTML='<div class="empty-state"><h3>تعذر التحميل</h3></div>'}
+}
+
+/* ---------- الرادار والخطة ---------- */
+function radar(){var D=864e5,now=Date.now(),m={};
+ (APP.evaluations||[]).forEach(function(e){var t=new Date(e.evaluation_date||e.created_at).getTime(),sc=Number(e.score);if(!isFinite(t)||!isFinite(sc)||!e.student_id)return;var w=Math.floor((now-t)/(7*D));if(w<0||w>2)return;var k=e.student_id+'|'+e.subject_id,o=m[k]=m[k]||{s:e.student_id,j:e.subject_id,b:[[],[],[]],last:0};o.b[w].push(sc);if(t>o.last)o.last=t});
+ var out=[];Object.keys(m).forEach(function(k){var x=m[k],a=x.b.map(function(v){return v.length?v.reduce(function(p,c){return p+c},0)/v.length:null}),q=[a[2],a[1],a[0]].filter(function(v){return v!==null});if(q.length<2)return;var d=q[0]-q[q.length-1];if(d>=8&&q.every(function(v,i){return !i||v<=q[i-1]+1}))out.push({s:x.s,j:x.j,from:q[0],to:q[q.length-1],drop:d,last:x.last})});
+ return out.sort(function(a,b){return b.drop-a.drop})}
+function hasPlan(s,j){return S.plans.some(function(p){return same(p.student_id,s)&&same(p.subject_id,j)&&p.status!=='closed'})}
+function tpl(x){var j=subN(x.j);return{days:[['مراجعة ملخص آخر درس في '+j+' وقراءة الأخطاء السابقة',15],['حلّ ٥ تمارين على الدرس مع كتابة الخطوات',20],['تدوين الأسئلة الصعبة وسؤال المعلم عنها',10],['اختبار ذاتي قصير بوقت محدد',15],['تصحيح أخطاء الاختبار وتلخيص القاعدة',15],['مراجعة خفيفة ثم راحة',10]],pledges:['أحلّ واجباتي كل يوم','أسأل فورًا عمّا لا أفهمه','أراجع الدرس ٥ دقائق قبل النوم'],tip:'اجلس مع ابنك ١٠ دقائق يوميًا بعد وقت المذاكرة، واسأله عمّا أنجزه دون أن تحلّ عنه. شجّعه على الالتزام قبل النتيجة.'}}
+function comp(p){var t=iso(new Date()),c=S.ck[p.id]||{},n=0,s=0;
+ for(var i=0;i<14;i++){var ds=addD(p.starts_on,i);if(wd(ds)>5||ds>t)continue;n++;var r=c['d:'+ds];if(r)s+=r.state==='done'?1:.5}
+ return{n:n,pct:n?Math.round(s/n*100):null}}
+function cur(p){var t=Date.now()-7*864e5,v=(APP.evaluations||[]).filter(function(e){return same(e.student_id,p.student_id)&&same(e.subject_id,p.subject_id)&&new Date(e.evaluation_date||e.created_at).getTime()>=t}).map(function(e){return Number(e.score)}).filter(isFinite);return v.length?v.reduce(function(a,b){return a+b},0)/v.length:null}
+
+/* ---------- محرر الخطة (المدرس) ---------- */
+function editor(p,x){
+ if(!p&&!x)return;
+ var c=p?p.content:tpl(x),sid=p?p.student_id:x.s,jid=p?p.subject_id:x.j,base=p?p.base_score:Math.round(x.to),tg=p?p.target_score:Math.min(100,Math.max(Math.round(x.from),Math.round(x.to)+10)),draft=!p||p.status==='draft';
+ var rows=c.days.map(function(d,i){return'<div class="ew-er"><b>'+DAYS[i]+'</b><input class="form-control" data-d="'+i+'" value="'+X(d[0])+'" maxlength="120"><input class="form-control" type="number" data-m="'+i+'" value="'+X(d[1])+'" min="5" max="90"></div>'}).join('');
+ var pl=c.pledges.map(function(t,i){return'<input class="form-control" data-p="'+i+'" value="'+X(t)+'" maxlength="80" style="margin-bottom:6px">'}).join('');
+ var o=modal('<div class="modal-header"><div class="modal-title">خطة '+X(fn(sid))+' في '+X(subN(jid))+'</div></div><div class="ew-sub">مستواه الآن '+X(base)+'% · الهدف <input id="ewT" type="number" class="form-control" style="width:80px;display:inline-block" value="'+X(tg)+'" min="1" max="100">%</div><div class="ew-h">برنامج الأسبوع (يتكرر أسبوعين)</div>'+rows+'<div class="ew-h">عهد الطالب</div>'+pl+'<div class="ew-h">دور ولي الأمر في البيت</div><textarea id="ewTip" class="form-control" rows="3" maxlength="300">'+X(c.tip)+'</textarea><div class="modal-actions"><button type="button" class="btn btn-secondary" data-x>إغلاق</button>'+(draft?'<button type="button" class="btn btn-secondary" id="ewS0">حفظ مسودة</button><button type="button" class="btn btn-primary" id="ewS1">نشر لولي الأمر</button>':'<button type="button" class="btn btn-primary" id="ewS1">حفظ التعديلات</button>')+'</div>');
+ var s0=o.querySelector('#ewS0');if(s0)s0.onclick=function(){save(o,p,x,'draft')};
+ o.querySelector('#ewS1').onclick=function(){save(o,p,x,draft?'active':null)};
+}
+async function save(o,p,x,status){
+ var days=[].map.call(o.querySelectorAll('[data-d]'),function(el,i){return[el.value.trim()||'—',Math.max(5,Math.min(90,Number(o.querySelector('[data-m="'+i+'"]').value)||15))]});
+ var pl=[].map.call(o.querySelectorAll('[data-p]'),function(el){return el.value.trim()}).filter(Boolean);
+ var now=new Date(),row={content:{days:days,pledges:pl,tip:o.querySelector('#ewTip').value.trim()},target_score:Math.max(1,Math.min(100,Number(o.querySelector('#ewT').value)||80)),updated_at:now.toISOString()};
+ if(status){row.status=status;if(status==='active'&&!(p&&p.published_at)){row.published_at=now.toISOString();row.starts_on=iso(now)}}
+ var r=p?await sb.from('support_plans').update(row).eq('id',p.id):await sb.from('support_plans').insert(Object.assign({student_id:x.s,subject_id:x.j,base_score:Math.round(x.to)},row));
+ if(r.error){handleSupabaseError(r.error,'تعذر حفظ الخطة');return}
+ o.remove();showToast(status==='active'?'تم نشر الخطة لولي الأمر':'تم الحفظ','success');S.ok=false;MEMO={};
+ if(APP.currentPage==='ewStaff')renderStaff();refreshBell();
+}
+async function setStatus(id,st){var r=await sb.from('support_plans').update({status:st,updated_at:new Date().toISOString()}).eq('id',id);if(r.error){handleSupabaseError(r.error,'تعذر التحديث');return}showToast('تم تحديث الحالة','success');S.ok=false;renderStaff()}
+async function delPlan(id){if(!confirm('حذف هذه الخطة نهائياً؟'))return;var r=await sb.from('support_plans').delete().eq('id',id);if(r.error){handleSupabaseError(r.error,'تعذر الحذف');return}S.ok=false;renderStaff()}
+
+/* ---------- صفحة الإنذار المبكر (مدرس/مدير) ---------- */
+async function renderStaff(){
+ var box=$('ewStaffBox');if(!box)return;box.innerHTML='<div class="loading-box"></div>';
+ try{await ensure(true)}catch(e){fail(box,e);return}
+ RD=radar().filter(function(x){return !hasPlan(x.s,x.j)});
+ var pl=S.plans.filter(function(p){return p.status!=='closed'||true}),v=S.view;
+ var h='<div class="ew-tabs"><button type="button" data-v="alerts" class="'+(v==='alerts'?'on':'')+'">التنبيهات ('+RD.length+')</button><button type="button" data-v="plans" class="'+(v==='plans'?'on':'')+'">الخطط ('+pl.length+')</button></div>';
+ if(v==='alerts')h+=RD.length?RD.map(function(x,i){var n=String((stu(x.s)||{}).full_name||'—');return'<div class="ew-card"><div class="ew-top"><span class="ew-av">'+X(n.charAt(0))+'</span><div><b>'+X(n)+'</b><small>'+X(subN(x.j))+' · '+Math.round(x.from)+'% ← '+Math.round(x.to)+'%</small></div><strong class="ew-drop">-'+Math.round(x.drop)+'</strong></div><button type="button" class="btn btn-primary btn-sm w-full" data-new="'+i+'">إنشاء خطة دعم</button></div>'}).join(''):'<div class="empty-state"><h3>لا يوجد طلاب متراجعون</h3><p>سيظهر هنا أي طالب يتراجع تدريجياً خلال ٣ أسابيع.</p></div>';
+ else h+=pl.length?pl.map(function(p){var st=STAT[p.status]||STAT.active,cp=comp(p),c=S.ck[p.id]||{},nt=c.note,cu=cur(p),opt=['active','improved','needs_review','closed'].map(function(k){return'<option value="'+k+'"'+(p.status===k?' selected':'')+'>'+STAT[k][0]+'</option>'}).join('');
+  return'<div class="ew-card"><div class="ew-top"><span class="ew-av">'+X(fn(p.student_id).charAt(0))+'</span><div><b>'+X((stu(p.student_id)||{}).full_name||'—')+'</b><small>'+X(subN(p.subject_id))+' · الهدف '+X(p.target_score)+'%'+(cu!==null?' · الآن '+Math.round(cu)+'%':'')+'</small></div><span class="status-badge '+st[1]+'">'+st[0]+'</span></div>'+(p.status==='draft'?'':'<div class="ew-bar"><i style="width:'+(cp.pct||0)+'%"></i></div><small>التزام ولي الأمر: '+(cp.pct===null?'لم تبدأ بعد':cp.pct+'% من '+cp.n+' أيام')+'</small>')+(cu!==null&&p.target_score&&cu>=p.target_score&&p.status==='active'?'<div class="ew-note">بلغ الطالب الهدف، يُقترح تغيير الحالة إلى «تحسّن».</div>':'')+(nt&&nt.note?'<div class="ew-note">ملاحظة ولي الأمر: '+X(nt.note)+'</div>':'')+'<div class="ew-act"><button type="button" class="btn btn-secondary btn-sm" data-ed="'+X(p.id)+'">'+(p.status==='draft'?'مراجعة ونشر':'تعديل')+'</button>'+(p.status==='draft'?'':'<select class="form-control" data-st="'+X(p.id)+'">'+opt+'</select>')+'<button type="button" class="btn btn-secondary btn-sm" data-del="'+X(p.id)+'">حذف</button></div></div>'}).join(''):'<div class="empty-state"><h3>لا توجد خطط بعد</h3><p>أنشئ خطة من تبويب التنبيهات.</p></div>';
+ box.innerHTML=h;
+ box.onclick=function(e){var t=e.target.closest('button');if(!t)return;
+  if(t.dataset.v){S.view=t.dataset.v;renderStaff()}
+  else if(t.dataset.new!==undefined)editor(null,RD[+t.dataset.new]);
+  else if(t.dataset.ed)editor(S.plans.find(function(p){return p.id===t.dataset.ed}));
+  else if(t.dataset.del)delPlan(t.dataset.del)};
+ box.onchange=function(e){var s=e.target.closest('select[data-st]');if(s)setStatus(s.dataset.st,s.value)};
+}
+
+/* ---------- صفحة ولي الأمر ---------- */
+function tri(pid,key,r,can,fut){var s=r?r.state:'none';return'<button type="button" class="ew-tri '+s+'" data-pk="'+X(pid)+'|'+key+'"'+(can?'':' disabled')+'>'+(s==='done'?'✓ أنجزه':s==='partial'?'◐ جزئياً':fut?'—':'لم يُنجز')+'</button>'}
+function card(p){
+ var c=p.content,ck=S.ck[p.id]||{},cp=comp(p),st=STAT[p.status]||STAT.active,lock=p.status==='closed',today=iso(new Date()),yest=addD(today,-1),ws=addD(today,-wd(today)),rows='';
+ for(var i=0;i<6;i++){var ds=addD(ws,i);if(ds<p.starts_on||ds>=addD(p.starts_on,14))continue;var d=c.days[i]||['—',0];
+  rows+='<div class="ew-day"><div><b>'+DAYS[i]+'</b><small>'+ds.slice(5).replace('-','/')+'</small></div><span>'+X(d[0])+' <em>'+X(d[1])+' د</em></span>'+tri(p.id,'d:'+ds,ck['d:'+ds],!lock&&(ds===today||ds===yest),ds>today)+'</div>'}
+ var pl=(c.pledges||[]).map(function(t,i){return'<div class="ew-day"><span>'+X(t)+'</span>'+tri(p.id,'p:'+i,ck['p:'+i],!lock,false)+'</div>'}).join('');
+ return'<div class="ew-card"><div class="ew-top"><span class="ew-av">'+X(fn(p.student_id).charAt(0))+'</span><div><b>'+X(fn(p.student_id))+' · '+X(subN(p.subject_id))+'</b><small>من '+X(p.base_score)+'% إلى هدف '+X(p.target_score)+'%</small></div><span class="status-badge '+st[1]+'">'+st[0]+'</span></div><div class="ew-bar"><i style="width:'+(cp.pct||0)+'%"></i></div><small>الالتزام: '+(cp.pct===null?'لم تبدأ بعد':cp.pct+'%')+'</small>'+(c.tip?'<div class="ew-note"><b>دورك في البيت:</b> '+X(c.tip)+'</div>':'')+'<div class="ew-h">هذا الأسبوع</div>'+rows+'<div class="ew-h">عهد الطالب</div>'+pl+(lock?'':'<div class="ew-act"><button type="button" class="btn btn-secondary btn-sm w-full" data-note="'+X(p.id)+'">'+((ck.note&&ck.note.note)?'تعديل ملاحظتك للمدرس':'إضافة ملاحظة للمدرس')+'</button></div>')+'</div>'}
+async function renderParent(){
+ var box=$('ewParentBox');if(!box)return;box.innerHTML='<div class="loading-box"></div>';
+ try{await ensure(true)}catch(e){fail(box,e);return}
+ draw(box);
+ box.onclick=function(e){var t=e.target.closest('button');if(!t)return;if(t.dataset.pk)cycle(t.dataset.pk);else if(t.dataset.note)noteEd(t.dataset.note)};
+}
+function draw(box){var ps=S.plans.filter(function(p){return p.status!=='draft'});box.innerHTML=ps.length?ps.map(card).join(''):'<div class="empty-state"><h3>لا توجد خطة دعم حالياً</h3><p>عندما ينشر المدرس خطة لابنكم ستظهر هنا.</p></div>'}
+async function cycle(pk){
+ var a=pk.split('|'),pid=a[0],key=a[1];if(!/^(d:\d{4}-\d{2}-\d{2}|p:\d)$/.test(key))return;
+ var c=S.ck[pid]=S.ck[pid]||{},cu=c[key],nx=!cu?'done':cu.state==='done'?'partial':null,r;
+ if(nx){r=await sb.from('plan_checkins').upsert({plan_id:pid,item_key:key,state:nx,updated_at:new Date().toISOString()},{onConflict:'plan_id,item_key'}).select().single();if(!r.error)c[key]=r.data}
+ else{r=await sb.from('plan_checkins').delete().eq('plan_id',pid).eq('item_key',key);if(!r.error)delete c[key]}
+ if(r.error){handleSupabaseError(r.error,'تعذر الحفظ');return}
+ draw($('ewParentBox'));
+}
+function noteEd(pid){
+ var c=S.ck[pid]||{},o=modal('<div class="modal-header"><div class="modal-title">ملاحظة للمدرس</div></div><textarea id="ewN" class="form-control" rows="4" maxlength="200" placeholder="مثال: لم يكمل لأن لديه اختباراً">'+X(c.note&&c.note.note||'')+'</textarea><div class="modal-actions"><button type="button" class="btn btn-secondary" data-x>إغلاق</button><button type="button" class="btn btn-primary" id="ewNS">حفظ</button></div>');
+ o.querySelector('#ewNS').onclick=async function(){var v=o.querySelector('#ewN').value.trim(),r;
+  if(v){r=await sb.from('plan_checkins').upsert({plan_id:pid,item_key:'note',state:'done',note:v,updated_at:new Date().toISOString()},{onConflict:'plan_id,item_key'}).select().single();if(!r.error){S.ck[pid]=S.ck[pid]||{};S.ck[pid].note=r.data}}
+  else{r=await sb.from('plan_checkins').delete().eq('plan_id',pid).eq('item_key','note');if(!r.error&&S.ck[pid])delete S.ck[pid].note}
+  if(r.error){handleSupabaseError(r.error,'تعذر الحفظ');return}o.remove();draw($('ewParentBox'));showToast('تم الحفظ','success')}
+}
+
+/* ---------- الإشعارات الموحدة (تُحسب داخل التطبيق بلا صفوف جديدة) ---------- */
+function ckey(){return'najm_nfs_'+uid()}
+function cursor(){try{var v=localStorage.getItem(ckey());return v?new Date(v).getTime():Date.now()-3*864e5}catch(e){return Date.now()-3*864e5}}
+async function feed(){
+ var it=[],since=Date.now()-30*864e5,cu=cursor(),role=APP.role,nowI=new Date().toISOString();
+ function add(id,t,k,ti,tx,g,pin){var ms=new Date(t).getTime();if(!pin&&!(ms>=since))return;it.push({id:id,t:t,k:k,ti:ti,tx:tx||'',go:g||{},pin:!!pin,unread:!!pin||ms>cu})}
+ try{await ensure()}catch(e){}
+ var needs=S.plans.filter(function(p){return p.status==='needs_review'}).length;
+ if(role==='parent'){
+  var db=[];try{db=await memo('db',6e4,async function(){var r=await sb.from('notifications').select('*').gte('created_at',new Date(since).toISOString()).order('created_at',{ascending:false}).limit(100);return r.data||[]})}catch(e){}
+  var seen={};
+  db.forEach(function(n){var dd=iso(new Date(n.created_at));[-1,0,1].forEach(function(k){seen[n.student_id+'|'+n.kind+'|'+addD(dd,k)]=1});it.push({id:'db:'+n.id,t:n.created_at,k:n.kind,ti:n.title,tx:n.body||'',go:{db:n.id,sid:n.student_id,kind:n.kind},pin:false,unread:!n.is_read})});
+  var g={};(APP.evaluations||[]).forEach(function(e){var d=e.evaluation_date||String(e.created_at).slice(0,10);if(!(new Date(d).getTime()>=since))return;var k=e.student_id+'|'+e.subject_id+'|'+d;(g[k]=g[k]||{s:e.student_id,j:e.subject_id,d:d,v:[]}).v.push(Number(e.score))});
+  Object.keys(g).forEach(function(k){var x=g[k];if(seen[x.s+'|evaluation|'+x.d])return;var a=x.v.filter(isFinite);if(a.length)add('e:'+k,x.d+'T12:00:00','evaluation','تقييم جديد: '+subN(x.j),fn(x.s)+' — المتوسط '+Math.round(a.reduce(function(p,c){return p+c},0)/a.length)+'%',{sid:x.s})});
+  (APP.attendance||[]).forEach(function(a){if(a.status==='present')return;var d=a.attendance_date;if(seen[a.student_id+'|absence|'+d])return;add('a:'+a.student_id+d,d+'T08:00:00','absence',attendanceStatusText(a.status),fn(a.student_id)+' — '+d,{sid:a.student_id})});
+  (APP.notes||[]).forEach(function(n){if(!n.visible_to_parent)return;var d=iso(new Date(n.created_at));if(seen[n.student_id+'|note|'+d])return;add('n:'+n.id,n.created_at,'note','ملاحظة جديدة',fn(n.student_id)+' — '+String(n.note||'').slice(0,90),{sid:n.student_id})});
+  (APP.awards||[]).forEach(function(a){var d=iso(new Date(a.created_at));if(seen[a.student_id+'|award|'+d])return;add('w:'+a.id,a.created_at,'award',a.award_type||'تكريم',fn(a.student_id)+(a.reason?' — '+a.reason:''),{sid:a.student_id})});
+  S.plans.filter(function(p){return p.status!=='draft'}).forEach(function(p){
+   add('pl:'+p.id,p.published_at||p.created_at,'plan','خطة دعم جديدة',fn(p.student_id)+' في '+subN(p.subject_id),{tab:'ewParent'});
+   if(p.status==='improved'||p.status==='needs_review')add('ps:'+p.id+p.status,p.updated_at,'plan',p.status==='improved'?'تحسّن في الخطة':'تحديث على الخطة',fn(p.student_id)+' في '+subN(p.subject_id),{tab:'ewParent'})});
+ }else{
+  radar().filter(function(x){return !hasPlan(x.s,x.j)}).slice(0,8).forEach(function(x){add('r:'+x.s+'|'+x.j,new Date(x.last).toISOString(),'radar','تراجع '+fn(x.s)+' في '+subN(x.j),'من '+Math.round(x.from)+'% إلى '+Math.round(x.to)+'%',{tab:'ewStaff',view:'alerts'})});
+  S.plans.filter(function(p){return p.status!=='draft'&&p.status!=='closed'}).forEach(function(p){var c=S.ck[p.id]||{},last=0;Object.keys(c).forEach(function(k){var t=new Date(c[k].updated_at).getTime();if(t>last)last=t});if(!last)return;var cp=comp(p),n=c.note;add('c:'+p.id,new Date(last).toISOString(),'checkin','متابعة ولي أمر '+fn(p.student_id),subN(p.subject_id)+(cp.pct!==null?' — التزام '+cp.pct+'%':'')+(n&&n.note?' — «'+n.note+'»':''),{tab:'ewStaff',view:'plans'})});
+  if(needs)add('x:needs',nowI,'plan','خطط تحتاج تعديل',needs+' خطة',{tab:'ewStaff',view:'plans'},true);
+  if(role==='teacher'){try{var an=await memo('an',6e4,fetchAnnouncements);an.forEach(function(a){add('an:'+a.id,a.created_at,'ann',a.title||'إعلان',a.body||a.content||a.message||'',{tab:'dashboard'})})}catch(e){}}
+  if(role==='admin'){
+   if(window.__pendingExc>0)add('x:exc',nowI,'absence','أعذار غياب بانتظار القرار',window.__pendingExc+' عذراً',{tab:'excuses'},true);
+   if(window.__pendingSug>0)add('x:sug',nowI,'award','اقتراحات تكريم بانتظار الاعتماد',window.__pendingSug+' اقتراحاً',{tab:'awards'},true);
+   try{var ac=await memo('act',6e4,async function(){var r=await sb.from('activity_log').select('id',{count:'exact',head:true}).eq('read_by_admin',false).in('action',['update','delete']);return r.count||0});if(ac>0)add('x:act',nowI,'note','تعديلات المدرسين غير المقروءة',ac+' تعديلاً',{tab:'activity'},true)}catch(e){}
+  }
+ }
+ it.sort(function(a,b){return a.pin!==b.pin?(a.pin?-1:1):new Date(b.t)-new Date(a.t)});
+ return it;
+}
+var NI={exam:'book',excuse:'check',evaluation:'clipboard',absence:'check',award:'medal',note:'note',task:'list',plan:'star',radar:'activity',checkin:'check',ann:'megaphone'};
+function setB(host,v){if(!host)return;var b=host.querySelector('.bell-badge');if(!v){b&&b.remove();return}if(!b){b=document.createElement('i');b.className='bell-badge';host.appendChild(b)}b.textContent=v>9?'9+':v}
+refreshBell=async function(){if(!APP.user)return;var n=0;try{n=(await feed()).filter(function(x){return x.unread}).length}catch(e){}
+ setB($('bellBtn'),n);document.querySelectorAll('[data-tab="notifications"]').forEach(function(h){setB(h,n)})};
+openBell=function(){tab('notifications')};
+async function renderFeed(){
+ var box=$('notificationsBox');if(!box)return;box.innerHTML='<div class="loading-box"></div>';
+ var f=[];try{f=await feed()}catch(e){}
+ if(!f.length){box.innerHTML='<div class="empty-state"><div class="empty-icon">'+icon('bell',34)+'</div><h3>لا توجد إشعارات</h3><p>تظهر هنا آخر ٣٠ يوماً.</p></div>';refreshBell();return}
+ var h='<div style="display:flex;justify-content:flex-end;margin-bottom:8px"><button class="btn btn-secondary btn-sm" type="button" id="nfAll">تحديد الكل كمقروء</button></div>',cw='';
+ f.forEach(function(x,i){var w=x.pin?'يحتاج إجراء':weekLabel(x.t);if(w!==cw){h+='<div class="wk-head">'+X(w)+'</div>';cw=w}
+  h+='<div class="notif-item '+(x.unread?'unread':'')+'" data-i="'+i+'"><div class="ni-ic">'+icon(NI[x.k]||'bell',20)+'</div><div><strong>'+X(x.ti)+'</strong><p>'+X(x.tx)+'</p>'+(x.pin?'':'<small>'+X(formatDateTime(x.t))+'</small>')+'</div></div>'});
+ box.innerHTML=h;
+ box.onclick=function(e){
+  if(e.target.closest('#nfAll')){try{localStorage.setItem(ckey(),new Date().toISOString())}catch(x){}MEMO={};
+   if(APP.role==='parent')sb.from('notifications').update({is_read:true}).eq('is_read',false).then(function(){renderFeed()},function(){renderFeed()});else renderFeed();return}
+  var el=e.target.closest('.notif-item');if(!el)return;var x=f[+el.dataset.i],g=x.go||{};
+  if(g.db){sb.from('notifications').update({is_read:true}).eq('id',g.db).then(function(){MEMO={};refreshBell()});}
+  else{try{var seenT=Math.max(cursor(),new Date(x.t).getTime());if(!x.pin)localStorage.setItem(ckey(),new Date(seenT).toISOString())}catch(z){}}
+  if(g.view)S.view=g.view;
+  if(g.db&&g.kind==='task')tab('tasks');
+  else if(g.tab)tab(g.tab);
+  else if(g.sid){APP.selectedStudentId=g.sid;tab('parentReport')}
+  else renderFeed();
+ };
+ refreshBell();
+}
+
+/* ---------- التسجيل والربط ---------- */
+var N=EXTRA_PAGES.notifications;if(N){N.roles=['parent','teacher','admin'];N.render=renderFeed}
+registerPage('ewStaff',{title:'الإنذار المبكر',sub:'طلاب متراجعون وخطط الدعم',roles:['admin','teacher'],render:renderStaff,nav:{icon:'activity',label:'الإنذار المبكر'}});
+registerPage('ewParent',{title:'خطة الدعم',sub:'متابعة خطة ابنكم يوماً بيوم',roles:['parent'],render:renderParent,nav:{icon:'star',label:'خطة الدعم'}});
+try{if(APP.role&&typeof addNavEntries==='function')addNavEntries()}catch(e){}
+var rp=renderParentPage;
+renderParentPage=async function(){await rp.apply(this,arguments);
+ try{await ensure();var a=S.plans.filter(function(p){return p.status==='active'||p.status==='needs_review'}),h=$('parentStudents');
+  if(h&&a.length){var o=h.querySelector('.ew-ban');if(o)o.remove();h.insertAdjacentHTML('afterbegin','<div class="ew-ban" onclick="tab(\'ewParent\')">لديكم '+a.length+' خطة دعم نشطة، اضغط لمتابعتها اليوم</div>')}}catch(e){}};
+var la=loadAllData;
+loadAllData=async function(f){await la.apply(this,arguments);
+ if(APP.role==='admin'){var k='najm_cl2_'+iso(new Date());if(!localStorage.getItem(k)){localStorage.setItem(k,'1');sb.rpc('cleanup_support_plans').then(function(){},function(){})}}};
+/* زر الخطة في بطاقة الرادار بلوحة المدرس يفتح المحرر الجديد */
+document.addEventListener('click',async function(e){
+ var b=e.target.closest&&e.target.closest('#ewRadar button[data-i]');if(!b||!staff())return;
+ e.stopPropagation();e.preventDefault();
+ try{await ensure(true)}catch(x){showToast('شغّل ملف early_warning.sql أولاً','warning');return}
+ var x=radar()[+b.dataset.i];if(!x)return;
+ var ex=S.plans.find(function(p){return same(p.student_id,x.s)&&same(p.subject_id,x.j)&&p.status!=='closed'});
+ if(ex){S.view='plans';tab('ewStaff')}else editor(null,x);
+},true);
+})();
+</script>
+
 </body>
 </html>
