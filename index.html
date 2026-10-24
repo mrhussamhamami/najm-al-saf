@@ -24981,7 +24981,7 @@ function cur(p){var t=Date.now()-7*864e5,v=(APP.evaluations||[]).filter(function
 
 /* ---------- محرر الخطة (المدرس) ---------- */
 function editor(p,x){
- if(!p&&!x)return;
+ if(APP.role!=='teacher'||(!p&&!x))return;
  var c=p?p.content:tpl(x),sid=p?p.student_id:x.s,jid=p?p.subject_id:x.j,base=p?p.base_score:Math.round(x.to),tg=p?p.target_score:Math.min(100,Math.max(Math.round(x.from),Math.round(x.to)+10)),draft=!p||p.status==='draft';
  var rows=c.days.map(function(d,i){return'<div class="ew-er"><b>'+DAYS[i]+'</b><input class="form-control" data-d="'+i+'" value="'+X(d[0])+'" maxlength="120"><input class="form-control" type="number" data-m="'+i+'" value="'+X(d[1])+'" min="5" max="90"></div>'}).join('');
  var pl=c.pledges.map(function(t,i){return'<input class="form-control" data-p="'+i+'" value="'+X(t)+'" maxlength="80" style="margin-bottom:6px">'}).join('');
@@ -24995,23 +24995,29 @@ async function save(o,p,x,status){
  var now=new Date(),row={content:{days:days,pledges:pl,tip:o.querySelector('#ewTip').value.trim()},target_score:Math.max(1,Math.min(100,Number(o.querySelector('#ewT').value)||80)),updated_at:now.toISOString()};
  if(status){row.status=status;if(status==='active'&&!(p&&p.published_at)){row.published_at=now.toISOString();row.starts_on=iso(now)}}
  var r=p?await sb.from('support_plans').update(row).eq('id',p.id):await sb.from('support_plans').insert(Object.assign({student_id:x.s,subject_id:x.j,base_score:Math.round(x.to)},row));
- if(r.error){handleSupabaseError(r.error,'تعذر حفظ الخطة');return}
+ if(r.error){if(r.error.code==='23505')showToast('توجد خطة لهذا الطالب في هذه المادة مسبقاً','warning');else handleSupabaseError(r.error,'تعذر حفظ الخطة');return}
  o.remove();showToast(status==='active'?'تم نشر الخطة لولي الأمر':'تم الحفظ','success');S.ok=false;MEMO={};
  if(APP.currentPage==='ewStaff')renderStaff();refreshBell();
 }
-async function setStatus(id,st){var r=await sb.from('support_plans').update({status:st,updated_at:new Date().toISOString()}).eq('id',id);if(r.error){handleSupabaseError(r.error,'تعذر التحديث');return}showToast('تم تحديث الحالة','success');S.ok=false;renderStaff()}
-async function delPlan(id){if(!confirm('حذف هذه الخطة نهائياً؟'))return;var r=await sb.from('support_plans').delete().eq('id',id);if(r.error){handleSupabaseError(r.error,'تعذر الحذف');return}S.ok=false;renderStaff()}
+async function setStatus(id,st){var r=await sb.from('support_plans').update({status:st,updated_at:new Date().toISOString()}).eq('id',id);if(r.error){if(r.error.code==='23505')showToast('توجد خطة أخرى مفتوحة لهذا الطالب في المادة','warning');else handleSupabaseError(r.error,'تعذر التحديث');S.ok=false;renderStaff();return}showToast('تم تحديث الحالة','success');S.ok=false;renderStaff()}
+async function delPlan(id){
+ var o=modal('<div class="modal-header"><div class="modal-title">حذف الخطة</div></div><p style="line-height:1.8">سيُحذف البرنامج وكل متابعات ولي الأمر عليه، وتختفي الخطة من حسابه. لا يمكن التراجع.</p><div class="modal-actions"><button type="button" class="btn btn-secondary" data-x>إلغاء</button><button type="button" class="btn btn-primary" id="ewDy">حذف نهائياً</button></div>');
+ o.querySelector('#ewDy').onclick=async function(){var r=await sb.from('support_plans').delete().eq('id',id).select('id');
+  if(r.error){handleSupabaseError(r.error,'تعذر الحذف');return}
+  o.remove();
+  if(!r.data||!r.data.length){showToast('لا تملك صلاحية حذف هذه الخطة','warning');return}
+  showToast('تم حذف الخطة','success');S.ok=false;MEMO={};renderStaff();refreshBell()}}
 
 /* ---------- صفحة الإنذار المبكر (مدرس/مدير) ---------- */
 async function renderStaff(){
  var box=$('ewStaffBox');if(!box)return;box.innerHTML='<div class="loading-box"></div>';
  try{await ensure(true)}catch(e){fail(box,e);return}
- RD=radar().filter(function(x){return !hasPlan(x.s,x.j)});
+ RD=radar().filter(function(x){return !hasPlan(x.s,x.j)});var PN={};if(APP.role==='admin'){try{var pr=await sb.from('profiles').select('id,full_name');(pr.data||[]).forEach(function(q){PN[q.id]=q.full_name})}catch(e){}}
  var pl=S.plans.filter(function(p){return p.status!=='closed'||true}),v=S.view;
  var h='<div class="ew-tabs"><button type="button" data-v="alerts" class="'+(v==='alerts'?'on':'')+'">التنبيهات ('+RD.length+')</button><button type="button" data-v="plans" class="'+(v==='plans'?'on':'')+'">الخطط ('+pl.length+')</button></div>';
- if(v==='alerts')h+=RD.length?RD.map(function(x,i){var n=String((stu(x.s)||{}).full_name||'—');return'<div class="ew-card"><div class="ew-top"><span class="ew-av">'+X(n.charAt(0))+'</span><div><b>'+X(n)+'</b><small>'+X(subN(x.j))+' · '+Math.round(x.from)+'% ← '+Math.round(x.to)+'%</small></div><strong class="ew-drop">-'+Math.round(x.drop)+'</strong></div><button type="button" class="btn btn-primary btn-sm w-full" data-new="'+i+'">إنشاء خطة دعم</button></div>'}).join(''):'<div class="empty-state"><h3>لا يوجد طلاب متراجعون</h3><p>سيظهر هنا أي طالب يتراجع تدريجياً خلال ٣ أسابيع.</p></div>';
+ if(v==='alerts')h+=RD.length?RD.map(function(x,i){var n=String((stu(x.s)||{}).full_name||'—');return'<div class="ew-card"><div class="ew-top"><span class="ew-av">'+X(n.charAt(0))+'</span><div><b>'+X(n)+'</b><small>'+X(subN(x.j))+' · '+Math.round(x.from)+'% ← '+Math.round(x.to)+'%</small></div><strong class="ew-drop">-'+Math.round(x.drop)+'</strong></div>'+(APP.role==='teacher'?'<button type="button" class="btn btn-primary btn-sm w-full" data-new="'+i+'">إنشاء خطة دعم</button>':'<small>ينشئ المدرس المختص خطة الدعم لهذا الطالب</small>')+'</div>'}).join(''):'<div class="empty-state"><h3>لا يوجد طلاب متراجعون</h3><p>سيظهر هنا أي طالب يتراجع تدريجياً خلال ٣ أسابيع.</p></div>';
  else h+=pl.length?pl.map(function(p){var st=STAT[p.status]||STAT.active,cp=comp(p),c=S.ck[p.id]||{},nt=c.note,cu=cur(p),opt=['active','improved','needs_review','closed'].map(function(k){return'<option value="'+k+'"'+(p.status===k?' selected':'')+'>'+STAT[k][0]+'</option>'}).join('');
-  return'<div class="ew-card"><div class="ew-top"><span class="ew-av">'+X(fn(p.student_id).charAt(0))+'</span><div><b>'+X((stu(p.student_id)||{}).full_name||'—')+'</b><small>'+X(subN(p.subject_id))+' · الهدف '+X(p.target_score)+'%'+(cu!==null?' · الآن '+Math.round(cu)+'%':'')+'</small></div><span class="status-badge '+st[1]+'">'+st[0]+'</span></div>'+(p.status==='draft'?'':'<div class="ew-bar"><i style="width:'+(cp.pct||0)+'%"></i></div><small>التزام ولي الأمر: '+(cp.pct===null?'لم تبدأ بعد':cp.pct+'% من '+cp.n+' أيام')+'</small>')+(cu!==null&&p.target_score&&cu>=p.target_score&&p.status==='active'?'<div class="ew-note">بلغ الطالب الهدف، يُقترح تغيير الحالة إلى «تحسّن».</div>':'')+(nt&&nt.note?'<div class="ew-note">ملاحظة ولي الأمر: '+X(nt.note)+'</div>':'')+'<div class="ew-act"><button type="button" class="btn btn-secondary btn-sm" data-ed="'+X(p.id)+'">'+(p.status==='draft'?'مراجعة ونشر':'تعديل')+'</button>'+(p.status==='draft'?'':'<select class="form-control" data-st="'+X(p.id)+'">'+opt+'</select>')+'<button type="button" class="btn btn-secondary btn-sm" data-del="'+X(p.id)+'">حذف</button></div></div>'}).join(''):'<div class="empty-state"><h3>لا توجد خطط بعد</h3><p>أنشئ خطة من تبويب التنبيهات.</p></div>';
+  return'<div class="ew-card"><div class="ew-top"><span class="ew-av">'+X(fn(p.student_id).charAt(0))+'</span><div><b>'+X((stu(p.student_id)||{}).full_name||'—')+'</b><small>'+X(subN(p.subject_id))+(APP.role==='admin'?' · المدرس: '+X(PN[p.teacher_id]||'—'):'')+' · الهدف '+X(p.target_score)+'%'+(cu!==null?' · الآن '+Math.round(cu)+'%':'')+'</small></div><span class="status-badge '+st[1]+'">'+st[0]+'</span></div>'+(p.status==='draft'?'':'<div class="ew-bar"><i style="width:'+(cp.pct||0)+'%"></i></div><small>التزام ولي الأمر: '+(cp.pct===null?'لم تبدأ بعد':cp.pct+'% من '+cp.n+' أيام')+'</small>')+(cu!==null&&p.target_score&&cu>=p.target_score&&p.status==='active'?'<div class="ew-note">بلغ الطالب الهدف، يُقترح تغيير الحالة إلى «تحسّن».</div>':'')+(nt&&nt.note?'<div class="ew-note">ملاحظة ولي الأمر: '+X(nt.note)+'</div>':'')+'<div class="ew-act">'+(APP.role!=='teacher'?'':'<button type="button" class="btn btn-secondary btn-sm" data-ed="'+X(p.id)+'">'+(p.status==='draft'?'مراجعة ونشر':'تعديل')+'</button>'+(p.status==='draft'?'':'<select class="form-control" data-st="'+X(p.id)+'">'+opt+'</select>'))+'<button type="button" class="btn btn-secondary btn-sm" data-del="'+X(p.id)+'">حذف</button></div></div>'}).join(''):'<div class="empty-state"><h3>لا توجد خطط بعد</h3><p>أنشئ خطة من تبويب التنبيهات.</p></div>';
  box.innerHTML=h;
  box.onclick=function(e){var t=e.target.closest('button');if(!t)return;
   if(t.dataset.v){S.view=t.dataset.v;renderStaff()}
@@ -25129,7 +25135,7 @@ loadAllData=async function(f){await la.apply(this,arguments);
 /* زر الخطة في بطاقة الرادار بلوحة المدرس يفتح المحرر الجديد */
 document.addEventListener('click',async function(e){
  var b=e.target.closest&&e.target.closest('#ewRadar button[data-i]');if(!b||!staff())return;
- e.stopPropagation();e.preventDefault();
+ e.stopPropagation();e.preventDefault();if(APP.role!=='teacher'){showToast('خطط الدعم ينشئها المدرس المختص','info');return}
  try{await ensure(true)}catch(x){showToast('شغّل ملف early_warning.sql أولاً','warning');return}
  var x=radar()[+b.dataset.i];if(!x)return;
  var ex=S.plans.find(function(p){return same(p.student_id,x.s)&&same(p.subject_id,x.j)&&p.status!=='closed'});
