@@ -25145,44 +25145,60 @@ document.addEventListener('click',async function(e){
 </script>
 
 <style id="nav-css">
+.sheet-sec{display:none!important}
 .sheet-grp{grid-column:1/-1;margin:10px 4px 0;font-size:.78rem;font-weight:900;color:var(--muted)}
 .bottom-sheet{max-height:86vh;overflow-y:auto}
+.bottom-sheet .sheet-item{position:relative}
+.bottom-sheet .sheet-item .nav-badge,.bottom-sheet .sheet-item .bell-badge{top:8px;right:10px;left:auto;margin:0}
 .bottom-nav button span:last-child{font-size:.72rem}
 </style>
 <script id="nav-js">
 (function(){'use strict';
 if(typeof applyRoleUI!=='function'||typeof canAccessPage!=='function')return;
 var $=function(i){return document.getElementById(i)};
-/* [المعرّف, الاسم, الأيقونة] */
+/* أيقونات بنفس نمط أيقونات التطبيق (خطوط SVG) */
+try{
+ if(typeof ICONS==='object'){
+  ICONS.alertTri=ICONS.alertTri||'<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/>';
+  ICONS.heart=ICONS.heart||'<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>';
+ }
+ if(typeof EXTRA_PAGES!=='undefined'){
+  if(EXTRA_PAGES.ewStaff)EXTRA_PAGES.ewStaff.nav.icon='alertTri';
+  if(EXTRA_PAGES.ewParent)EXTRA_PAGES.ewParent.nav.icon='heart';
+ }
+}catch(e){}
+/* إلغاء التقسيم القديم (المتابعة/المدرسة/الحساب) كي لا يتعارض مع هذا */
+try{if(typeof regroupSheet==='function')regroupSheet=function(){}}catch(e){}
+/* [المعرّف, الاسم, اسم الأيقونة] */
 var CFG={
- teacher:{bar:[['dashboard','الرئيسية','🏠'],['lesson','حصة','📋'],['students','الطلاب','👨‍🎓'],['ewStaff','الإنذار','📉']],
+ teacher:{bar:[['dashboard','الرئيسية','home'],['lesson','حصة','clipboard'],['students','الطلاب','users'],['ewStaff','الإنذار','alertTri']],
   groups:[['التدريس',['evaluation','attendance','notes','tasks','exams']],['المتابعة',['excuses','awards','honor','reports']],['التنظيم',['schedule','calendar','notifications']]]},
- admin:{bar:[['dashboard','الرئيسية','🏠'],['students','الطلاب','👨‍🎓'],['ewStaff','الإنذار','📉'],['notifications','الإشعارات','🔔']],
+ admin:{bar:[['dashboard','الرئيسية','home'],['students','الطلاب','users'],['ewStaff','الإنذار','alertTri'],['notifications','الإشعارات','bell']],
   groups:[['الإشراف',['activity','excuses','lesson','evaluation','attendance','notes']],['التواصل والمهام',['announce','tasks','exams']],['الإنجازات والتقارير',['awards','honor','reports','schedule','calendar']],['الإدارة',['admin','data']]]},
- parent:{bar:[['parent','أبنائي','👨‍👩‍👦'],['ewParent','الدعم','🌟'],['tasks','المهام','📚'],['notifications','الإشعارات','🔔']],
+ parent:{bar:[['parent','أبنائي','users'],['ewParent','الدعم','heart'],['tasks','المهام','book'],['notifications','الإشعارات','bell']],
   groups:[['متابعة ابني',['parentReport','exams','excuses']],['المواعيد والتكريم',['schedule','calendar','honor']]]}
 };
-var PG={dashboard:['الرئيسية','🏠'],students:['الطلاب','👨‍🎓'],evaluation:['التقييم','📊'],attendance:['الحضور','✓'],notes:['الملاحظات','📝'],awards:['الإنجازات','🏆'],honor:['لوحة الشرف','🏅'],reports:['التقارير','📈'],admin:['الإدارة','⚙️'],parentReport:['التقرير','📊'],notifications:['الإشعارات','🔔']};
+var PG={dashboard:['الرئيسية','home'],students:['الطلاب','users'],evaluation:['التقييم','chart'],attendance:['الحضور','check'],notes:['الملاحظات','note'],awards:['الإنجازات','trophy'],honor:['لوحة الشرف','medal'],reports:['التقارير','chart'],admin:['الإدارة','settings'],parentReport:['التقرير','chart'],notifications:['الإشعارات','bell']};
 var SP={sheetNotes:'notes',sheetAwards:'awards',sheetReports:'reports',sheetAdmin:'admin',sheetHonor:'honor'};
-var U={};Object.keys(CFG).forEach(function(r){CFG[r].groups.forEach(function(g){g[1].forEach(function(i){U[i]=1})})});
+var U={};Object.keys(CFG).forEach(function(r){CFG[r].groups.forEach(function(g){g[1].forEach(function(i){U[i]=1})});CFG[r].bar.forEach(function(x){U[x[0]]=1})});
 function pid(el){var i=el.id||'';return SP[i]||(i.indexOf('sheet_')===0?i.slice(6):null)}
 function acct(el){var o=el.getAttribute('onclick')||'';return /toggleTheme|showAbout|logout/.test(o)}
 function pageEl(id){return $('page'+id.charAt(0).toUpperCase()+id.slice(1))}
 function can(id){return id==='parentReport'?canAccessPage('parentReport'):(canAccessPage(id)&&!!pageEl(id))}
+function ic(n){return typeof icon==='function'?icon(n,22):''}
 function tile(id){
  var el=$('sheet_'+id);for(var k in SP)if(SP[k]===id&&$(k))el=$(k);
  if(el)return el;
- var c=(typeof EXTRA_PAGES!=='undefined')&&EXTRA_PAGES[id],p=PG[id]||[id,'•'];
- var lab=c?c.nav.label:p[0],ic=c&&typeof icon==='function'?icon(c.nav.icon,22):p[1];
+ var c=(typeof EXTRA_PAGES!=='undefined')&&EXTRA_PAGES[id],p=PG[id]||[id,'list'];
  var b=document.createElement('button');b.id='sheet_'+id;b.type='button';b.className='sheet-item';
  if(id==='parentReport'){b.dataset.tab='parentReport';b.setAttribute('onclick','closeMore();openParentLatestReport()')}
  else b.setAttribute('onclick',"closeMore();tab('"+id+"')");
- b.innerHTML='<span class="sheet-item-icon">'+ic+'</span><span>'+lab+'</span>';
+ b.innerHTML='<span class="sheet-item-icon">'+ic(c?c.nav.icon:p[1])+'</span><span>'+(c?c.nav.label:p[0])+'</span>';
  return b;
 }
 function build(){
  var cfg=CFG[APP.role],ms=$('moreSheet');if(!cfg||!ms)return;
- [].forEach.call(ms.querySelectorAll('.sheet-grp'),function(e){e.remove()});
+ [].forEach.call(ms.querySelectorAll('.sheet-grp,.sheet-sec'),function(e){e.remove()});
  var items=[].slice.call(ms.querySelectorAll('.sheet-item')),anchor=items.filter(acct)[0]||null;
  items.forEach(function(el){var p=pid(el);if(p&&U[p])el.classList.add('hidden')});
  function put(el){anchor?ms.insertBefore(el,anchor):ms.appendChild(el)}
@@ -25203,7 +25219,7 @@ function bar(){
  cfg.bar.forEach(function(x){
   if(!can(x[0]))return;
   var b=document.createElement('button');b.type='button';b.dataset.tab=x[0];b.setAttribute('onclick',"tab('"+x[0]+"')");
-  b.innerHTML='<span class="nav-icon">'+(x[0]==='notifications'&&typeof icon==='function'?icon('bell',22):x[2])+'</span><span>'+x[1]+'</span>';
+  b.innerHTML='<span class="nav-icon">'+ic(x[2])+'</span><span>'+x[1]+'</span>';
   nav.insertBefore(b,more);
  });
  if(typeof updateNavigation==='function')updateNavigation(APP.currentPage);
